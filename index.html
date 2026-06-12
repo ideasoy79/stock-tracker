@@ -476,8 +476,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="status-section" id="sec-entry">
       <hr class="section-divider">
       <div class="form-grid">
-        <div class="form-group"><label>진입가 (원)</label><input type="number" id="inp-entry" placeholder="52800"></div>
-        <div class="form-group"><label>투자금 (원)</label><input type="number" id="inp-amount" placeholder="500000"></div>
+        <div class="form-group"><label>진입가 (원)</label><input type="number" id="inp-entry" placeholder="52800" oninput="autoCalc()"></div>
+        <div class="form-group"><label>수량 (주)</label><input type="number" id="inp-qty" placeholder="10" oninput="autoCalc()"></div>
+        <div class="form-group"><label>투자금 (원) <span style="color:var(--accent2);font-size:9px;">자동계산</span></label><input type="number" id="inp-amount" placeholder="진입가×수량 자동"></div>
         <div class="form-group"><label>손절선 (원)</label><input type="number" id="inp-stoploss" placeholder="49100"></div>
         <div class="form-group"><label>목표가 (원)</label><input type="number" id="inp-target" placeholder="60000"></div>
       </div>
@@ -495,9 +496,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="status-section" id="sec-exit">
       <hr class="section-divider">
       <div class="form-grid">
-        <div class="form-group"><label>매도가 (원)</label><input type="number" id="inp-exit" placeholder="58000"></div>
-        <div class="form-group"><label>실현 손익 (원)</label><input type="number" id="inp-pnl" placeholder="25000"></div>
+        <div class="form-group"><label>매도가 (원)</label><input type="number" id="inp-exit" placeholder="58000" oninput="autoCalc()"></div>
+        <div class="form-group"><label>실현 손익 (원) <span style="color:var(--accent2);font-size:9px;">자동계산</span></label><input type="number" id="inp-pnl" placeholder="(매도가-진입가)×수량 자동"></div>
       </div>
+      <div id="calc-result" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:4px;font-size:12px;font-family:var(--font-mono);"></div>
     </div>
 
     <!-- 공통 메모 -->
@@ -590,6 +592,7 @@ function openModal(id) {
     document.getElementById('inp-stock').value   = r.stock || '';
     document.getElementById('inp-status').value  = r.status || 'watch';
     document.getElementById('inp-entry').value   = r.entry || '';
+    document.getElementById('inp-qty').value     = r.qty || '';
     document.getElementById('inp-amount').value  = r.amount || '';
     document.getElementById('inp-stoploss').value= r.stoploss || '';
     document.getElementById('inp-target').value  = r.target || '';
@@ -607,7 +610,7 @@ function openModal(id) {
   } else {
     document.getElementById('modal-title-text').textContent = '✦ 새 기록 추가';
     document.getElementById('inp-date').value = new Date().toISOString().split('T')[0];
-    ['inp-stock','inp-entry','inp-amount','inp-stoploss','inp-target','inp-current','inp-chart','inp-exit','inp-pnl','inp-issue','inp-memo'].forEach(id => {
+    ['inp-stock','inp-entry','inp-qty','inp-amount','inp-stoploss','inp-target','inp-current','inp-chart','inp-exit','inp-pnl','inp-issue','inp-memo'].forEach(id => {
       document.getElementById(id).value = '';
     });
     document.getElementById('inp-status').value = 'watch';
@@ -618,6 +621,33 @@ function openModal(id) {
 
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+// ── Auto Calculation ──────────────────────────────────
+function autoCalc() {
+  const entry = parseFloat(document.getElementById('inp-entry').value) || 0;
+  const qty   = parseFloat(document.getElementById('inp-qty').value) || 0;
+  const exitP = parseFloat(document.getElementById('inp-exit').value) || 0;
+  const resEl = document.getElementById('calc-result');
+
+  // 투자금 = 진입가 × 수량
+  if (entry && qty) {
+    document.getElementById('inp-amount').value = entry * qty;
+  }
+
+  // 실현손익 = (매도가 - 진입가) × 수량
+  if (entry && qty && exitP) {
+    const pnl = (exitP - entry) * qty;
+    const pct = ((exitP - entry) / entry * 100).toFixed(2);
+    document.getElementById('inp-pnl').value = pnl;
+    resEl.style.display = 'block';
+    const color = pnl >= 0 ? 'var(--accent)' : 'var(--red)';
+    resEl.innerHTML =
+      '투자금 ' + (entry*qty).toLocaleString() + '원 → 회수 ' + (exitP*qty).toLocaleString() + '원<br>' +
+      '<span style="color:' + color + ';font-weight:700;">손익 ' + (pnl>=0?'+':'') + pnl.toLocaleString() + '원 (' + (pct>=0?'+':'') + pct + '%)</span>';
+  } else {
+    resEl.style.display = 'none';
+  }
+}
 
 function onStatusChange() {
   const s = document.getElementById('inp-status').value;
@@ -652,6 +682,7 @@ function saveRecord() {
     date, stock,
     status:   document.getElementById('inp-status').value,
     entry, current,
+    qty:      parseFloat(document.getElementById('inp-qty').value) || 0,
     stoploss: parseFloat(document.getElementById('inp-stoploss').value) || 0,
     target:   parseFloat(document.getElementById('inp-target').value) || 0,
     amount:   parseFloat(document.getElementById('inp-amount').value) || 0,
