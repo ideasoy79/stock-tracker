@@ -248,6 +248,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 #naver-link-row{display:none;margin-bottom:8px;}
 #naver-link{display:inline-block;font-size:11px;color:var(--green);background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:6px;padding:5px 10px;text-decoration:none;}
 
+
+/* Custom stock search dropdown */
+.stock-dropdown{position:absolute;top:calc(100% + 2px);left:0;right:0;background:var(--s1);border:1px solid var(--border2);border-radius:8px;max-height:200px;overflow-y:auto;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.12);}
+.stock-option{padding:8px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.stock-option:last-child{border-bottom:none;}
+.stock-option:hover,.stock-option.focused{background:var(--s2);}
+.stock-option .sname{font-weight:600;color:var(--text);}
+.stock-option .scode{font-family:var(--mono);font-size:10px;color:var(--muted);}
 @media(max-width:560px){
   .quick-row{grid-template-columns:1fr 1fr}
   .pattern-grid{grid-template-columns:1fr}
@@ -285,16 +293,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <!-- 오늘의 판단 -->
       <div class="panel active" id="panel-today">
         <div class="today-header">
-          <div class="today-title">오늘의 판단 기록</div>
-          <div class="today-date" id="today-date"></div>
+          <div class="today-title">판단 기록</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="date" id="log-date-filter" style="background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:11px;font-family:var(--sans);outline:none;" onchange="renderLogs()">
+            <button class="icon-btn" onclick="resetLogDate()" style="font-size:10px;padding:4px 8px;">오늘</button>
+          </div>
         </div>
         <div class="quick-form">
           <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;">⚡ 빠른 기록</div>
           <div class="quick-row">
             <div>
               <div class="qf-label">종목명</div>
-              <input class="qf-input" id="q-stock" placeholder="네이버 035420" oninput="qNaverLink()" list="stock-dl">
-              <datalist id="stock-dl"></datalist>
+              <div style="position:relative;">
+                <input class="qf-input" id="q-stock" placeholder="종목명 검색..." oninput="stockSearch('q')" autocomplete="off">
+                <div id="q-dropdown" class="stock-dropdown" style="display:none;"></div>
+              </div>
             </div>
             <div>
               <div class="qf-label">한줄 판단</div>
@@ -428,7 +441,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     </div>
     <div class="field-row">
       <div class="field"><label>날짜</label><input type="date" id="m-date"></div>
-      <div class="field"><label>종목명 / 코드</label><input type="text" id="m-stock" oninput="mNaverLink();mUpdateDatalist()" list="m-stock-dl"><datalist id="m-stock-dl"></datalist></div>
+      <div class="field"><label>종목명 / 코드</label><div style="position:relative;">
+        <input type="text" id="m-stock" placeholder="종목명 검색..." oninput="stockSearch('m')" autocomplete="off">
+        <div id="m-dropdown" class="stock-dropdown" style="display:none;"></div>
+      </div></div>
     </div>
     <div id="m-naver" style="display:none;margin-bottom:8px;"><a id="m-naver-link" href="#" target="_blank" style="font-size:11px;color:var(--green);background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:6px;padding:4px 9px;text-decoration:none;">📈 네이버 금융 →</a></div>
     <div class="field"><label>상태</label>
@@ -491,9 +507,9 @@ let editId = null;
 function loadSimData() {
   if (records.length > 0) return;
   const sim = [
-    {id:1001,date:'2026-06-02',stock:'SK하이닉스 000660',status:'profit',entry:195000,qty:3,amount:585000,stoploss:181350,target:220000,current:0,exit:218000,pnl:69000,exitPct:'11.79',pct:null,issue:'AI 서버 HBM 수요 급증, 엔비디아 실적 호조 수혜',memo:'계획대로 목표가 근처에서 익절. 더 갈 수 있었지만 원칙 준수.',claude:'HBM 실수요 확인된 진입. 목표가 220,000 근처 분할 매도 권장.',tags:['눌림목','AI수혜','계획매도'],chartUrl:'',phase_logs:[{date:'2026-06-01',status:'watch',note:'HBM 뉴스 확인. 눌림목 대기.'},{date:'2026-06-02',status:'buy',note:'195,000 분할 진입 완료.'},{date:'2026-06-05',status:'profit',note:'218,000 목표가 근접, 익절.'}]},
-    {id:1002,date:'2026-06-03',stock:'피에스케이 319660',status:'profit',entry:48000,qty:10,amount:480000,stoploss:44640,target:54000,current:0,exit:52800,pnl:48000,exitPct:'10.00',pct:null,issue:'반도체 식각 장비 수주 증가, 코스닥 소부장 순환매',memo:'10% 익절 성공. 첫 실현 수익. 계획대로 실행.',claude:'소부장 실적 기반 진입. 공시 확인 후 손절선 준수 필수.',tags:['소부장','순환매','계획매도'],chartUrl:'',phase_logs:[{date:'2026-06-02',status:'analyze',note:'소부장 순환매 흐름 분석.'},{date:'2026-06-03',status:'buy',note:'48,000 진입.'},{date:'2026-06-06',status:'profit',note:'52,800 +10% 익절.'}]},
-    {id:1003,date:'2026-06-04',stock:'주성엔지니어링 036930',status:'loss',entry:32000,qty:15,amount:480000,stoploss:29760,target:37000,current:0,exit:30720,pnl:-19200,exitPct:'-4.00',pct:null,issue:'반도체 장비 수주 기대. 진입 후 시장 전체 하락.',memo:'손절선 -7% 이전 -4%에서 손절. 타이밍 놓쳐 약간 늦었지만 원칙 이행.',claude:'손절 실행은 잘한 판단. 매도 타이밍보다 실행 자체가 중요.',tags:['손절원칙이행','시장하락','조기손절'],chartUrl:'',phase_logs:[{date:'2026-06-04',status:'buy',note:'32,000 진입.'},{date:'2026-06-06',status:'loss',note:'30,720 -4% 손절. 원칙 이행.'}]},
+    {id:1001,date:'2026-06-02',stock:'SK하이닉스 000660',status:'profit',entry:195000,qty:3,amount:585000,stoploss:181350,target:220000,current:0,exit:218000,pnl:69000,exitPct:11.79,pct:null,issue:'AI 서버 HBM 수요 급증, 엔비디아 실적 호조 수혜',memo:'계획대로 목표가 근처에서 익절. 더 갈 수 있었지만 원칙 준수.',claude:'HBM 실수요 확인된 진입. 목표가 220,000 근처 분할 매도 권장.',tags:['눌림목','AI수혜','계획매도'],chartUrl:'',phase_logs:[{date:'2026-06-01',status:'watch',note:'HBM 뉴스 확인. 눌림목 대기.'},{date:'2026-06-02',status:'buy',note:'195,000 분할 진입 완료.'},{date:'2026-06-05',status:'profit',note:'218,000 목표가 근접, 익절.'}]},
+    {id:1002,date:'2026-06-03',stock:'피에스케이 319660',status:'profit',entry:48000,qty:10,amount:480000,stoploss:44640,target:54000,current:0,exit:52800,pnl:48000,exitPct:10.00,pct:null,issue:'반도체 식각 장비 수주 증가, 코스닥 소부장 순환매',memo:'10% 익절 성공. 첫 실현 수익. 계획대로 실행.',claude:'소부장 실적 기반 진입. 공시 확인 후 손절선 준수 필수.',tags:['소부장','순환매','계획매도'],chartUrl:'',phase_logs:[{date:'2026-06-02',status:'analyze',note:'소부장 순환매 흐름 분석.'},{date:'2026-06-03',status:'buy',note:'48,000 진입.'},{date:'2026-06-06',status:'profit',note:'52,800 +10% 익절.'}]},
+    {id:1003,date:'2026-06-04',stock:'주성엔지니어링 036930',status:'loss',entry:32000,qty:15,amount:480000,stoploss:29760,target:37000,current:0,exit:30720,pnl:-19200,exitPct:-4.00,pct:null,issue:'반도체 장비 수주 기대. 진입 후 시장 전체 하락.',memo:'손절선 -7% 이전 -4%에서 손절. 타이밍 놓쳐 약간 늦었지만 원칙 이행.',claude:'손절 실행은 잘한 판단. 매도 타이밍보다 실행 자체가 중요.',tags:['손절원칙이행','시장하락','조기손절'],chartUrl:'',phase_logs:[{date:'2026-06-04',status:'buy',note:'32,000 진입.'},{date:'2026-06-06',status:'loss',note:'30,720 -4% 손절. 원칙 이행.'}]},
     {id:1004,date:'2026-06-05',stock:'이오테크닉스 039030',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:89000,exit:0,pnl:0,exitPct:null,pct:null,issue:'코스피 하락장 소외 코스닥 소부장. 6/11 +10% 상승 목격.',memo:'추격 안 함. 눌림목 기다리는 중.',claude:'급등 후 관망. 83,000 이하 눌림목 확인 시 진입 검토.',tags:['관망','눌림목대기','소부장'],chartUrl:'',phase_logs:[{date:'2026-06-05',status:'watch',note:'저평가 소부장 후보 등록.'},{date:'2026-06-11',status:'watch',note:'+10% 급등 목격. 추격 안 함. 눌림목 대기.'}]},
     {id:1005,date:'2026-06-05',stock:'두산에너빌리티 034020',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:28500,exit:0,pnl:0,exitPct:null,pct:null,issue:'AI 전력 수요 실수요 스토리. 이란 종전 후 중동 재건 수혜.',memo:'진입 조건: 시초가 보합~+2% 이내. 오늘 체크 예정.',claude:'이란 종전 재건 수혜 + 원전 스토리. 실수요 기반 스윙 적합.',tags:['관망','이란재건','원전'],chartUrl:'',phase_logs:[{date:'2026-06-05',status:'watch',note:'저평가 후보 등록.'},{date:'2026-06-16',status:'watch',note:'+3.51%. 이란 종전 수혜 확인. 진입 조건 모니터링.'}]},
     {id:1006,date:'2026-06-06',stock:'SK이터닉스 475150',status:'pass',entry:0,qty:0,amount:0,stoploss:0,target:0,current:0,exit:0,pnl:0,exitPct:null,pct:null,issue:'이틀 누적 +56% 급등. KKR 인수 기대감. 개별 재료 미확정.',memo:'추격 안 함. +20% 고점에서 순식간에 +9%로 반납 목격.',claude:'재료 미확정 + 이틀 56% 급등 = 추격 금지. 세력 물량 털기 패턴.',tags:['패스','갭추격금지','세력패턴','학습'],chartUrl:'',phase_logs:[{date:'2026-06-11',status:'pass',note:'+20% 고점 → +9%로 급락 목격. 추격 안 함. 세력패턴 학습.'}]},
@@ -511,6 +527,93 @@ function loadSimData() {
   todayLogs = simLogs;
   localStorage.setItem('sv4_records', JSON.stringify(records));
   localStorage.setItem('sv4_logs', JSON.stringify(todayLogs));
+}
+
+
+// ── Custom Stock Search ────────────────────────────────
+let searchFocusIdx = { q: -1, m: -1 };
+
+function stockSearch(prefix) {
+  const input = document.getElementById(prefix+'-stock');
+  const dropdown = document.getElementById(prefix+'-dropdown');
+  if (!input || !dropdown) return;
+
+  // Naver link
+  if (prefix === 'q') qNaverLink();
+  if (prefix === 'm') mNaverLink();
+
+  const val = input.value.trim();
+  if (!val || val.length < 1) { dropdown.style.display='none'; return; }
+
+  // Search: name contains val OR code contains val OR search alias
+  const lower = val.toLowerCase();
+  const results = KRX_STOCKS.filter(s =>
+    s.name.toLowerCase().includes(lower) ||
+    s.code.includes(val) ||
+    (s.search && s.search.toLowerCase().includes(lower))
+  ).slice(0, 30);
+
+  // Also search user recorded stocks
+  const recorded = [...new Set(records.map(r=>r.stock))];
+  const recResults = recorded.filter(s => s.toLowerCase().includes(lower) && !results.find(r=>r.name+' '+r.code === s));
+
+  if (!results.length && !recResults.length) { dropdown.style.display='none'; return; }
+
+  searchFocusIdx[prefix] = -1;
+  dropdown.innerHTML = [
+    ...results.map((s,i) => `<div class="stock-option" data-idx="${i}" data-prefix="${prefix}" onmousedown="selectStock('${prefix}','${s.name} ${s.code}')"><span class="sname">${s.name}</span><span class="scode">${s.code}</span></div>`),
+    ...recResults.map((s,i) => `<div class="stock-option" onmousedown="selectStock('${prefix}','${s}')"><span class="sname">${s}</span><span class="scode">기록됨</span></div>`)
+  ].join('');
+  dropdown.style.display = 'block';
+}
+
+function selectStock(prefix, value) {
+  const input = document.getElementById(prefix+'-stock');
+  const dropdown = document.getElementById(prefix+'-dropdown');
+  if (input) input.value = value;
+  if (dropdown) dropdown.style.display = 'none';
+  if (prefix === 'q') qNaverLink();
+  if (prefix === 'm') mNaverLink();
+}
+
+function closeDropdown(prefix) {
+  const dropdown = document.getElementById(prefix+'-dropdown');
+  if (dropdown) dropdown.style.display = 'none';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#q-stock') && !e.target.closest('#q-dropdown')) closeDropdown('q');
+  if (!e.target.closest('#m-stock') && !e.target.closest('#m-dropdown')) closeDropdown('m');
+});
+
+// Keyboard navigation for dropdown
+document.addEventListener('keydown', function(e) {
+  ['q','m'].forEach(prefix => {
+    const dropdown = document.getElementById(prefix+'-dropdown');
+    if (!dropdown || dropdown.style.display==='none') return;
+    const items = dropdown.querySelectorAll('.stock-option');
+    if (!items.length) return;
+    if (e.key==='ArrowDown') {
+      e.preventDefault();
+      searchFocusIdx[prefix] = Math.min(searchFocusIdx[prefix]+1, items.length-1);
+      items.forEach((el,i)=>el.classList.toggle('focused', i===searchFocusIdx[prefix]));
+    } else if (e.key==='ArrowUp') {
+      e.preventDefault();
+      searchFocusIdx[prefix] = Math.max(searchFocusIdx[prefix]-1, 0);
+      items.forEach((el,i)=>el.classList.toggle('focused', i===searchFocusIdx[prefix]));
+    } else if (e.key==='Enter' && searchFocusIdx[prefix] >= 0) {
+      e.preventDefault();
+      items[searchFocusIdx[prefix]].dispatchEvent(new MouseEvent('mousedown'));
+    } else if (e.key==='Escape') {
+      closeDropdown(prefix);
+    }
+  });
+});
+
+function resetLogDate() {
+  const el = document.getElementById('log-date-filter');
+  if (el) { el.value = new Date().toISOString().split('T')[0]; renderLogs(); }
 }
 
 // ── KRX Stock Search ───────────────────────────────────
@@ -544,8 +647,10 @@ function populateAllDatalist() {
 document.addEventListener('DOMContentLoaded', () => {
   loadSimData();
   loadKRXStocks();
-  document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  const logDateEl = document.getElementById('log-date-filter');
+  if (logDateEl) logDateEl.value = new Date().toISOString().split('T')[0];
+  const _tdEl = document.getElementById('today-date');
+  if (_tdEl) _tdEl.textContent = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
   document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
   mStatusChange();
   renderAll();
@@ -580,6 +685,7 @@ function addQuickLog() {
   const action = document.getElementById('q-action').value;
   const claude = document.getElementById('q-claude').value.trim();
   if (!stock) { showToast('종목명을 입력해주세요'); return; }
+  if (!reason) { showToast('판단 근거를 한 줄 입력해주세요'); return; }
   const now = new Date();
   const log = {
     id: Date.now(),
@@ -613,7 +719,15 @@ function autoTag(action, reason) {
 }
 
 function autoLinkToStock(log) {
-  const match = records.find(r => r.stock === log.stock);
+  // Match by code (6 digits) OR exact name
+  const codeMatch = log.stock.match(/\d{6}/);
+  const match = records.find(r => {
+    if (codeMatch) {
+      const rc = r.stock.match(/\d{6}/);
+      if (rc && rc[0] === codeMatch[0]) return true;
+    }
+    return r.stock === log.stock || r.stock.startsWith(log.stock.split(' ')[0]);
+  });
   if (match) {
     if (!match.phase_logs) match.phase_logs = [];
     match.phase_logs.push({ date: log.date, status: log.action==='sell'?'profit':log.action, note: log.reason });
@@ -703,8 +817,8 @@ function saveRecord() {
   const qty   = parseFloat(document.getElementById('m-qty').value)||0;
   const curr  = parseFloat(document.getElementById('m-current').value)||0;
   const exitP = parseFloat(document.getElementById('m-exit').value)||0;
-  const pct   = entry&&curr ? (((curr-entry)/entry)*100).toFixed(2) : null;
-  const exitPct = entry&&exitP ? (((exitP-entry)/entry)*100).toFixed(2) : null;
+  const pct   = entry&&curr ? parseFloat(((curr-entry)/entry*100).toFixed(2)) : null;
+  const exitPct = entry&&exitP ? parseFloat(((exitP-entry)/entry*100).toFixed(2)) : null;
   const tags  = document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const rec = {
     id: editId||Date.now(), date, stock,
@@ -747,8 +861,11 @@ function renderAll() { renderLogs(); renderStocks(); renderPattern(); renderSumm
 function renderLogs() {
   const el = document.getElementById('log-list');
   const today = new Date().toISOString().split('T')[0];
-  const list = todayLogs.filter(l=>l.date===today);
-  if (!list.length) { el.innerHTML='<div class="empty"><div class="ei">📋</div><p>오늘의 첫 판단을 기록해보세요.</p></div>'; return; }
+  const filterEl = document.getElementById('log-date-filter');
+  const filterDate = filterEl ? filterEl.value || today : today;
+  const list = todayLogs.filter(l=>l.date===filterDate);
+  const isToday = filterDate === today;
+  if (!list.length) { el.innerHTML='<div class="empty"><div class="ei">📋</div><p>'+(isToday?'오늘의 첫 판단을 기록해보세요.':filterDate+' 판단 기록이 없어요.')+'</p></div>'; return; }
   const aMap={watch:'sb-watch',analyze:'sb-analyze',pass:'sb-pass',buy:'sb-buy',sell:'sb-sell',hold:'sb-hold'};
   const tMap={watch:'tag-watch',pass:'tag-pass',buy:'tag-buy',sell:'tag-sell',hold:'tag-hold'};
   el.innerHTML=list.map(l=>`
