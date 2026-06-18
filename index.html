@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>생각콩 주식 트래커</title>
+<title>생각콩 × AI 주식 트래커</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -264,7 +264,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 <div class="onboarding" id="onboarding" style="display:none;">
   <div class="ob-card">
     <div class="ob-logo">📈</div>
-    <div class="ob-title">생각콩 주식 트래커</div>
+    <div class="ob-title">생각콩 × AI 주식 트래커</div>
     <div class="ob-sub">주식 투자 판단을 기록하고<br>나만의 패턴을 발견하는 학습 일지</div>
     <div class="ob-feats">
       <div class="ob-feat"><div class="ob-feat-icon">📋</div><div class="ob-feat-text"><b>오늘의 판단 기록</b><span>매수·관망·패스 모든 결정을 한 줄로</span></div></div>
@@ -416,7 +416,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
       </div>
 
       <div id="sub2-usage" style="display:none;">
-      <div class="usage-hero"><h2>📈 생각콩 주식 트래커</h2><p>투자 판단을 기록하고 패턴을 발견해<br>실력 있는 투자자로 성장하는 도구</p></div>
+      <div class="usage-hero"><h2>📈 생각콩 × AI 주식 트래커</h2><p>투자 판단을 기록하고 패턴을 발견해<br>실력 있는 투자자로 성장하는 도구</p></div>
       <div class="sec-title" style="margin-top:0;">💡 이런 분께 맞아요</div>
       <div class="purpose-card"><div class="purpose-icon">🌱</div><div class="purpose-b"><h4>주식 입문자</h4><p>왜 사고 팔았는지 기록하는 습관부터. 기록이 쌓이면 실수 패턴이 보여요.</p></div></div>
       <div class="purpose-card"><div class="purpose-icon">📊</div><div class="purpose-b"><h4>스윙 트레이더</h4><p>1~5일 보유 전략을 체계적으로 기록하고 승률과 손익비를 트래킹해요.</p></div></div>
@@ -512,28 +512,7 @@ let editId = null, curFilter = 'all';
 const _timer = {q:null,m:null}, _fidx = {q:-1,m:-1};
 
 function loadSimData() {
-  if (records.length > 0) return;
-  const sim = [
-    {id:1001,date:'2026-06-02',stock:'SK하이닉스 000660',status:'profit',entry:195000,qty:3,amount:585000,stoploss:181350,target:220000,current:0,exit:218000,pnl:69000,exitPct:11.79,pct:null,issue:'AI 서버 HBM 수요 급증, 엔비디아 실적 호조 수혜',memo:'계획대로 목표가 근처에서 익절. 더 갈 수 있었지만 원칙 준수.',claude:'HBM 실수요 확인된 진입. 목표가 220,000 근처 분할 매도 권장.',tags:['눌림목','AI수혜','계획매도'],chartUrl:'',phase_logs:[{date:'2026-06-01',status:'watch',note:'HBM 뉴스 확인. 눌림목 대기.'},{date:'2026-06-02',status:'buy',note:'195,000 분할 진입 완료.'},{date:'2026-06-05',status:'profit',note:'218,000 목표가 근접, 익절.'}]},
-    {id:1002,date:'2026-06-03',stock:'피에스케이 319660',status:'profit',entry:48000,qty:10,amount:480000,stoploss:44640,target:54000,current:0,exit:52800,pnl:48000,exitPct:10.00,pct:null,issue:'반도체 식각 장비 수주 증가, 코스닥 소부장 순환매',memo:'10% 익절 성공. 첫 실현 수익. 계획대로 실행.',claude:'소부장 실적 기반 진입. 공시 확인 후 손절선 준수 필수.',tags:['소부장','순환매','계획매도'],chartUrl:'',phase_logs:[{date:'2026-06-02',status:'analyze',note:'소부장 순환매 흐름 분석.'},{date:'2026-06-03',status:'buy',note:'48,000 진입.'},{date:'2026-06-06',status:'profit',note:'52,800 +10% 익절.'}]},
-    {id:1003,date:'2026-06-04',stock:'주성엔지니어링 036930',status:'loss',entry:32000,qty:15,amount:480000,stoploss:29760,target:37000,current:0,exit:30720,pnl:-19200,exitPct:-4.00,pct:null,issue:'반도체 장비 수주 기대. 진입 후 시장 전체 하락.',memo:'손절선 -7% 이전 -4%에서 손절. 타이밍 놓쳐 약간 늦었지만 원칙 이행.',claude:'손절 실행은 잘한 판단. 매도 타이밍보다 실행 자체가 중요.',tags:['손절원칙이행','시장하락','조기손절'],chartUrl:'',phase_logs:[{date:'2026-06-04',status:'buy',note:'32,000 진입.'},{date:'2026-06-06',status:'loss',note:'30,720 -4% 손절. 원칙 이행.'}]},
-    {id:1004,date:'2026-06-05',stock:'이오테크닉스 039030',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:89000,exit:0,pnl:0,exitPct:null,pct:null,issue:'코스피 하락장 소외 코스닥 소부장. 6/11 +10% 상승 목격.',memo:'추격 안 함. 눌림목 기다리는 중.',claude:'급등 후 관망. 83,000 이하 눌림목 확인 시 진입 검토.',tags:['관망','눌림목대기','소부장'],chartUrl:'',phase_logs:[{date:'2026-06-05',status:'watch',note:'저평가 소부장 후보 등록.'},{date:'2026-06-11',status:'watch',note:'+10% 급등 목격. 추격 안 함. 눌림목 대기.'}]},
-    {id:1005,date:'2026-06-05',stock:'두산에너빌리티 034020',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:28500,exit:0,pnl:0,exitPct:null,pct:null,issue:'AI 전력 수요 실수요 스토리. 이란 종전 후 중동 재건 수혜.',memo:'진입 조건: 시초가 보합~+2% 이내. 오늘 체크 예정.',claude:'이란 종전 재건 수혜 + 원전 스토리. 실수요 기반 스윙 적합.',tags:['관망','이란재건','원전'],chartUrl:'',phase_logs:[{date:'2026-06-05',status:'watch',note:'저평가 후보 등록.'},{date:'2026-06-16',status:'watch',note:'+3.51%. 이란 종전 수혜 확인. 진입 조건 모니터링.'}]},
-    {id:1006,date:'2026-06-06',stock:'SK이터닉스 475150',status:'pass',entry:0,qty:0,amount:0,stoploss:0,target:0,current:0,exit:0,pnl:0,exitPct:null,pct:null,issue:'이틀 누적 +56% 급등. KKR 인수 기대감. 개별 재료 미확정.',memo:'추격 안 함. +20% 고점에서 순식간에 +9%로 반납 목격.',claude:'재료 미확정 + 이틀 56% 급등 = 추격 금지. 세력 물량 털기 패턴.',tags:['패스','갭추격금지','세력패턴','학습'],chartUrl:'',phase_logs:[{date:'2026-06-11',status:'pass',note:'+20% 고점 → +9%로 급락 목격. 추격 안 함. 세력패턴 학습.'}]},
-    {id:1007,date:'2026-06-07',stock:'휴림로봇 090710',status:'pass',entry:0,qty:0,amount:0,stoploss:0,target:0,current:0,exit:0,pnl:0,exitPct:null,pct:null,issue:'SNS·찌라시 바이럴. 개별 재료 없음. 테마 수급주.',memo:'바이럴 자체가 경고 신호. 진입 안 함.',claude:'시끄럽게 오르는 종목은 위험. 바이럴 = 세력 매도 준비 신호.',tags:['패스','바이럴경고','테마수급'],chartUrl:'',phase_logs:[{date:'2026-06-11',status:'pass',note:'찌라시·SNS 바이럴 확인. 개별 재료 없음. 패스.'}]},
-    {id:1008,date:'2026-06-08',stock:'네이버 035420',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:236000,exit:0,pnl:0,exitPct:null,pct:null,issue:'엔비디아·오픈AI·앤트로픽 AI 3대장 협력. 글로벌 AI 허브 포지셔닝.',memo:'6/17 갭 하락 -2.5% → 진입 조건 불충족. 230,000 눌림목 대기.',claude:'호재 있음에도 갭하락 = 매도세 강함. 230,000 이하 눌림 확인 후 재진입 검토.',tags:['관망','갭하락','조건불충족','AI협력'],chartUrl:'',phase_logs:[{date:'2026-06-08',status:'watch',note:'AI 3대장 협력 호재.'},{date:'2026-06-17',status:'watch',note:'갭하락 -2.5%. 진입조건 불충족. 230,000 눌림목 대기.'}]},
-    {id:1009,date:'2026-06-10',stock:'롯데쇼핑 023530',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:192000,exit:0,pnl:0,exitPct:null,pct:null,issue:'외국인 관광 회복. 키움 목표가 19만→23만 상향. 내수 순환매.',memo:'6/11 +7% 갭 상승. 추격 안 함. 17만원 초반 눌림목 기다리는 중.',claude:'갭 추격 금지 원칙 적용. 목표가 23만 여전히 유효. 눌림 시 재검토.',tags:['관망','갭추격금지','내수순환매'],chartUrl:'',phase_logs:[{date:'2026-06-10',status:'watch',note:'저평가 내수주 등록.'},{date:'2026-06-11',status:'watch',note:'+7% 갭 상승 추격 안 함. 눌림목 대기.'}]},
-    {id:1010,date:'2026-06-12',stock:'한화에어로스페이스 012450',status:'watch',entry:0,qty:0,amount:0,stoploss:0,target:0,current:380000,exit:0,pnl:0,exitPct:null,pct:null,issue:'이란 종전 후 중동 재건 방산 수혜. 6/16 +9.13% 급등.',memo:'전일 +9% 이미 올라있음. 오늘 눌림목 오면 진입 검토.',claude:'이란 종전 방산 수혜 유효하나 전일 급등으로 진입 부담. 눌림 -3% 이내 시 분할 진입.',tags:['관망','방산','이란종전','눌림목대기'],chartUrl:'',phase_logs:[{date:'2026-06-12',status:'watch',note:'방산 후보 등록.'},{date:'2026-06-16',status:'watch',note:'+9.13% 급등. 추격 안 함. 눌림목 대기.'}]},
-  ];
-  records = sim;
-  const simLogs = [
-    {id:2001,date:'2026-06-17',time:'08:45',stock:'네이버 035420',action:'pass',reason:'갭하락 -2.5% → 진입 조건 불충족',claude:'230,000 눌림목 확인 후 재검토 권장',tags:['갭하락','조건불충족']},
-    {id:2002,date:'2026-06-17',time:'09:10',stock:'SK이터닉스 475150',action:'pass',reason:'전일 급등 종목 2차 추격 충동 → 원칙대로 패스',claude:'계획 없는 종목 진입 금지',tags:['패스','충동방지']},
-    {id:2003,date:'2026-06-17',time:'09:20',stock:'두산에너빌리티 034020',action:'watch',reason:'이란 종전 수혜 확인. 시초가 +1.5% → 진입 조건 충족 검토 중',claude:'보합~+2% 이내 조건 충족. 분할 진입 고려 가능',tags:['관망','조건충족검토']},
-  ];
-  todayLogs = simLogs;
-  localStorage.setItem('sv4_records', JSON.stringify(records));
-  localStorage.setItem('sv4_logs', JSON.stringify(todayLogs));
+  // 시뮬레이션 데이터 제거됨 - 신규 사용자는 빈 상태로 시작
 }
 function resetLogDate() {
   const el = document.getElementById('log-date-filter');
@@ -770,7 +749,7 @@ function renderPattern(){
 }
 
 function renderSummary(){
-  const total=records.length;const holding=records.filter(r=>r.status==='buy'||r.status==='hold').length;
+  const total=records.length+todayLogs.length;const holding=records.filter(r=>r.status==='buy'||r.status==='hold').length;
   const invested=records.filter(r=>r.status==='buy'||r.status==='hold').reduce((s,r)=>s+(r.amount||0),0);
   const totalPnl=records.reduce((s,r)=>s+(r.pnl||0),0);
   const closed=records.filter(r=>r.status==='profit'||r.status==='loss');
