@@ -605,6 +605,34 @@ function selectStock(prefix,val) {
   const nRow=prefix==='q'?document.getElementById('naver-link-row'):document.getElementById('m-naver-row');
   const nLink=prefix==='q'?document.getElementById('naver-link'):document.getElementById('m-naver-link');
   if(cm&&nLink){nLink.href='https://finance.naver.com/item/main.naver?code='+cm[0];if(nRow)nRow.style.display='block';}
+  if(prefix==='m'&&!editId) attachOngoingRecord(val,cm?cm[0]:null);
+}
+function attachOngoingRecord(val,code){
+  const ongoing=['watch','analyze','buy','hold'];
+  const match=records.find(r=>ongoing.includes(r.status)&&(
+    (code&&(r.stock.match(/\d{6}/)||[])[0]===code) || r.stock===val || r.stock.split(' ')[0]===val.split(' ')[0]
+  ));
+  if(!match) return;
+  editId=match.id;
+  document.getElementById('modal-title-text').textContent='✦ 기록 이어가기 ('+sL(match.status)+' → 다음 단계)';
+  document.getElementById('btn-del').style.display='block';
+  document.getElementById('m-date').value=match.date||'';
+  document.getElementById('m-status').value=match.status||'watch';
+  document.getElementById('m-entry').value=match.entry||'';
+  document.getElementById('m-qty').value=match.qty||'';
+  document.getElementById('m-stoploss').value=match.stoploss||'';
+  document.getElementById('m-target').value=match.target||'';
+  document.getElementById('m-amount').value=match.amount||'';
+  document.getElementById('m-current').value=match.current||'';
+  document.getElementById('m-exit').value=match.exit||'';
+  document.getElementById('m-pnl').value=match.pnl||'';
+  document.getElementById('m-issue').value=match.issue||'';
+  document.getElementById('m-memo').value='';
+  document.getElementById('m-claude').value=match.claude||'';
+  document.getElementById('m-tags').value=(match.tags||[]).join(', ');
+  document.getElementById('m-chart').value=match.chartUrl||'';
+  mStatusChange();
+  showToast('📌 기존 기록을 이어서 불러왔어요');
 }
 document.addEventListener('click',e=>{
   if(!e.target.closest('#q-stock')&&!e.target.closest('#q-dropdown')){const d=document.getElementById('q-dropdown');if(d)d.style.display='none';}
@@ -697,9 +725,19 @@ function saveRecord(){
   const pct=en&&cu?parseFloat(((cu-en)/en*100).toFixed(2)):null;
   const exitPct=en&&ex?parseFloat(((ex-en)/en*100).toFixed(2)):null;
   const tags=document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  const rec={id:editId||Date.now(),date,stock,status:document.getElementById('m-status').value,entry:en,qty:qt,current:cu,amount:parseFloat(document.getElementById('m-amount').value)||en*qt,stoploss:parseFloat(document.getElementById('m-stoploss').value)||0,target:parseFloat(document.getElementById('m-target').value)||0,exit:ex,pnl:parseFloat(document.getElementById('m-pnl').value)||0,pct,exitPct,issue:document.getElementById('m-issue').value.trim(),memo:document.getElementById('m-memo').value.trim(),claude:document.getElementById('m-claude').value.trim(),tags,chartUrl:document.getElementById('m-chart').value.trim(),phase_logs:editId?(records.find(r=>r.id===editId)||{}).phase_logs||[]:[{date,status:document.getElementById('m-status').value,note:document.getElementById('m-issue').value.trim().slice(0,80)}]};
+  const newStatus=document.getElementById('m-status').value;
+  const newNote=(document.getElementById('m-memo').value.trim()||document.getElementById('m-issue').value.trim()).slice(0,80);
+  const prev=editId?records.find(r=>r.id===editId):null;
+  let phaseLogs;
+  if(prev){
+    phaseLogs=prev.phase_logs||[];
+    if(prev.status!==newStatus) phaseLogs=[...phaseLogs,{date,status:newStatus,note:newNote}];
+  } else {
+    phaseLogs=[{date,status:newStatus,note:document.getElementById('m-issue').value.trim().slice(0,80)}];
+  }
+  const rec={id:editId||Date.now(),date,stock,status:newStatus,entry:en,qty:qt,current:cu,amount:parseFloat(document.getElementById('m-amount').value)||en*qt,stoploss:parseFloat(document.getElementById('m-stoploss').value)||0,target:parseFloat(document.getElementById('m-target').value)||0,exit:ex,pnl:parseFloat(document.getElementById('m-pnl').value)||0,pct,exitPct,issue:document.getElementById('m-issue').value.trim(),memo:document.getElementById('m-memo').value.trim(),claude:document.getElementById('m-claude').value.trim(),tags,chartUrl:document.getElementById('m-chart').value.trim(),phase_logs:phaseLogs};
   if(editId)records=records.map(r=>r.id===editId?rec:r);else records.unshift(rec);
-  persist();closeModal();renderAll();showToast(editId?'수정 완료':'저장 완료');
+  persist();closeModal();renderAll();showToast(editId?'기록이 이어졌어요':'저장 완료');
 }
 function deleteRecord(){if(!confirm('삭제할까요?'))return;records=records.filter(r=>r.id!==editId);persist();closeModal();renderAll();showToast('삭제됨');}
 function setFilter(f){curFilter=f;document.querySelectorAll('.f-btn').forEach(b=>b.classList.toggle('active',b.dataset.f===f));renderStocks();}
