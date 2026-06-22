@@ -541,48 +541,37 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script type="module">
-// ── Firebase SDK ─────────────────────────────────────────
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ── Firebase 초기화 ──────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCw0jBBIKJZ_ZAOvu4aN5OG84yG_XtrKY4",
   authDomain: "stock-tracker-81099.firebaseapp.com",
   projectId: "stock-tracker-81099",
   storageBucket: "stock-tracker-81099.firebasestorage.app",
   messagingSenderId: "924968717057",
-  appId: "1:924968717057:web:92bfec9f112c404b55a900",
-  measurementId: "G-VYYG6QN5FT"
+  appId: "1:924968717057:web:92bfec9f112c404b55a900"
 };
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const googleProvider = new GoogleAuthProvider();
-
-// ── 로그인 상태 관리 ──────────────────────────────────────
+// ── 상태 ────────────────────────────────────────────────
 let currentUser = null;
 let unsubscribeSnapshot = null;
 let isSignupMode = false;
 
-window._firebaseReady = true;
-window._auth = auth;
-window._db = db;
-
 // 로그인 상태 감지
-onAuthStateChanged(auth, async (user) => {
+auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
     document.getElementById('login-screen').style.display = 'none';
-    // 닉네임 설정
     const name = user.displayName || localStorage.getItem('sv4_user_name') || '투자자';
     localStorage.setItem('sv4_user_name', name);
-    // 클라우드 데이터 불러오기 + 실시간 동기화 구독
     await loadFromCloud(user.uid);
     subscribeToCloud(user.uid);
-    // 앱 시작
     if (typeof window.showApp === 'function') window.showApp();
     document.getElementById('sync-indicator').style.display = 'flex';
   } else {
@@ -595,35 +584,45 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// ── 클라우드 데이터 읽기/쓰기 ────────────────────────────
+// Google 리다이렉트 결과 처리 (페이지 로드 시)
+auth.getRedirectResult().then((result) => {
+  if (result && result.user) {
+    // 리다이렉트 로그인 성공 - onAuthStateChanged가 자동 처리
+  }
+}).catch((e) => {
+  if (e.code !== 'auth/no-current-user') {
+    showLoginError('Google 로그인 오류: ' + (e.code || e.message));
+  }
+});
+
+// ── 클라우드 읽기/쓰기 ──────────────────────────────────
 async function loadFromCloud(uid) {
   try {
     setSyncState('syncing');
-    const snap = await getDoc(doc(db, 'users', uid));
-    if (snap.exists()) {
+    const snap = await db.collection('users').doc(uid).get();
+    if (snap.exists) {
       const data = snap.data();
       if (data.records) { window._records = data.records; localStorage.setItem('sv4_records', JSON.stringify(data.records)); }
       if (data.todayLogs) { window._todayLogs = data.todayLogs; localStorage.setItem('sv4_logs', JSON.stringify(data.todayLogs)); }
       if (data.userName) localStorage.setItem('sv4_user_name', data.userName);
     }
     setSyncState('synced');
-  } catch(e) { console.error('클라우드 로드 오류:', e); setSyncState('error'); }
+  } catch(e) { console.error('로드 오류:', e); setSyncState('error'); }
 }
 
 function subscribeToCloud(uid) {
   if (unsubscribeSnapshot) unsubscribeSnapshot();
-  unsubscribeSnapshot = onSnapshot(doc(db, 'users', uid), (snap) => {
-    if (!snap.exists()) return;
+  unsubscribeSnapshot = db.collection('users').doc(uid).onSnapshot((snap) => {
+    if (!snap.exists) return;
     const data = snap.data();
-    // 외부 기기에서 변경된 경우에만 업데이트
-    const cloudRecordsStr = JSON.stringify(data.records||[]);
-    const localRecordsStr = JSON.stringify(window._records||[]);
-    if (cloudRecordsStr !== localRecordsStr) {
+    const cloudStr = JSON.stringify(data.records||[]);
+    const localStr = JSON.stringify(window._records||[]);
+    if (cloudStr !== localStr) {
       if (data.records) { window._records = data.records; localStorage.setItem('sv4_records', JSON.stringify(data.records)); }
       if (data.todayLogs) { window._todayLogs = data.todayLogs; localStorage.setItem('sv4_logs', JSON.stringify(data.todayLogs)); }
       if (typeof window.renderAll === 'function') window.renderAll();
-      setSyncState('synced');
     }
+    setSyncState('synced');
   });
 }
 
@@ -631,14 +630,14 @@ window.saveToCloud = async function() {
   if (!currentUser) return;
   try {
     setSyncState('syncing');
-    await setDoc(doc(db, 'users', currentUser.uid), {
+    await db.collection('users').doc(currentUser.uid).set({
       records: window._records || [],
       todayLogs: window._todayLogs || [],
       userName: localStorage.getItem('sv4_user_name') || '',
       updatedAt: new Date().toISOString()
     });
     setSyncState('synced');
-  } catch(e) { console.error('클라우드 저장 오류:', e); setSyncState('error'); }
+  } catch(e) { console.error('저장 오류:', e); setSyncState('error'); }
 };
 
 function setSyncState(state) {
@@ -646,25 +645,24 @@ function setSyncState(state) {
   const text = document.getElementById('sync-text');
   if (!dot || !text) return;
   if (state === 'syncing') { dot.className = 'sync-dot syncing'; text.textContent = '동기화 중...'; }
-  else if (state === 'synced') { dot.className = 'sync-dot'; text.textContent = '동기화됨'; }
+  else if (state === 'synced') { dot.className = 'sync-dot'; dot.style.background = ''; text.textContent = '동기화됨'; }
   else { dot.className = 'sync-dot'; dot.style.background = 'var(--red)'; text.textContent = '오프라인'; }
 }
 
-// ── 로그인/회원가입 함수 ─────────────────────────────────
+// ── 로그인/회원가입 ──────────────────────────────────────
 window.loginWithEmail = async function() {
   const email = document.getElementById('login-email').value.trim();
   const pw = document.getElementById('login-pw').value;
-  const err = document.getElementById('login-error');
-  err.style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
   if (!email || !pw) { showLoginError('이메일과 비밀번호를 입력해주세요'); return; }
   try {
     if (isSignupMode) {
       const name = document.getElementById('login-name').value.trim() || '투자자';
-      const cred = await createUserWithEmailAndPassword(auth, email, pw);
-      await updateProfile(cred.user, { displayName: name });
+      const cred = await auth.createUserWithEmailAndPassword(email, pw);
+      await cred.user.updateProfile({ displayName: name });
       localStorage.setItem('sv4_user_name', name);
     } else {
-      await signInWithEmailAndPassword(auth, email, pw);
+      await auth.signInWithEmailAndPassword(email, pw);
     }
   } catch(e) {
     const msgs = {
@@ -673,23 +671,21 @@ window.loginWithEmail = async function() {
       'auth/weak-password': '비밀번호는 6자 이상이어야 해요',
       'auth/invalid-credential': '이메일 또는 비밀번호가 틀렸어요',
       'auth/user-not-found': '등록된 계정이 없어요. 회원가입을 해주세요',
+      'auth/wrong-password': '비밀번호가 틀렸어요',
+      'auth/network-request-failed': '네트워크 연결을 확인해주세요',
     };
-    showLoginError(msgs[e.code] || '오류: ' + e.message);
+    showLoginError(msgs[e.code] || '오류: ' + e.code);
   }
 };
 
-window.loginWithGoogle = async function() {
-  try {
-    await signInWithPopup(auth, googleProvider);
-  } catch(e) {
-    showLoginError('Google 로그인에 실패했어요: ' + e.message);
-  }
+window.loginWithGoogle = function() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithRedirect(provider);
 };
 
 window.logoutUser = async function() {
   if (!confirm('로그아웃 할까요?')) return;
-  await signOut(auth);
-  showToast('로그아웃됐어요');
+  await auth.signOut();
 };
 
 window.toggleSignup = function() {
@@ -717,7 +713,6 @@ function showLoginError(msg) {
   err.style.display = 'block';
 }
 
-// 엔터키로 로그인
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
     window.loginWithEmail();
