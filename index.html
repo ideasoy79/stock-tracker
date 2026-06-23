@@ -736,8 +736,8 @@ body {
   cursor: pointer; box-shadow: 0 8px 32px rgba(99,102,241,0.5); z-index: 4000;
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.2s, box-shadow 0.2s;
-  font-size: 0;
 }
+.fab svg { width: 30px; height: 30px; stroke: white; stroke-width: 2.5; }
 .fab:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 14px 40px rgba(99,102,241,0.6); }
 .fab:active { transform: scale(0.96); }
 
@@ -910,7 +910,7 @@ body {
               <option value="sell">매도</option>
             </select>
           </div>
-          <div><label class="q-label">Claude 의견</label><input class="q-input" id="q-claude" placeholder="핵심 한 줄"></div>
+          <div><label class="q-label">AI 판단 메모 <span style="color:var(--text3);font-weight:400;">(Claude 답변 요약)</span></label><input class="q-input" id="q-claude" placeholder="예: 갭추격 리스크 있다고 판단, 진입 보류 권장"></div>
           <div class="qb-full"><label class="q-label">판단 근거 <span style="color:var(--red)">*필수</span></label>
             <input class="q-input" id="q-reason" placeholder="예: 갭하락으로 조건 불충족, 패스">
           </div>
@@ -1041,7 +1041,12 @@ body {
   </div>
 </div>
 
-<button class="fab" onclick="openModal()" id="fab" style="display:none;">＋</button>
+<button class="fab" onclick="openModal()" id="fab" style="display:none;">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="12" y1="5" x2="12" y2="19" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="5" y1="12" x2="19" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
 
 <div class="overlay" id="overlay" onclick="closeOverlay(event)">
   <div class="modal">
@@ -1094,7 +1099,7 @@ body {
     <hr class="m-sep">
     <div class="m-field"><label>판단 근거 / 이슈</label><textarea id="m-issue" class="m-textarea" placeholder="진입·관망·패스 이유, 공시, 차트 신호..."></textarea></div>
     <div class="m-field"><label id="m-memo-label">메모 / 회고</label><textarea id="m-memo" class="m-textarea" placeholder="결과 회고, 느낀 점, 다음 액션..."></textarea></div>
-    <div class="m-field"><label>Claude 의견</label><input type="text" id="m-claude" class="m-input" placeholder="Claude 핵심 한 줄"></div>
+    <div class="m-field"><label>AI 판단 메모 <span style="font-weight:400;color:var(--text3);font-size:10px;">— Claude에게 질문 후 핵심 답변 요약 기록</span></label><input type="text" id="m-claude" class="m-input" placeholder="예: '손절선 -7% 엄수, 분할매수 권장' (Claude 답변 요약)"><div style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;">☝️ 🤖 복사 버튼으로 트래커 데이터를 Claude에 붙여넣고 받은 핵심 조언을 여기 메모하세요</div></div>
     <div class="m-field"><label>패턴 태그 (쉼표 구분)</label><input type="text" id="m-tags" class="m-input" placeholder="갭추격, 눌림목, 손절원칙이행"></div>
     <div class="m-field"><label>차트 URL</label><input type="text" id="m-chart" class="m-input"></div>
     <div id="instant-feedback" style="display:none;"></div>
