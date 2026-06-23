@@ -796,6 +796,54 @@ body {
   .vision-logo { width: 60px; height: 60px; margin-bottom: 16px; }
   .vision-title { font-size: 22px; }
 }
+
+/* ── 온보딩 투어 ── */
+.tour-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  pointer-events: none;
+}
+.tour-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+  z-index: 9001; pointer-events: all;
+}
+.tour-spotlight {
+  position: fixed; z-index: 9002;
+  border-radius: 16px;
+  box-shadow: 0 0 0 4000px rgba(0,0,0,0.72), 0 0 0 3px rgba(129,140,248,0.7);
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.tour-bubble {
+  position: fixed; z-index: 9003;
+  background: var(--card2);
+  border: 1px solid rgba(129,140,248,0.35);
+  border-radius: 18px; padding: 18px 20px;
+  width: 280px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: all;
+}
+.tour-step-label {
+  font-size: 10px; font-weight: 800; color: var(--purple);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+}
+.tour-bubble h4 { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.tour-bubble p  { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+.tour-actions { display: flex; gap: 8px; align-items: center; }
+.tour-next {
+  flex: 1; padding: 9px; background: var(--purple); color: white;
+  border: none; border-radius: 10px; font-size: 13px; font-weight: 800;
+  cursor: pointer; font-family: var(--sans);
+}
+.tour-skip {
+  font-size: 11.5px; color: var(--text3); background: none;
+  border: none; cursor: pointer; font-family: var(--sans); padding: 4px 6px;
+}
+.tour-dots { display: flex; gap: 5px; margin-left: auto; }
+.tour-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text3); transition: background 0.2s;
+}
+.tour-dot.active { background: var(--purple); }
 </style>
 </head>
 <body>
@@ -808,13 +856,6 @@ body {
     <div class="vision-sub">
       성공하는 투자자는 감정에 휘둘리지 않습니다.<br>
       모든 판단을 기록하고 <b>AI</b>와 함께<br>나만의 승리 패턴을 데이터로 증명하세요.
-    </div>
-    <div style="margin-top:40px;">
-      <div class="vision-hint" id="vision-hint-auto">
-        <i data-lucide="loader-2" style="width:15px;height:15px;animation:spin 1s linear infinite;"></i>
-        <span id="vision-countdown">3</span>초 후 자동으로 시작됩니다
-      </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text3);">터치하면 바로 시작</div>
     </div>
   </div>
 </div>
@@ -875,7 +916,8 @@ body {
     <div class="brand"><div class="brand-dot"></div><span class="brand-name" id="user-greeting">AI Tracker</span></div>
     <div class="topbar-actions">
       <div class="sync-indicator" id="sync-indicator" style="display:none;"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">동기화됨</span></div>
-      <button class="t-btn accent" onclick="triggerGeminiBriefing()" title="AI 브리핑"><i data-lucide="sparkles" style="width:14px;height:14px;"></i> AI</button>
+      <button class="t-btn accent" onclick="triggerGeminiBriefing()" title="내 현황 분석"><i data-lucide="user" style="width:14px;height:14px;"></i> <span style="font-size:11.5px;">분석</span></button>
+      <button class="t-btn" onclick="triggerSwingRecommend()" title="오늘 스윙 추천" style="border-color:rgba(0,229,160,0.25);color:var(--green);background:rgba(0,229,160,0.08);"><i data-lucide="trending-up" style="width:14px;height:14px;"></i> <span style="font-size:11.5px;">스윙</span></button>
       <button class="t-btn" onclick="copyForClaude()" title="Claude 복사"><i data-lucide="bot" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="exportData()" title="백업"><i data-lucide="download" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="document.getElementById('imp').click()" title="가져오기"><i data-lucide="upload" style="width:14px;height:14px;"></i></button>
@@ -892,16 +934,16 @@ body {
 
     <div class="panel active" id="panel-home">
       <div class="quick-bar">
-        <div class="qb-title"><i data-lucide="zap" style="width:16px;height:16px;color:var(--yellow);"></i> 빠른 기록</div>
+        <div class="qb-title"><i data-lucide="zap" style="width:16px;height:16px;color:var(--yellow);"></i> 오늘의 투자 판단 기록<span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:8px;">매수·관망·패스 모든 판단을 남겨요</span></div>
         <div class="qb-grid">
           <div class="qb-full"><label class="q-label">종목명 검색</label>
             <div class="search-wrap">
-              <input class="q-input" id="q-stock" placeholder="종목명 또는 코드..." autocomplete="off" oninput="stockSearch('q')">
+              <input class="q-input" id="q-stock" placeholder="어떤 종목을 봤나요? (예: 삼성전자)" autocomplete="off" oninput="stockSearch('q')">
               <div class="stock-dropdown" id="q-dropdown" style="display:none;"></div>
             </div>
             <div id="naver-link-row"><a id="naver-link" href="#" target="_blank"><i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>네이버 금융 현재가 확인</a></div>
           </div>
-          <div><label class="q-label">판단</label>
+          <div><label class="q-label">오늘 내 판단은?</label>
             <select class="q-select" id="q-action">
               <option value="watch">관망</option>
               <option value="analyze">분석중</option>
@@ -910,14 +952,14 @@ body {
               <option value="sell">매도</option>
             </select>
           </div>
-          <div><label class="q-label">AI 판단 메모 <span style="color:var(--text3);font-weight:400;">(Claude 답변 요약)</span></label><input class="q-input" id="q-claude" placeholder="예: 갭추격 리스크 있다고 판단, 진입 보류 권장"></div>
+          <div><label class="q-label">AI 판단 메모 <span style="color:var(--text3);font-weight:400;">(Claude 답변 요약)</span></label><input class="q-input" id="q-claude" placeholder="Claude에게 물어본 핵심 조언 한 줄 (선택)"></div>
           <div class="qb-full"><label class="q-label">판단 근거 <span style="color:var(--red)">*필수</span></label>
-            <input class="q-input" id="q-reason" placeholder="예: 갭하락으로 조건 불충족, 패스">
+            <input class="q-input" id="q-reason" placeholder="왜 이 판단을 했나요? (예: 갭하락 후 눌림목 반등, 거래량 터짐 → 진입)">
           </div>
         </div>
         <div style="display:flex;gap:10px;margin-top:18px;">
           <button class="q-btn" style="flex:2;margin-top:0;" onclick="addQuickLog()">
-            <i data-lucide="zap" style="width:15px;height:15px;"></i> 빠른 기록
+            <i data-lucide="check" style="width:15px;height:15px;"></i> 판단 기록하기
           </button>
           <button class="q-btn" style="flex:3;margin-top:0;background:linear-gradient(135deg,#10b981,#059669);" onclick="addQuickLogAndDetail()">
             <i data-lucide="plus-circle" style="width:15px;height:15px;"></i> 상세 기록 추가
@@ -1018,7 +1060,13 @@ body {
       </div>
 
       <div id="sub2-usage" style="display:none;">
-      <div class="usage-hero"><h2>📈 생각콩 × AI 주식 트래커</h2><p>투자 판단을 기록하고 패턴을 발견해<br>실력 있는 투자자로 성장하는 도구</p></div>
+      <div class="usage-hero">
+        <h2>📈 생각콩 × AI 주식 트래커</h2>
+        <p>투자 판단을 기록하고 패턴을 발견해<br>실력 있는 투자자로 성장하는 도구</p>
+        <button onclick="startOnboardingTour()" style="margin-top:16px;display:inline-flex;align-items:center;gap:7px;background:var(--purple-light);border:1px solid rgba(129,140,248,0.3);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;color:var(--purple);cursor:pointer;font-family:var(--sans);">
+          <i data-lucide="play-circle" style="width:14px;height:14px;"></i> 앱 투어 다시 보기
+        </button>
+      </div>
       <div class="sec-title" style="margin-top:0;">이런 분께 맞아요</div>
       <div class="purpose-card"><div class="purpose-icon">🌱</div><div class="purpose-b"><h4>주식 입문자</h4><p>왜 사고 팔았는지 기록하는 습관부터. 기록이 쌓이면 실수 패턴이 보여요.</p></div></div>
       <div class="purpose-card"><div class="purpose-icon">📊</div><div class="purpose-b"><h4>스윙 트레이더</h4><p>1~5일 보유 전략을 체계적으로 기록하고 승률과 손익비를 트래킹해요.</p></div></div>
@@ -1117,12 +1165,39 @@ body {
       <div class="gemini-title"><i data-lucide="bot" style="color:var(--purple);"></i> Claude AI 트레이딩 코치</div>
       <button class="modal-close" onclick="closeGemini()"><i data-lucide="x"></i></button>
     </div>
-    <div class="gemini-body" id="gemini-body">
-      <div class="gemini-loader" id="gemini-loader">
+
+    <!-- 탭 선택 -->
+    <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <button id="ai-tab-coach" onclick="switchAiTab('coach')"
+        style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:2px solid var(--purple);
+               font-size:13.5px;font-weight:800;color:var(--purple);cursor:pointer;font-family:var(--sans);
+               display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;">
+        <i data-lucide="user" style="width:15px;height:15px;"></i> 내 현황 분석
+      </button>
+      <button id="ai-tab-swing" onclick="switchAiTab('swing')"
+        style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:2px solid transparent;
+               font-size:13.5px;font-weight:800;color:var(--text3);cursor:pointer;font-family:var(--sans);
+               display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;">
+        <i data-lucide="trending-up" style="width:15px;height:15px;"></i> 오늘의 스윙 추천
+      </button>
+    </div>
+
+    <!-- 내 현황 분석 탭 -->
+    <div id="ai-panel-coach" class="gemini-body">
+      <div class="gemini-loader" id="coach-loader" style="display:none;">
         <div class="spinner"></div>
-        <div>AI가 포트폴리오를 분석 중입니다...</div>
+        <div>포트폴리오를 분석 중입니다...</div>
       </div>
-      <div id="gemini-result" style="display:none;"></div>
+      <div id="coach-result"></div>
+    </div>
+
+    <!-- 오늘의 스윙 추천 탭 -->
+    <div id="ai-panel-swing" class="gemini-body" style="display:none;">
+      <div class="gemini-loader" id="swing-loader" style="display:none;">
+        <div class="spinner"></div>
+        <div>스윙 추천 프롬프트 생성 중...</div>
+      </div>
+      <div id="swing-result"></div>
     </div>
   </div>
 </div>
@@ -1367,31 +1442,26 @@ window.showApp = showApp;
 
 // 비전 스크린 → 로그인 화면 전환 (자동 3초 or 터치)
 function showLoginScreen() {
+  // 자동 타이머가 남아있으면 취소 (터치로 수동 진입 시)
+  if(window._visionTimer) { clearTimeout(window._visionTimer); window._visionTimer = null; }
   const vs = document.getElementById('vision-screen');
-  if(vs) {
-    vs.style.opacity='0';
-    vs.style.transition='opacity 0.4s ease';
-    setTimeout(()=>{
-      vs.style.display='none';
-      const ls=document.getElementById('login-screen');
-      if(ls) ls.style.display='flex';
-      if(typeof lucide !== 'undefined') lucide.createIcons();
-    }, 400);
-  }
+  if(!vs || vs.style.display === 'none') return; // 이미 전환됐으면 무시
+  vs.style.opacity='0';
+  vs.style.transition='opacity 0.4s ease';
+  setTimeout(()=>{
+    vs.style.display='none';
+    const ls=document.getElementById('login-screen');
+    if(ls) ls.style.display='flex';
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+  }, 400);
 }
 
 // 비전 스크린 자동 카운트다운 (3초)
 function startVisionCountdown() {
-  let count = 3;
-  const countEl = document.getElementById('vision-countdown');
-  if(!countEl) return;
-  const timer = setInterval(() => {
-    count--;
-    if(countEl) countEl.textContent = count;
-    if(count <= 0) { clearInterval(timer); showLoginScreen(); }
-  }, 1000);
-  // 터치하면 즉시 전환 (이벤트는 HTML onclick에서 처리됨)
-  window._visionTimer = timer;
+  // 정확히 3초 후 전환 (터치하면 clearTimeout으로 취소 후 즉시 이동)
+  window._visionTimer = setTimeout(() => {
+    showLoginScreen();
+  }, 3000);
 }
 
 // 비밀번호 재설정
@@ -1496,13 +1566,161 @@ function checkFirstLogin(user) {
   const isFirst = !localStorage.getItem(key);
   if(isFirst) {
     localStorage.setItem(key, '1');
-    setTimeout(() => {
-      // 가이드 탭으로 이동 후 usage 서브탭 활성화
-      switchTab('guide');
-      setSubTab2('usage');
-      showToast('처음 오셨군요! 사용 가이드를 먼저 확인해보세요 📖');
-    }, 800);
+    // 투어가 가이드 역할을 하므로 별도 탭 이동 없음 (중복 방지)
+    setTimeout(() => startOnboardingTour(), 1000);
   }
+}
+
+// ─────────────────────────────────────────────
+// 온보딩 투어 (신규 사용자 최초 1회)
+// ─────────────────────────────────────────────
+const TOUR_STEPS = [
+  {
+    targetId: null, // 전체 화면 포커스
+    title: '생각콩 × AI 주식 트래커에 오신 걸 환영해요!',
+    body: '이 앱은 주식 매매 일지가 아니에요.<br>내 <b>투자 판단의 이유를 기록</b>하고,<br>같은 실수가 반복되는 <b>패턴을 발견</b>하는 도구예요.<br><br>30초면 끝나는 빠른 투어를 시작할게요.',
+    pos: 'center'
+  },
+  {
+    targetId: 'panel-home',
+    targetQuery: '.quick-bar',
+    title: '오늘의 판단을 바로 기록해요',
+    body: '매수했든, 관망했든, 패스했든<br><b>이유와 함께 기록</b>하는 게 핵심이에요.<br>결과보다 <b>판단 근거</b>가 쌓여야 실력이 늘어요.',
+    pos: 'bottom'
+  },
+  {
+    targetId: 'panel-home',
+    targetQuery: '#log-list',
+    title: '기록하면 여기에 쌓여요',
+    body: '오늘 기록한 판단들이 시간순으로 보여요.<br>각 항목에서 <b>종목에 상세기록</b> 버튼을 누르면<br>진입가·손절선·목표가까지 연결할 수 있어요.',
+    pos: 'top'
+  },
+  {
+    targetId: null,
+    targetQuery: '.fab',
+    title: '+ 버튼 — 상세 기록 추가',
+    body: '오른쪽 아래 + 버튼은 <b>종목 상세 기록</b>이에요.<br>진입가·수량·손절선을 입력하면<br>손익이 자동 계산되고, 매도 후 <b>패턴 피드백</b>도 바로 받아요.',
+    pos: 'top-left'
+  },
+  {
+    targetId: null,
+    targetQuery: '.tab:nth-child(2)',
+    title: '종목 탭 — 내 매매 히스토리',
+    body: '모든 종목 기록과 패턴 분석이 여기 있어요.<br>태그별 승률, 뇌동매매 패턴, 손절 이행률을<br>숫자로 확인할 수 있어요.',
+    pos: 'bottom'
+  },
+  {
+    targetId: null,
+    targetQuery: '.tab:nth-child(3)',
+    title: '가이드 탭 — 루틴과 학습 자료',
+    body: '장전·장중·장후 체크리스트와<br>전략 정보 링크 모음이 있어요.<br>가이드 탭 → <b>사용 가이드</b>에서 상세한 사용법을 확인할 수 있어요.',
+    pos: 'bottom'
+  }
+];
+
+let _tourStep = 0;
+let _tourEl = null;
+
+function startOnboardingTour() {
+  _tourStep = 0;
+  renderTourStep();
+}
+
+function renderTourStep() {
+  // 기존 투어 엘리먼트 제거
+  const old = document.getElementById('tour-container');
+  if(old) old.remove();
+
+  if(_tourStep >= TOUR_STEPS.length) {
+    endTour();
+    return;
+  }
+
+  const step = TOUR_STEPS[_tourStep];
+  const container = document.createElement('div');
+  container.id = 'tour-container';
+
+  // 스포트라이트 대상 찾기
+  let target = null;
+  if(step.targetQuery) target = document.querySelector(step.targetQuery);
+
+  // 백드롭
+  const backdrop = document.createElement('div');
+  backdrop.className = 'tour-backdrop';
+  backdrop.onclick = () => advanceTour();
+  container.appendChild(backdrop);
+
+  // 스포트라이트
+  if(target) {
+    const rect = target.getBoundingClientRect();
+    const pad = 8;
+    const spotlight = document.createElement('div');
+    spotlight.className = 'tour-spotlight';
+    spotlight.style.cssText = [
+      'top:'+(rect.top - pad)+'px',
+      'left:'+(rect.left - pad)+'px',
+      'width:'+(rect.width + pad*2)+'px',
+      'height:'+(rect.height + pad*2)+'px'
+    ].join(';');
+    container.appendChild(spotlight);
+  }
+
+  // 말풍선 버블
+  const bubble = document.createElement('div');
+  bubble.className = 'tour-bubble';
+
+  // 도트
+  const dots = TOUR_STEPS.map((_,i) =>
+    '<div class="tour-dot'+(i===_tourStep?' active':'')+'"></div>'
+  ).join('');
+
+  bubble.innerHTML =
+    '<div class="tour-step-label">STEP '+(_tourStep+1)+' / '+TOUR_STEPS.length+'</div>'+
+    '<h4>'+step.title+'</h4>'+
+    '<p>'+step.body+'</p>'+
+    '<div class="tour-actions">'+
+      '<button class="tour-next" onclick="advanceTour()">'+
+        (_tourStep === TOUR_STEPS.length-1 ? '시작하기 ✓' : '다음 →')+
+      '</button>'+
+      (_tourStep < TOUR_STEPS.length-1 ?
+        '<button class="tour-skip" onclick="endTour()">건너뛰기</button>' : '')+
+    '</div>'+
+    '<div class="tour-dots" style="margin-top:10px;">'+dots+'</div>';
+
+  // 버블 위치 계산
+  let bubbleTop = '50%', bubbleLeft = '50%', transform = 'translate(-50%,-50%)';
+  if(target && step.pos) {
+    const rect = target.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    if(step.pos === 'bottom') {
+      bubbleTop = (rect.bottom + 16) + 'px';
+      bubbleLeft = Math.min(Math.max(rect.left, 10), vw - 290) + 'px';
+      transform = 'none';
+    } else if(step.pos === 'top') {
+      bubbleTop = (rect.top - 16) + 'px';
+      bubbleLeft = Math.min(Math.max(rect.left, 10), vw - 290) + 'px';
+      transform = 'translateY(-100%)';
+    } else if(step.pos === 'top-left') {
+      bubbleTop = (rect.top - 16) + 'px';
+      bubbleLeft = Math.max(vw - 296, 10) + 'px';
+      transform = 'translateY(-100%)';
+    }
+  }
+  bubble.style.cssText = 'top:'+bubbleTop+';left:'+bubbleLeft+';transform:'+transform+';';
+  container.appendChild(bubble);
+  document.body.appendChild(container);
+}
+
+function advanceTour() {
+  _tourStep++;
+  renderTourStep();
+}
+
+function endTour() {
+  const el = document.getElementById('tour-container');
+  if(el) el.remove();
+  showToast('투어 완료! 판단 기록을 시작해보세요');
+  // 가이드 이동 없음 — 홈 탭에서 바로 시작하도록 유도
 }
 
 function switchTab(n) {
@@ -1824,17 +2042,47 @@ async function openClaude(prompt) {
   }, 1200);
 }
 
-async function triggerGeminiBriefing() {
+// ── AI 드로어 탭 전환 ──────────────────────────────
+function switchAiTab(tab) {
+  const isCoach = tab === 'coach';
+  // 탭 버튼 스타일
+  const coachBtn = document.getElementById('ai-tab-coach');
+  const swingBtn = document.getElementById('ai-tab-swing');
+  if(coachBtn) {
+    coachBtn.style.borderBottomColor = isCoach ? 'var(--purple)' : 'transparent';
+    coachBtn.style.color = isCoach ? 'var(--purple)' : 'var(--text3)';
+  }
+  if(swingBtn) {
+    swingBtn.style.borderBottomColor = !isCoach ? 'var(--green)' : 'transparent';
+    swingBtn.style.color = !isCoach ? 'var(--green)' : 'var(--text3)';
+  }
+  // 패널 전환
+  const coachPanel = document.getElementById('ai-panel-coach');
+  const swingPanel = document.getElementById('ai-panel-swing');
+  if(coachPanel) coachPanel.style.display = isCoach ? 'block' : 'none';
+  if(swingPanel) swingPanel.style.display = !isCoach ? 'block' : 'none';
+}
+
+// ── 드로어 열기 (탭 지정 가능) ──────────────────────
+function openAiDrawer(tab) {
   const drawer = document.getElementById('gemini-drawer');
-  const result = document.getElementById('gemini-result');
-  const loader = document.getElementById('gemini-loader');
   drawer.style.display = 'flex';
   setTimeout(() => drawer.classList.add('open'), 10);
-  loader.style.display = 'flex'; result.style.display = 'none'; result.innerHTML = '';
+  switchAiTab(tab || 'coach');
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ── 기존 브리핑 버튼 → 내 현황 분석 탭 열기 ─────────
+async function triggerGeminiBriefing() {
+  openAiDrawer('coach');
+  const result = document.getElementById('coach-result');
+  const loader = document.getElementById('coach-loader');
+  // 이미 결과 있으면 재사용
+  if(result && result.innerHTML && !result.innerHTML.includes('시작하기')) return;
+  if(loader) { loader.style.display = 'flex'; }
+  if(result) { result.innerHTML = ''; }
 
   const summary = buildSummaryForAI();
-  
-  // 전문가 수준 프롬프트 (전문 트레이더 + 개인투자자 관점 통합)
   const prompt = `당신은 10년 이상 경력의 국내 주식 스윙 트레이딩 코치입니다.
 아래 트레이더 데이터를 분석하고, 전문 트레이더 관점(리스크 관리, 승률 최적화, 포지션 사이징)과 실력 있는 개인투자자 관점(실전 체감, 감정 관리, 손익비)을 통합해 코칭해주세요.
 
@@ -1848,72 +2096,237 @@ ${summary}
 ### 2. 오늘의 최우선 과제 (1가지만)
 가장 중요한 행동 하나를 구체적으로.
 
-### 3. 스윙 후보 (선택, 현재 시장 상황 감안)
-종목명, 진입 조건, 목표가, 손절가, 이유 (확신 없으면 "오늘은 관망 권장"으로)
-
-### 4. 나의 패턴 피드백
+### 3. 나의 패턴 피드백
 약점 패턴에 대한 구체적 개선 방법 1가지.
 
-### 5. 오늘 하지 말아야 할 것
-한 줄로.
+### 4. 오늘 하지 말아야 할 것 (한 줄)
 
-※ 모든 답변은 구체적 수치와 근거를 포함하고, 확실하지 않은 건 "모름"이라고 솔직히 말해주세요.`;
+※ 수치와 근거 필수. 확실하지 않으면 "모름"으로 답해주세요.`;
+
+  const coachResult = document.getElementById('coach-result');
+  const coachLoader = document.getElementById('coach-loader');
+
+  function renderCoachResult(html_content) {
+    if(coachLoader) coachLoader.style.display = 'none';
+    if(coachResult) { coachResult.innerHTML = html_content; }
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+  }
 
   try {
     await navigator.clipboard.writeText(prompt);
-    loader.style.display = 'none';
-    result.style.display = 'block';
-    result.innerHTML = `
+    renderCoachResult(`
       <div style="padding:4px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i data-lucide="check-circle-2" style="width:22px;height:22px;color:var(--green);"></i>
-          </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;
+             padding:14px;background:var(--green-light);border-radius:14px;
+             border:1px solid rgba(0,229,160,0.2);">
+          <i data-lucide="check-circle-2" style="width:24px;height:24px;color:var(--green);flex-shrink:0;"></i>
           <div>
-            <div style="font-size:15px;font-weight:800;color:var(--text);">브리핑 프롬프트 복사 완료</div>
-            <div style="font-size:12px;color:var(--text3);">전문 트레이더 코치 프롬프트 (포트폴리오 포함)</div>
+            <div style="font-size:14px;font-weight:800;color:var(--text);">프롬프트 복사 완료</div>
+            <div style="font-size:11.5px;color:var(--text3);margin-top:2px;">내 포트폴리오 + 패턴 데이터 포함</div>
           </div>
         </div>
-        
-        <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.7;">
-          <div style="font-weight:800;color:var(--text);margin-bottom:8px;">포함된 정보</div>
-          <div>✓ 현재 보유 포지션 + 손익 현황</div>
-          <div>✓ 매매 승률 + 패턴 분석</div>
-          <div>✓ 오늘 루틴 달성 현황</div>
-          <div>✓ 강점/약점 패턴 태그</div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:14px;
+             padding:14px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;
+               letter-spacing:0.8px;margin-bottom:10px;">포함된 데이터</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            ${[
+              ['user','보유 포지션 + 손익'],
+              ['bar-chart-2','매매 승률 분석'],
+              ['tag','패턴 태그 승률'],
+              ['activity','루틴 달성 현황']
+            ].map(([icon,label])=>
+              '<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);">'
+              +'<i data-lucide="'+icon+'" style="width:13px;height:13px;color:var(--purple);flex-shrink:0;"></i>'+label+'</div>'
+            ).join('')}
+          </div>
         </div>
-        
-        <div style="font-size:12.5px;color:var(--text3);margin-bottom:16px;padding:12px;background:var(--yellow-light);border-radius:10px;border:1px solid rgba(251,191,36,0.2);">
-          <strong style="color:var(--yellow);">Claude 앱 이용 팁:</strong><br>
-          Claude.ai를 열고 붙여넣기(길게 터치 → 붙여넣기)하면 맞춤 코칭을 받을 수 있어요. 반복 사용 시 Projects 기능으로 대화 맥락을 유지하면 더 정확해져요.
+
+        <div style="font-size:12px;color:var(--text3);margin-bottom:14px;padding:11px 13px;
+             background:var(--yellow-light);border-radius:10px;line-height:1.6;">
+          <strong style="color:var(--yellow);">💡 팁</strong> — Claude Projects에 트래커 데이터를 저장해두면
+          매일 대화 맥락이 누적돼서 코칭 정확도가 높아져요.
         </div>
-        
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(prompt)}'.replace(/%20/g,' ')))" class="ai-action-btn" style="justify-content:center;width:100%;">
-            <i data-lucide="bot" style="width:16px;height:16px;"></i> Claude 앱 열기 (자동 붙여넣기 시도)
+
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(prompt)}'.replace(/%20/g,' ')))"
+            class="ai-action-btn" style="justify-content:center;width:100%;">
+            <i data-lucide="bot" style="width:15px;height:15px;"></i> Claude 앱 열기
           </button>
-          <a href="https://claude.ai/new" target="_blank" class="ai-action-btn" style="text-decoration:none;justify-content:center;background:rgba(129,140,248,0.2);border:1px solid rgba(129,140,248,0.3);color:var(--purple);">
-            <i data-lucide="external-link" style="width:15px;height:15px;"></i> Claude 웹에서 열기
+          <a href="https://claude.ai/new" target="_blank" class="ai-action-btn"
+            style="text-decoration:none;justify-content:center;
+                   background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.3);color:var(--purple);">
+            <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹에서 열기
           </a>
+          <button onclick="triggerGeminiBriefing()" class="ai-action-btn"
+            style="justify-content:center;background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">
+            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> 데이터 새로 복사
+          </button>
         </div>
-      </div>
-    `;
-    if(typeof lucide !== 'undefined') lucide.createIcons();
+      </div>`);
   } catch(e) {
-    loader.style.display = 'none';
-    result.style.display = 'block';
-    result.innerHTML = `
-      <div style="padding:20px;text-align:center;">
-        <div style="color:var(--yellow);font-size:13px;margin-bottom:16px;">클립보드 자동 복사가 차단됐어요.<br>아래 버튼으로 직접 복사해주세요.</div>
-        <textarea id="prompt-textarea" style="width:100%;height:120px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:12px;resize:none;">${prompt.replace(/</g,'&lt;')}</textarea>
-        <button onclick="document.getElementById('prompt-textarea').select();document.execCommand('copy');showToast('복사됐어요!')" class="ai-action-btn" style="width:100%;margin-top:10px;justify-content:center;">
-          <i data-lucide="copy" style="width:15px;height:15px;"></i> 직접 복사하기
+    renderCoachResult(`
+      <div style="padding:16px;text-align:center;">
+        <div style="color:var(--yellow);font-size:13px;margin-bottom:14px;line-height:1.6;">
+          클립보드 복사가 차단됐어요.<br>아래에서 직접 복사해주세요.
+        </div>
+        <textarea id="prompt-textarea"
+          style="width:100%;height:110px;background:var(--input-bg);border:1px solid var(--border);
+                 border-radius:10px;padding:10px;color:var(--text);font-size:11.5px;resize:none;
+                 font-family:var(--mono);">${prompt.replace(/</g,'&lt;').replace(/`/g,'\`')}</textarea>
+        <button onclick="document.getElementById('prompt-textarea').select();document.execCommand('copy');showToast('복사됐어요!')"
+          class="ai-action-btn" style="width:100%;margin-top:8px;justify-content:center;">
+          <i data-lucide="copy" style="width:14px;height:14px;"></i> 직접 복사
         </button>
-        <a href="https://claude.ai/new" target="_blank" class="ai-action-btn" style="display:flex;text-decoration:none;justify-content:center;margin-top:8px;background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.3);color:var(--purple);">
-          <i data-lucide="external-link" style="width:15px;height:15px;"></i> Claude 웹 열기
+        <a href="https://claude.ai/new" target="_blank" class="ai-action-btn"
+          style="display:flex;text-decoration:none;justify-content:center;margin-top:6px;
+                 background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.25);color:var(--purple);">
+          <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹 열기
         </a>
-      </div>`;
+      </div>`);
+  }
+}
+
+// ── 오늘의 스윙 추천 ─────────────────────────────────
+async function triggerSwingRecommend() {
+  openAiDrawer('swing');
+  const result = document.getElementById('swing-result');
+  const loader = document.getElementById('swing-loader');
+  // 이미 결과 있으면 재사용
+  if(result && result.innerHTML && !result.innerHTML.includes('시작하기')) return;
+  if(loader) loader.style.display = 'flex';
+  if(result) result.innerHTML = '';
+
+  const holding = records.filter(r => ['buy','hold'].includes(r.status));
+  const watching = records.filter(r => ['watch','analyze'].includes(r.status));
+
+  let portfolioCtx = '';
+  if(holding.length) {
+    portfolioCtx += '\n[보유 포지션]\n';
+    holding.forEach(r => {
+      portfolioCtx += `- ${r.stock}: 매수가 ${r.entry||'?'}원, 손절선 ${r.stoploss||'미설정'}원, 목표가 ${r.target||'미설정'}원\n`;
+    });
+  }
+  if(watching.length) {
+    portfolioCtx += '\n[관망/분석 중]\n';
+    watching.forEach(r => portfolioCtx += `- ${r.stock} (${r.issue||''})\n`);
+  }
+
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
+
+  const swingPrompt = `당신은 국내 주식 스윙 트레이딩 전문 애널리스트입니다.
+오늘 날짜: ${today}
+
+아래 4가지 항목을 순서대로 답해주세요.
+
+### 1. 어젯밤 미국 장 + 오늘 시장 환경 체크
+- 나스닥/S&P500 마감 결과 (출처와 날짜 명시)
+- 오늘 코스피/코스닥 시초 방향 예상 (선물 기준)
+- 오늘 주목할 섹터/테마 1~2가지
+
+### 2. 내 보유/관망 종목별 오늘 대응 전략
+${portfolioCtx || '(보유 종목 없음)'}
+각 종목에 대해: 오늘 주목할 가격대 / 대응 방향 (홀드/분할매도/손절 대기 등)
+
+### 3. 오늘 스윙 후보 추천 (1~3개)
+각 후보에 대해 반드시 아래 형식으로:
+- 종목명 (코드)
+- 진입 조건: (가격대 또는 조건)
+- 목표가: (원)
+- 손절선: (원)
+- 추천 이유: (2~3줄, 시장 컨텍스트 포함)
+※ 확신이 없으면 "오늘은 관망 권장"으로 답하고 이유를 써주세요.
+
+### 4. 오늘 절대 하지 말아야 할 것 (딱 1가지)
+한 줄로. 오늘 시장 상황에 맞게.
+
+※ 모든 수치는 출처 또는 근거 명시. 모르는 건 모른다고 솔직하게.`;
+
+  function renderSwingResult(html_content) {
+    if(loader) loader.style.display = 'none';
+    if(result) result.innerHTML = html_content;
     if(typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  try {
+    await navigator.clipboard.writeText(swingPrompt);
+    renderSwingResult(`
+      <div style="padding:4px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;
+             padding:14px;background:var(--green-light);border-radius:14px;
+             border:1px solid rgba(0,229,160,0.2);">
+          <i data-lucide="check-circle-2" style="width:24px;height:24px;color:var(--green);flex-shrink:0;"></i>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:var(--text);">스윙 추천 프롬프트 복사 완료</div>
+            <div style="font-size:11.5px;color:var(--text3);margin-top:2px;">${today} 기준</div>
+          </div>
+        </div>
+
+        <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:14px;
+             padding:14px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;
+               letter-spacing:0.8px;margin-bottom:12px;">프롬프트 포함 내용</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${[
+              ['globe','어젯밤 미국 장 + 오늘 시장 환경 체크 (출처 표기 요청)'],
+              ['briefcase','내 보유/관망 종목별 오늘 대응 전략'],
+              ['trending-up','스윙 후보 추천 (진입가·목표가·손절선)'],
+              ['alert-octagon','오늘 절대 하지 말아야 할 것 1가지']
+            ].map(([icon,label],i)=>
+              '<div style="display:flex;align-items:flex-start;gap:9px;">'
+              +'<div style="width:22px;height:22px;min-width:22px;border-radius:50%;'
+              +'background:var(--purple);color:white;font-size:11px;font-weight:800;'
+              +'display:flex;align-items:center;justify-content:center;">'+(i+1)+'</div>'
+              +'<div style="font-size:12.5px;color:var(--text2);line-height:1.5;padding-top:3px;">'+label+'</div></div>'
+            ).join('')}
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--text3);margin-bottom:14px;padding:11px 13px;
+             background:var(--blue-light);border-radius:10px;line-height:1.6;
+             border:1px solid rgba(96,165,250,0.15);">
+          <strong style="color:var(--blue);">📅 장 시작 전(오전 8~9시) 사용 권장</strong><br>
+          미국 마감 데이터가 최신이고, 오늘 전략 수립에 가장 효과적이에요.
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(swingPrompt)}'.replace(/%20/g,' ')))"
+            class="ai-action-btn" style="justify-content:center;width:100%;
+            background:linear-gradient(135deg,var(--green),#059669);">
+            <i data-lucide="bot" style="width:15px;height:15px;"></i> Claude 앱에서 바로 받기
+          </button>
+          <a href="https://claude.ai/new" target="_blank" class="ai-action-btn"
+            style="text-decoration:none;justify-content:center;
+                   background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.25);color:var(--green);">
+            <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹에서 열기
+          </a>
+          <button onclick="triggerSwingRecommend()" class="ai-action-btn"
+            style="justify-content:center;background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">
+            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> 새로 복사
+          </button>
+        </div>
+      </div>`);
+  } catch(e) {
+    renderSwingResult(`
+      <div style="padding:16px;text-align:center;">
+        <div style="color:var(--yellow);font-size:13px;margin-bottom:14px;line-height:1.6;">
+          클립보드 복사가 차단됐어요.<br>아래에서 직접 복사해주세요.
+        </div>
+        <textarea id="swing-textarea"
+          style="width:100%;height:110px;background:var(--input-bg);border:1px solid var(--border);
+                 border-radius:10px;padding:10px;color:var(--text);font-size:11.5px;resize:none;
+                 font-family:var(--mono);">${swingPrompt.replace(/</g,'&lt;').replace(/`/g,'\`')}</textarea>
+        <button onclick="document.getElementById('swing-textarea').select();document.execCommand('copy');showToast('복사됐어요!')"
+          class="ai-action-btn" style="width:100%;margin-top:8px;justify-content:center;">
+          <i data-lucide="copy" style="width:14px;height:14px;"></i> 직접 복사
+        </button>
+        <a href="https://claude.ai/new" target="_blank" class="ai-action-btn"
+          style="display:flex;text-decoration:none;justify-content:center;margin-top:6px;
+                 background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:var(--green);">
+          <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹 열기
+        </a>
+      </div>`);
   }
 }
 
@@ -1931,7 +2344,15 @@ function renderLogs(){
   const today=new Date().toISOString().split('T')[0];
   const fEl=document.getElementById('log-date-filter');const fd=fEl?fEl.value||today:today;
   const list=todayLogs.filter(l=>l.date===fd);
-  if(!list.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>'+(fd===today?'오늘의 첫 판단을 기록해보세요.':fd+' 기록이 없어요.')+'</p></div>';return;}
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:36px 20px;">'
+    +'<div style="width:56px;height:56px;border-radius:16px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">'
+    +'<i data-lucide="edit-3" style="width:24px;height:24px;color:var(--purple);"></i></div>'
+    +(fd===today
+      ?'<div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px;">오늘 첫 판단을 기록해보세요</div>'
+       +'<div style="font-size:12.5px;color:var(--text3);line-height:1.7;">위 입력창에 오늘 본 종목과<br>판단 이유를 남겨보세요.<br><span style="color:var(--purple);font-weight:700;">매수만이 아니라 관망·패스도 모두 기록이에요.</span></div>'
+      :'<div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;">'+fd+' 기록 없음</div>'
+       +'<div style="font-size:12px;color:var(--text3);">이 날 기록된 판단이 없어요</div>'
+    )+'</div>';return;}
   el.innerHTML=list.map(l=>'<div class="log-item"><div class="log-row1"><span class="log-time">'+l.time+'</span><span class="log-stock">'+l.stock+'</span><span class="badge '+bC(l.action)+'">'+sL(l.action)+'</span>'+(l.tags&&l.tags.length?l.tags.map(t=>'<span class="badge b-pass" style="font-size:10px;">'+t+'</span>').join(''):'')+'</div>'+(l.reason?'<div class="log-reason">'+l.reason+'</div>':'')+(l.claude?'<div class="log-claude">✦ '+l.claude+'</div>':'')+'</div>').join('');
 }
 
@@ -1939,7 +2360,15 @@ function renderStocks(){
   const el=document.getElementById('stocks-list');if(!el)return;
   const fm={all:null,active:['buy','hold'],watch:['watch','analyze'],closed:['profit','loss'],pass:['pass']};
   const allowed=fm[curFilter];const list=allowed?records.filter(r=>allowed.includes(r.status)):records;
-  if(!list.length){el.innerHTML='<div class="empty"><div class="ei">📌</div><p>'+(records.length?'이 필터에 기록이 없어요.':'+ 버튼으로 첫 기록을 추가해보세요!')+'</p></div>';return;}
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:36px 20px;">'
+    +'<div style="width:56px;height:56px;border-radius:16px;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">'
+    +'<i data-lucide="plus-circle" style="width:24px;height:24px;color:var(--green);"></i></div>'
+    +(records.length
+      ?'<div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;">이 필터엔 기록이 없어요</div>'
+       +'<div style="font-size:12px;color:var(--text3);">필터를 전체로 바꿔보세요</div>'
+      :'<div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px;">아직 종목 기록이 없어요</div>'
+       +'<div style="font-size:12.5px;color:var(--text3);line-height:1.7;">오른쪽 아래 <b style="color:var(--purple);">+ 버튼</b>을 눌러<br>첫 번째 종목을 기록해보세요.<br><span style="font-size:11.5px;color:var(--text3);">진입가·손절선·목표가를 숫자로 남기면<br>손익이 자동 계산돼요.</span></div>'
+    )+'</div>';return;}
   el.innerHTML=list.map(r=>{
     const sl=(r.status==='buy'||r.status==='hold')&&r.stoploss&&r.current&&r.current<r.stoploss;
     return '<div class="stock-card"><div class="sc-header" onclick="toggleStock('+r.id+')"><div class="sc-left"><span class="sc-ticker">'+r.stock+'</span><span class="badge '+bC(r.status)+'">'+sL(r.status)+'</span>'+(sl?'<span class="badge b-loss">⚠️ 손절선 이탈</span>':'')+(r.exitPct!=null?'<span class="sc-pnl '+(r.exitPct>=0?'pos':'neg')+'">'+(r.exitPct>=0?'+':'')+r.exitPct+'%</span>':'')+(r.pct!=null&&(r.status==='buy'||r.status==='hold')?'<span class="sc-pnl '+(r.pct>=0?'pos':'neg')+'">'+(r.pct>=0?'+':'')+r.pct+'%</span>':'')+'</div><div style="display:flex;align-items:center;gap:6px;"><span class="sc-meta">'+r.date+'</span><span class="chevron" id="chev-'+r.id+'">▼</span></div></div><div class="sc-body" id="scb-'+r.id+'">'+(r.phase_logs&&r.phase_logs.length?'<div class="tl-wrap">'+r.phase_logs.map(pl=>'<div class="tl-item"><div class="tl-dot '+pl.status+'"></div><div><div class="tl-date">'+pl.date+'</div><div class="tl-note"><span class="badge '+bC(pl.status)+'" style="font-size:10px;">'+sL(pl.status)+'</span> '+(pl.note||'')+'</div></div></div>').join('')+'</div>':'')+'<div class="detail-box"><div class="num-grid">'+(r.entry?'<div class="num-item"><div class="num-label">진입가</div><div class="num-val nv-base">'+r.entry.toLocaleString()+'원</div></div>':'')+(r.qty?'<div class="num-item"><div class="num-label">수량</div><div class="num-val nv-base">'+r.qty+'주</div></div>':'')+(r.current?'<div class="num-item"><div class="num-label">현재가</div><div class="num-val '+(r.pct!=null&&r.pct>=0?'nv-up':'nv-dn')+'">'+r.current.toLocaleString()+'원</div></div>':'')+(r.stoploss?'<div class="num-item"><div class="num-label">손절선</div><div class="num-val nv-dn">'+r.stoploss.toLocaleString()+'원</div></div>':'')+(r.target?'<div class="num-item"><div class="num-label">목표가</div><div class="num-val nv-up">'+r.target.toLocaleString()+'원</div></div>':'')+(r.exit?'<div class="num-item"><div class="num-label">매도가</div><div class="num-val '+(r.exitPct!=null&&r.exitPct>=0?'nv-up':'nv-dn')+'">'+r.exit.toLocaleString()+'원</div></div>':'')+(r.pnl?'<div class="num-item"><div class="num-label">실현손익</div><div class="num-val '+(r.pnl>=0?'nv-up':'nv-dn')+'">'+(r.pnl>=0?'+':'')+r.pnl.toLocaleString()+'원</div></div>':'')+'</div>'+(r.issue?'<div class="info-box"><b>📌 근거:</b> '+r.issue+'</div>':'')+(r.memo?'<div class="info-box"><b>✏️ 회고:</b> '+r.memo+'</div>':'')+(r.claude?'<div class="claude-box">✦ '+r.claude+'</div>':'')+(r.tags&&r.tags.length?'<div class="tags">'+r.tags.map(t=>'<span class="tag">'+t+'</span>').join('')+'</div>':'')+'<div class="card-actions"><button class="t-btn" onclick="openModal('+r.id+')">수정</button>'+(r.chartUrl?'<a href="'+r.chartUrl+'" target="_blank" class="t-btn" style="text-decoration:none;">차트 →</a>':'')+'</div></div></div></div>';
@@ -1975,11 +2404,32 @@ function renderPattern(){
 }
 
 function renderSummary(){
-  const total=records.length+todayLogs.length;const holding=records.filter(r=>r.status==='buy'||r.status==='hold').length;
-  const invested=records.filter(r=>r.status==='buy'||r.status==='hold').reduce((s,r)=>s+(r.amount||0),0);
+  const total=records.length+todayLogs.length;
+  const holdingRecs=records.filter(r=>r.status==='buy'||r.status==='hold');
+  const holding=holdingRecs.length;
+  const invested=holdingRecs.reduce((s,r)=>s+(r.amount||0),0);
   const totalPnl=records.reduce((s,r)=>s+(r.pnl||0),0);
   const closed=records.filter(r=>r.status==='profit'||r.status==='loss');
   const wins=records.filter(r=>r.status==='profit');const wr=closed.length?Math.round(wins.length/closed.length*100):null;
+
+  // 기록 0건이면 힌트 카드 표시 후 조기 리턴
+  if(total===0){
+    document.getElementById('stat-grid').innerHTML='';
+    const sd=document.getElementById('summary-detail');
+    if(sd) sd.innerHTML='<div style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(0,229,160,0.06));border:1px solid rgba(129,140,248,0.2);border-radius:18px;padding:22px;margin-top:4px;">'
+      +'<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:14px;">이렇게 시작해보세요</div>'
+      +'<div style="display:flex;flex-direction:column;gap:12px;">'
+      +'<div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--purple);color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">1</div>'
+      +'<div style="font-size:12.5px;color:var(--text2);line-height:1.6;"><b style="color:var(--text);">오늘 본 종목을 위 검색창에서 찾아요</b><br>삼성전자, SK하이닉스 등 종목명 입력</div></div>'
+      +'<div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--purple);color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;">2</div>'
+      +'<div style="font-size:12.5px;color:var(--text2);line-height:1.6;"><b style="color:var(--text);">관망인지, 매수인지, 패스인지 선택</b><br>결과가 아니라 판단 이유가 핵심이에요</div></div>'
+      +'<div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--green);color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19" stroke="white" stroke-width="2.5" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>'
+      +'<div style="font-size:12.5px;color:var(--text2);line-height:1.6;"><b style="color:var(--text);">매수했다면 화면 오른쪽 아래 + 버튼</b><br>진입가·손절선 입력 → 손익 자동 계산</div></div>'
+      +'</div></div>';
+    if(typeof lucide!=='undefined') lucide.createIcons();
+    return;
+  }
+
   document.getElementById('stat-grid').innerHTML='<div class="stat-card"><div class="stat-label">총 기록</div><div class="stat-value sv-purple">'+total+'</div></div><div class="stat-card"><div class="stat-label">보유 중</div><div class="stat-value sv-green">'+holding+'</div></div><div class="stat-card"><div class="stat-label">투자금</div><div class="stat-value sv-yellow" style="font-size:16px;">'+(invested?invested.toLocaleString()+'원':'0원')+'</div></div><div class="stat-card"><div class="stat-label">실현 손익</div><div class="stat-value '+(totalPnl>=0?'sv-green':'sv-red')+'" style="font-size:16px;">'+(totalPnl>=0?'+':'')+totalPnl.toLocaleString()+'원</div></div><div class="stat-card"><div class="stat-label">승률</div><div class="stat-value sv-purple">'+(wr!==null?wr+'%':'-')+'</div></div><div class="stat-card"><div class="stat-label">관망·패스</div><div class="stat-value sv-yellow">'+records.filter(r=>r.status==='watch'||r.status==='pass').length+'</div></div>';
   const counts={};records.forEach(r=>{counts[r.status]=(counts[r.status]||0)+1;});
   document.getElementById('summary-detail').innerHTML='<div class="card"><div class="sec-title" style="margin:0 0 10px;">상태별 분포</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.entries(counts).map(([s,c])=>'<div style="display:flex;align-items:center;gap:5px;"><span class="badge '+bC(s)+'">'+sL(s)+'</span><span style="font-family:var(--mono);font-size:13px;font-weight:700;">'+c+'</span></div>').join('')+'</div></div>';
