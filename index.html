@@ -731,13 +731,15 @@ body {
 /* ── FAB ── */
 .fab {
   position: fixed; bottom: 28px; right: 20px;
-  width: 58px; height: 58px; border-radius: 50%;
+  width: 64px; height: 64px; border-radius: 50%;
   background: var(--grad-purple); border: none; color: white;
-  cursor: pointer; box-shadow: 0 8px 28px rgba(99,102,241,0.45); z-index: 4000;
+  cursor: pointer; box-shadow: 0 8px 32px rgba(99,102,241,0.5); z-index: 4000;
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 0;
 }
-.fab:hover { transform: scale(1.08) translateY(-2px); box-shadow: 0 12px 36px rgba(99,102,241,0.55); }
+.fab:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 14px 40px rgba(99,102,241,0.6); }
+.fab:active { transform: scale(0.96); }
 
 /* ── Toast ── */
 .toast {
@@ -807,7 +809,13 @@ body {
       성공하는 투자자는 감정에 휘둘리지 않습니다.<br>
       모든 판단을 기록하고 <b>AI</b>와 함께<br>나만의 승리 패턴을 데이터로 증명하세요.
     </div>
-    <div class="vision-hint"><i data-lucide="mouse-pointer-click" style="width:16px;height:16px;"></i> 화면을 터치하여 시작하기</div>
+    <div style="margin-top:40px;">
+      <div class="vision-hint" id="vision-hint-auto">
+        <i data-lucide="loader-2" style="width:15px;height:15px;animation:spin 1s linear infinite;"></i>
+        <span id="vision-countdown">3</span>초 후 자동으로 시작됩니다
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text3);">터치하면 바로 시작</div>
+    </div>
   </div>
 </div>
 
@@ -822,9 +830,27 @@ body {
     <input class="login-input" id="login-pw" type="password" placeholder="비밀번호">
     <input class="login-input" id="login-name" type="text" placeholder="닉네임 (예: 생각콩)" maxlength="10" style="display:none;">
     <button class="login-btn" id="login-main-btn" onclick="loginWithEmail()">로그인</button>
+    <div id="login-capslock-warn" style="display:none;font-size:12px;color:var(--yellow);margin:-6px 0 10px;padding:8px 12px;background:var(--yellow-light);border-radius:8px;text-align:left;">
+      <i data-lucide="alert-triangle" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"></i>
+      <span id="login-capslock-msg">Caps Lock이 켜져 있어요. 한/영 전환도 확인해보세요.</span>
+    </div>
+    <div style="text-align:right;margin:-4px 0 16px;">
+      <span onclick="showPasswordReset()" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline;">비밀번호를 잊으셨나요?</span>
+    </div>
     <div class="login-divider">또는</div>
     <button class="login-btn secondary" onclick="loginWithGoogle()"><i data-lucide="chrome" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Google 계정으로 로그인</button>
     <div class="login-switch" id="login-switch">처음이세요? <span onclick="toggleSignup()">회원가입</span></div>
+    
+    <!-- 비밀번호 재설정 패널 -->
+    <div id="pw-reset-panel" style="display:none;margin-top:16px;padding:16px;background:var(--blue-light);border:1px solid rgba(96,165,250,0.2);border-radius:12px;text-align:left;">
+      <div style="font-size:13px;font-weight:800;color:var(--blue);margin-bottom:10px;">비밀번호 재설정 이메일 발송</div>
+      <input class="login-input" id="reset-email" type="email" placeholder="가입한 이메일 입력" style="margin-bottom:10px;">
+      <div style="display:flex;gap:8px;">
+        <button onclick="sendPasswordReset()" class="login-btn" style="flex:1;margin:0;padding:11px;font-size:13px;">이메일 발송</button>
+        <button onclick="document.getElementById('pw-reset-panel').style.display='none'" class="login-btn secondary" style="margin:0;padding:11px;font-size:13px;">취소</button>
+      </div>
+      <div id="reset-msg" style="font-size:12px;margin-top:8px;display:none;"></div>
+    </div>
   </div>
 </div>
 
@@ -880,8 +906,8 @@ body {
               <option value="watch">관망</option>
               <option value="analyze">분석중</option>
               <option value="pass">패스</option>
-              <option value="buy">✅ 진입</option>
-              <option value="sell">💰 매도</option>
+              <option value="buy">매수 (진입)</option>
+              <option value="sell">매도</option>
             </select>
           </div>
           <div><label class="q-label">Claude 의견</label><input class="q-input" id="q-claude" placeholder="핵심 한 줄"></div>
@@ -889,7 +915,14 @@ body {
             <input class="q-input" id="q-reason" placeholder="예: 갭하락으로 조건 불충족, 패스">
           </div>
         </div>
-        <button class="q-btn" onclick="addQuickLog()">기록하기</button>
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button class="q-btn" style="flex:2;margin-top:0;" onclick="addQuickLog()">
+            <i data-lucide="zap" style="width:15px;height:15px;"></i> 빠른 기록
+          </button>
+          <button class="q-btn" style="flex:3;margin-top:0;background:linear-gradient(135deg,#10b981,#059669);" onclick="addQuickLogAndDetail()">
+            <i data-lucide="plus-circle" style="width:15px;height:15px;"></i> 상세 기록 추가
+          </button>
+        </div>
       </div>
       <div class="date-row">
         <input type="date" id="log-date-filter" onchange="renderLogs()">
@@ -915,10 +948,10 @@ body {
         </div>
         <div class="filter-row">
           <button class="f-btn active" data-f="all" onclick="setFilter('all')">전체</button>
-          <button class="f-btn" data-f="active" onclick="setFilter('active')">✅ 보유</button>
-          <button class="f-btn" data-f="watch" onclick="setFilter('watch')">👀 관망</button>
-          <button class="f-btn" data-f="closed" onclick="setFilter('closed')">💰 완료</button>
-          <button class="f-btn" data-f="pass" onclick="setFilter('pass')">⏭ 패스</button>
+          <button class="f-btn" data-f="active" onclick="setFilter('active')">보유</button>
+          <button class="f-btn" data-f="watch" onclick="setFilter('watch')">관망</button>
+          <button class="f-btn" data-f="closed" onclick="setFilter('closed')">완료</button>
+          <button class="f-btn" data-f="pass" onclick="setFilter('pass')">패스</button>
         </div>
         <div id="stocks-list"></div>
       </div>
@@ -1029,8 +1062,8 @@ body {
     </div>
     <div class="m-field"><label>상태</label>
       <select id="m-status" class="m-select" onchange="mStatusChange()">
-        <option value="watch">👀 관망</option><option value="analyze">🔍 분석중</option>
-        <option value="pass">⏭ 패스</option><option value="buy">✅ 매수 완료</option>
+        <option value="watch">관망</option><option value="analyze">🔍 분석중</option>
+        <option value="pass">패스</option><option value="buy">✅ 매수 완료</option>
         <option value="hold">⏳ 보유 중</option><option value="profit">💰 익절 완료</option>
         <option value="loss">🔴 손절 완료</option>
       </select>
@@ -1076,7 +1109,7 @@ body {
 <div id="gemini-drawer" onclick="if(event.target===this)closeGemini()">
   <div class="gemini-content">
     <div class="gemini-header">
-      <div class="gemini-title"><i data-lucide="bot" style="color:var(--purple);"></i> AI 트레이딩 코치 브리핑</div>
+      <div class="gemini-title"><i data-lucide="bot" style="color:var(--purple);"></i> Claude AI 트레이딩 코치</div>
       <button class="modal-close" onclick="closeGemini()"><i data-lucide="x"></i></button>
     </div>
     <div class="gemini-body" id="gemini-body">
@@ -1119,9 +1152,12 @@ auth.onAuthStateChanged(async (user) => {
     ['login-screen','vision-screen'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     const name = user.displayName || localStorage.getItem('sv4_user_name') || '투자자';
     localStorage.setItem('sv4_user_name', name);
+    const isNew = user.metadata && user.metadata.creationTime === user.metadata.lastSignInTime;
     await loadFromCloud(user.uid);
     subscribeToCloud(user.uid);
     if (typeof window.showApp === 'function') window.showApp();
+    if(isNew) setTimeout(() => checkFirstLogin(user), 1000);
+    else checkFirstLogin(user); // key 기반 체크
     document.getElementById('sync-indicator').style.display = 'flex';
   } else {
     currentUser = null;
@@ -1324,10 +1360,144 @@ function showApp() {
 }
 window.showApp = showApp;
 
-// 비전 스크린에서 로그인 스크린으로 전환
+// 비전 스크린 → 로그인 화면 전환 (자동 3초 or 터치)
 function showLoginScreen() {
   const vs = document.getElementById('vision-screen');
-  if(vs) { vs.style.opacity='0'; setTimeout(()=>{ vs.style.display='none'; const ls=document.getElementById('login-screen'); if(ls) ls.style.display='flex'; }, 400); }
+  if(vs) {
+    vs.style.opacity='0';
+    vs.style.transition='opacity 0.4s ease';
+    setTimeout(()=>{
+      vs.style.display='none';
+      const ls=document.getElementById('login-screen');
+      if(ls) ls.style.display='flex';
+      if(typeof lucide !== 'undefined') lucide.createIcons();
+    }, 400);
+  }
+}
+
+// 비전 스크린 자동 카운트다운 (3초)
+function startVisionCountdown() {
+  let count = 3;
+  const countEl = document.getElementById('vision-countdown');
+  if(!countEl) return;
+  const timer = setInterval(() => {
+    count--;
+    if(countEl) countEl.textContent = count;
+    if(count <= 0) { clearInterval(timer); showLoginScreen(); }
+  }, 1000);
+  // 터치하면 즉시 전환 (이벤트는 HTML onclick에서 처리됨)
+  window._visionTimer = timer;
+}
+
+// 비밀번호 재설정
+window.showPasswordReset = function() {
+  const panel = document.getElementById('pw-reset-panel');
+  if(panel) {
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    const emailEl = document.getElementById('reset-email');
+    if(emailEl) emailEl.value = document.getElementById('login-email')?.value || '';
+  }
+};
+
+window.sendPasswordReset = async function() {
+  const email = document.getElementById('reset-email')?.value.trim();
+  const msgEl = document.getElementById('reset-msg');
+  if(!email) { if(msgEl){msgEl.textContent='이메일을 입력해주세요';msgEl.style.color='var(--red)';msgEl.style.display='block';} return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    if(msgEl){msgEl.textContent='재설정 이메일을 발송했어요. 받은편지함을 확인해주세요.';msgEl.style.color='var(--green)';msgEl.style.display='block';}
+  } catch(e) {
+    const msgs={'auth/user-not-found':'등록되지 않은 이메일이에요','auth/invalid-email':'이메일 형식이 올바르지 않아요'};
+    if(msgEl){msgEl.textContent=msgs[e.code]||'오류: '+e.message;msgEl.style.color='var(--red)';msgEl.style.display='block';}
+  }
+};
+
+// Caps Lock / 한영 감지
+function detectInputIssues(e) {
+  const warn = document.getElementById('login-capslock-warn');
+  const msg = document.getElementById('login-capslock-msg');
+  if(!warn) return;
+  const capsOn = e.getModifierState && e.getModifierState('CapsLock');
+  // 한글 감지: 입력 문자가 한글이면
+  const val = e.target.value || '';
+  const hasKorean = /[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(val);
+  if(hasKorean) {
+    warn.style.display='block';
+    if(msg) msg.textContent='한글이 입력됐어요. 영문 입력 상태인지 확인해주세요 (한/영 키)';
+  } else if(capsOn) {
+    warn.style.display='block';
+    if(msg) msg.textContent='Caps Lock이 켜져 있어요. 비밀번호를 대소문자 확인해주세요.';
+  } else {
+    warn.style.display='none';
+  }
+}
+
+// 빠른 기록 + 상세 기록 열기
+window.addQuickLogAndDetail = function() {
+  const stock = document.getElementById('q-stock').value.trim();
+  const reason = document.getElementById('q-reason').value.trim();
+  const action = document.getElementById('q-action').value;
+  const claude = document.getElementById('q-claude').value.trim();
+  if(!stock) { showToast('종목명을 입력해주세요'); return; }
+  // 빠른기록 먼저 저장
+  const now = new Date();
+  if(reason) {
+    const log={id:Date.now(),date:now.toISOString().split('T')[0],time:String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),stock,reason,action,claude,tags:autoTag(action,reason)};
+    todayLogs.unshift(log); autoLinkToStock(log); persist();
+    ['q-reason','q-claude'].forEach(id=>document.getElementById(id).value='');
+  }
+  // 상세 기록 모달 열기 (종목 자동 입력)
+  openModal();
+  setTimeout(() => {
+    document.getElementById('m-stock').value = stock;
+    document.getElementById('m-status').value = action==='sell'?'profit':action==='buy'?'buy':action==='pass'?'pass':'watch';
+    document.getElementById('m-issue').value = reason || '';
+    document.getElementById('m-claude').value = claude || '';
+    mStatusChange();
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+  }, 150);
+  document.getElementById('q-stock').value='';
+  document.getElementById('naver-link-row').style.display='none';
+  switchTab('stocks');
+};
+
+// 로그에서 상세기록 모달 열기
+window.openModalFromLog = function(logId) {
+  const log = todayLogs.find(l => l.id === logId);
+  if(!log) return;
+  openModal();
+  setTimeout(() => {
+    document.getElementById('m-stock').value = log.stock || '';
+    document.getElementById('m-status').value = log.action==='sell'?'profit':log.action==='buy'?'buy':log.action==='pass'?'pass':'watch';
+    document.getElementById('m-issue').value = log.reason || '';
+    document.getElementById('m-claude').value = log.claude || '';
+    document.getElementById('m-tags').value = (log.tags||[]).join(', ');
+    mStatusChange();
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+  }, 150);
+  switchTab('stocks');
+};
+
+// 빠른 기록 삭제
+window.deleteQuickLog = function(logId) {
+  if(!confirm('이 빠른 기록을 삭제할까요?')) return;
+  todayLogs = todayLogs.filter(l => l.id !== logId);
+  persist(); renderAll(); showToast('삭제됐어요');
+};
+
+// 신규 사용자 가이드 (첫 로그인 시)
+function checkFirstLogin(user) {
+  const key = 'sv4_first_' + user.uid;
+  const isFirst = !localStorage.getItem(key);
+  if(isFirst) {
+    localStorage.setItem(key, '1');
+    setTimeout(() => {
+      // 가이드 탭으로 이동 후 usage 서브탭 활성화
+      switchTab('guide');
+      setSubTab2('usage');
+      showToast('처음 오셨군요! 사용 가이드를 먼저 확인해보세요 📖');
+    }, 800);
+  }
 }
 
 function switchTab(n) {
@@ -1580,13 +1750,73 @@ window.renderAll = renderAll;
 // ── Gemini AI 인앱 브리핑 ──
 function buildSummaryForAI() {
   const holding = records.filter(r => ['buy','hold'].includes(r.status));
-  let str = "내 보유 종목:\n";
-  if(!holding.length) str += "없음\n";
-  holding.forEach(r => str += `- ${r.stock} (매수가: ${r.entry}원 / 현재가: ${r.current||'미입력'}원 / 손절가: ${r.stoploss||'미설정'}원)\n`);
+  const watching = records.filter(r => ['watch','analyze'].includes(r.status));
   const closed = records.filter(r => ['profit','loss'].includes(r.status));
-  const wins = closed.filter(r => r.status==='profit');
-  if(closed.length) str += `\n매매 기록: 총 ${closed.length}건 / 승률 ${Math.round(wins.length/closed.length*100)}%`;
+  const wins = closed.filter(r => r.status === 'profit');
+  const totalPnl = records.reduce((s,r) => s+(r.pnl||0), 0);
+  const hist = getHabitHistory ? getHabitHistory() : [];
+  const todayHabits = hist[0] && hist[0].date === new Date().toISOString().split('T')[0] ? hist[0] : null;
+  
+  // 태그 패턴 분석
+  const tagStats = getTagStats ? getTagStats() : [];
+  const weakTags = tagStats.filter(t => t.wr < 40 && t.total >= 2).map(t => `${t.tag}(승률${t.wr}%)`);
+  const strongTags = tagStats.filter(t => t.wr >= 70 && t.total >= 2).map(t => `${t.tag}(승률${t.wr}%)`);
+  
+  let str = `## 트레이더 프로필
+매매 스타일: 국내 스윙 트레이딩 (1~5일 보유)
+총 자본: 약 200만원 규모
+실현 누적 손익: ${totalPnl.toLocaleString()}원
+매매 기록: 총 ${closed.length}건 / 승률 ${closed.length>0?Math.round(wins.length/closed.length*100):0}%
+
+## 현재 보유 포지션
+`;
+  if(!holding.length) str += '없음\n';
+  else holding.forEach(r => {
+    const pct = r.entry && r.current ? ((r.current-r.entry)/r.entry*100).toFixed(1) : null;
+    str += `- ${r.stock}: 진입 ${r.entry?.toLocaleString()}원 / 현재 ${r.current?r.current.toLocaleString()+'원':'미입력'} ${pct?'('+pct+'%)':''} / 손절 ${r.stoploss?r.stoploss.toLocaleString()+'원':'미설정'} / 목표 ${r.target?r.target.toLocaleString()+'원':'미설정'}
+`;
+  });
+  
+  str += `
+## 관망/분석 중 종목
+`;
+  if(!watching.length) str += '없음\n';
+  else watching.forEach(r => str += `- ${r.stock} (${r.issue||''})\n`);
+  
+  if(weakTags.length || strongTags.length) {
+    str += `
+## 내 패턴 분석
+`;
+    if(strongTags.length) str += `강점 패턴: ${strongTags.join(', ')}
+`;
+    if(weakTags.length) str += `약점 패턴 (조심): ${weakTags.join(', ')}
+`;
+  }
+  
+  if(todayHabits) {
+    str += `
+## 오늘 루틴 준수
+달성: ${todayHabits.total}/${CL.length}개
+`;
+    if(todayHabits.habits) { Object.entries(todayHabits.habits).forEach(([h,c]) => str += `- ${h}: ${c}항목 완료\n`); }
+  }
   return str;
+}
+
+// Claude 앱 딥링크 시도 후 웹으로 폴백
+async function openClaude(prompt) {
+  const encoded = encodeURIComponent(prompt);
+  // iOS/Android Claude 앱 딥링크 시도
+  const appScheme = 'claude://new?message=' + encoded;
+  const webUrl = 'https://claude.ai/new';
+  
+  // 앱 실행 시도 (1초 안에 반응 없으면 웹으로)
+  const appWindow = window.open(appScheme, '_blank');
+  setTimeout(() => {
+    try {
+      if (!appWindow || appWindow.closed) window.open(webUrl, '_blank');
+    } catch(e) { window.open(webUrl, '_blank'); }
+  }, 1200);
 }
 
 async function triggerGeminiBriefing() {
@@ -1594,43 +1824,101 @@ async function triggerGeminiBriefing() {
   const result = document.getElementById('gemini-result');
   const loader = document.getElementById('gemini-loader');
   drawer.style.display = 'flex';
+  setTimeout(() => drawer.classList.add('open'), 10);
   loader.style.display = 'flex'; result.style.display = 'none'; result.innerHTML = '';
 
-  // Claude AI로 데이터 전송 (기존 copyForClaude 방식 활용)
   const summary = buildSummaryForAI();
-  const prompt = `오늘 데일리 트레이딩 브리핑:\n1. 내 보유 종목별 오늘 대응 전략\n2. 오늘 스윙 후보 추천 (진입가·목표가·손절선)\n3. 오늘 절대 하지 말아야 할 것 1가지\n\n[포트폴리오]\n${summary}`;
+  
+  // 전문가 수준 프롬프트 (전문 트레이더 + 개인투자자 관점 통합)
+  const prompt = `당신은 10년 이상 경력의 국내 주식 스윙 트레이딩 코치입니다.
+아래 트레이더 데이터를 분석하고, 전문 트레이더 관점(리스크 관리, 승률 최적화, 포지션 사이징)과 실력 있는 개인투자자 관점(실전 체감, 감정 관리, 손익비)을 통합해 코칭해주세요.
+
+${summary}
+
+## 요청 사항 (반드시 아래 형식으로 답변)
+
+### 1. 포지션 리뷰 (보유 중 종목별)
+각 종목에 대해: 현재 리스크 수준 / 오늘 대응 액션 / 손절 재확인
+
+### 2. 오늘의 최우선 과제 (1가지만)
+가장 중요한 행동 하나를 구체적으로.
+
+### 3. 스윙 후보 (선택, 현재 시장 상황 감안)
+종목명, 진입 조건, 목표가, 손절가, 이유 (확신 없으면 "오늘은 관망 권장"으로)
+
+### 4. 나의 패턴 피드백
+약점 패턴에 대한 구체적 개선 방법 1가지.
+
+### 5. 오늘 하지 말아야 할 것
+한 줄로.
+
+※ 모든 답변은 구체적 수치와 근거를 포함하고, 확실하지 않은 건 "모름"이라고 솔직히 말해주세요.`;
 
   try {
     await navigator.clipboard.writeText(prompt);
     loader.style.display = 'none';
     result.style.display = 'block';
     result.innerHTML = `
-      <div style="text-align:center; padding:20px;">
-        <div style="font-size:40px; margin-bottom:16px;">✅</div>
-        <div style="font-size:16px; font-weight:800; color:var(--green); margin-bottom:12px;">브리핑 프롬프트 복사 완료!</div>
-        <div style="font-size:14px; color:var(--text2); line-height:1.7; margin-bottom:24px;">
-          내 포트폴리오 데이터가 포함된 브리핑 요청이<br>클립보드에 복사되었어요.<br><br>
-          Claude.ai 또는 Gemini에 붙여넣기 하면<br>맞춤 트레이딩 코칭을 받을 수 있어요.
+      <div style="padding:4px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i data-lucide="check-circle-2" style="width:22px;height:22px;color:var(--green);"></i>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--text);">브리핑 프롬프트 복사 완료</div>
+            <div style="font-size:12px;color:var(--text3);">전문 트레이더 코치 프롬프트 (포트폴리오 포함)</div>
+          </div>
         </div>
-        <a href="https://claude.ai" target="_blank" class="ai-action-btn" style="text-decoration:none; margin-right:8px;">🤖 Claude.ai 열기</a>
-        <a href="https://gemini.google.com" target="_blank" class="ai-action-btn" style="text-decoration:none; background:linear-gradient(135deg,#4285f4,#34a853);">✨ Gemini 열기</a>
+        
+        <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.7;">
+          <div style="font-weight:800;color:var(--text);margin-bottom:8px;">포함된 정보</div>
+          <div>✓ 현재 보유 포지션 + 손익 현황</div>
+          <div>✓ 매매 승률 + 패턴 분석</div>
+          <div>✓ 오늘 루틴 달성 현황</div>
+          <div>✓ 강점/약점 패턴 태그</div>
+        </div>
+        
+        <div style="font-size:12.5px;color:var(--text3);margin-bottom:16px;padding:12px;background:var(--yellow-light);border-radius:10px;border:1px solid rgba(251,191,36,0.2);">
+          <strong style="color:var(--yellow);">Claude 앱 이용 팁:</strong><br>
+          Claude.ai를 열고 붙여넣기(길게 터치 → 붙여넣기)하면 맞춤 코칭을 받을 수 있어요. 반복 사용 시 Projects 기능으로 대화 맥락을 유지하면 더 정확해져요.
+        </div>
+        
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(prompt)}'.replace(/%20/g,' ')))" class="ai-action-btn" style="justify-content:center;width:100%;">
+            <i data-lucide="bot" style="width:16px;height:16px;"></i> Claude 앱 열기 (자동 붙여넣기 시도)
+          </button>
+          <a href="https://claude.ai/new" target="_blank" class="ai-action-btn" style="text-decoration:none;justify-content:center;background:rgba(129,140,248,0.2);border:1px solid rgba(129,140,248,0.3);color:var(--purple);">
+            <i data-lucide="external-link" style="width:15px;height:15px;"></i> Claude 웹에서 열기
+          </a>
+        </div>
       </div>
     `;
-    if(typeof lucide !== 'undefined') if(typeof lucide !== 'undefined') lucide.createIcons();
+    if(typeof lucide !== 'undefined') lucide.createIcons();
   } catch(e) {
     loader.style.display = 'none';
     result.style.display = 'block';
-    result.innerHTML = `<div style="color:var(--red); text-align:center; padding:20px;">클립보드 복사에 실패했어요.<br>🤖 복사 버튼을 대신 사용해주세요.</div>`;
+    result.innerHTML = `
+      <div style="padding:20px;text-align:center;">
+        <div style="color:var(--yellow);font-size:13px;margin-bottom:16px;">클립보드 자동 복사가 차단됐어요.<br>아래 버튼으로 직접 복사해주세요.</div>
+        <textarea id="prompt-textarea" style="width:100%;height:120px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:12px;resize:none;">${prompt.replace(/</g,'&lt;')}</textarea>
+        <button onclick="document.getElementById('prompt-textarea').select();document.execCommand('copy');showToast('복사됐어요!')" class="ai-action-btn" style="width:100%;margin-top:10px;justify-content:center;">
+          <i data-lucide="copy" style="width:15px;height:15px;"></i> 직접 복사하기
+        </button>
+        <a href="https://claude.ai/new" target="_blank" class="ai-action-btn" style="display:flex;text-decoration:none;justify-content:center;margin-top:8px;background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.3);color:var(--purple);">
+          <i data-lucide="external-link" style="width:15px;height:15px;"></i> Claude 웹 열기
+        </a>
+      </div>`;
+    if(typeof lucide !== 'undefined') lucide.createIcons();
   }
 }
 
 function closeGemini() {
   const d = document.getElementById('gemini-drawer');
   d.classList.remove('open');
-  setTimeout(() => d.style.display = 'none', 300);
+  setTimeout(() => { d.style.display = 'none'; }, 300);
 }
 
-function sL(s){return {watch:'👀 관망',analyze:'🔍 분석중',pass:'⏭ 패스',buy:'✅ 매수',hold:'⏳ 보유',profit:'💰 익절',loss:'🔴 손절',sell:'💰 매도'}[s]||s;}
+function sL(s){return {watch:'관망',analyze:'분석중',pass:'패스',buy:'매수',hold:'보유',profit:'익절',loss:'손절',sell:'매도'}[s]||s;}
 function bC(s){return 'b-'+({watch:'watch',analyze:'analyze',pass:'pass',buy:'buy',hold:'hold',profit:'profit',loss:'loss',sell:'sell'}[s]||'watch');}
 
 function renderLogs(){
@@ -1692,14 +1980,103 @@ function renderSummary(){
   document.getElementById('summary-detail').innerHTML='<div class="card"><div class="sec-title" style="margin:0 0 10px;">상태별 분포</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+Object.entries(counts).map(([s,c])=>'<div style="display:flex;align-items:center;gap:5px;"><span class="badge '+bC(s)+'">'+sL(s)+'</span><span style="font-family:var(--mono);font-size:13px;font-weight:700;">'+c+'</span></div>').join('')+'</div></div>';
 }
 
-const CL=[{id:'c1',phase:'pre',label:'미국 장 마감 + 나스닥 선물 확인'},{id:'c2',phase:'pre',label:'뉴스·공시 스캔 (네이버·DART)'},{id:'c3',phase:'pre',label:'오늘 계획 확정 (가격 숫자로)'},{id:'c4',phase:'open',label:'개장 30분 관망 (추격매수 안 함)'},{id:'c5',phase:'open',label:'계획한 가격에서만 매매'},{id:'c6',phase:'post',label:'오늘 판단 기록 (트래커에)'},{id:'c7',phase:'post',label:'잘한 것·고칠 것 한 줄씩'},{id:'c8',phase:'post',label:'내일 후보 1~2개 선정'}];
-function getCheckState(){const t=new Date().toISOString().split('T')[0];const s=JSON.parse(localStorage.getItem('sv4_check')||'{}');if(s.date!==t)return{date:t,done:{}};return s;}
-function toggleCheck(id){const st=getCheckState();st.done[id]=!st.done[id];localStorage.setItem('sv4_check',JSON.stringify(st));renderChecklist();}
+const CL=[
+  {id:'c1',phase:'pre',label:'미국 장 마감 + 나스닥 선물 확인',habit:'시장분석'},
+  {id:'c2',phase:'pre',label:'뉴스·공시 스캔 (네이버·DART)',habit:'시장분석'},
+  {id:'c3',phase:'pre',label:'오늘 계획 확정 — 진입가·손절가 숫자로',habit:'계획수립'},
+  {id:'c4',phase:'open',label:'개장 30분 관망 (갭추격 절대 금지)',habit:'뇌동방어'},
+  {id:'c5',phase:'open',label:'계획한 가격에서만 매매 (충동 클릭 금지)',habit:'뇌동방어'},
+  {id:'c6',phase:'open',label:'손절선 도달 즉시 이행 (망설임 없이)',habit:'손절준수'},
+  {id:'c7',phase:'post',label:'오늘 매매 기록 (패스 포함 전부)',habit:'기록습관'},
+  {id:'c8',phase:'post',label:'잘한 것·고칠 것 한 줄씩 복기',habit:'기록습관'},
+  {id:'c9',phase:'post',label:'내일 후보 1~2개 선정 후 트래커 등록',habit:'계획수립'}
+];
+function getCheckState(){
+  const t=new Date().toISOString().split('T')[0];
+  const s=JSON.parse(localStorage.getItem('sv4_check')||'{}');
+  if(s.date!==t) return {date:t,done:{}};
+  return s;
+}
+function getHabitHistory(){
+  return JSON.parse(localStorage.getItem('sv4_habits')||'[]');
+}
+function saveHabitHistory(st){
+  const hist=getHabitHistory();
+  const today=st.date;
+  const existing=hist.findIndex(h=>h.date===today);
+  const doneIds=Object.keys(st.done).filter(k=>st.done[k]);
+  const habitCounts={};
+  doneIds.forEach(id=>{const c=CL.find(x=>x.id===id);if(c)habitCounts[c.habit]=(habitCounts[c.habit]||0)+1;});
+  const entry={date:today,done:doneIds,total:doneIds.length,habits:habitCounts};
+  if(existing>=0) hist[existing]=entry; else hist.unshift(entry);
+  // 최근 90일만 유지
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-90);
+  const trimmed=hist.filter(h=>new Date(h.date)>=cutoff);
+  localStorage.setItem('sv4_habits',JSON.stringify(trimmed));
+}
+function toggleCheck(id){
+  const st=getCheckState();st.done[id]=!st.done[id];
+  localStorage.setItem('sv4_check',JSON.stringify(st));
+  saveHabitHistory(st);persist();renderChecklist();
+}
 function renderChecklist(){
   const el=document.getElementById('check-list');if(!el)return;
-  const st=getCheckState();const pm={pre:'cip-pre',open:'cip-open',post:'cip-post'};const pl={pre:'장전',open:'장중',post:'장후'};
-  el.innerHTML=CL.map(c=>'<div class="ci '+(st.done[c.id]?'done':'')+'" onclick="toggleCheck(&quot;'+c.id+'&quot;)"><div class="ci-box">'+(st.done[c.id]?'✓':'')+'</div><span class="ci-text">'+c.label+'</span><span class="ci-phase '+pm[c.phase]+'">'+pl[c.phase]+'</span></div>').join('');
-  const done=CL.filter(c=>st.done[c.id]).length;const cnt=document.getElementById('check-count');if(cnt)cnt.textContent=done+' / '+CL.length;
+  const st=getCheckState();
+  const pm={pre:'cip-pre',open:'cip-open',post:'cip-post'};
+  const pl={pre:'장전',open:'장중',post:'장후'};
+  el.innerHTML=CL.map(c=>{const d=st.done[c.id];return '<div class="ci '+(d?'done':'')+'" onclick="toggleCheck(&quot;'+c.id+'&quot;)"><div class="ci-box">'+(d?'<i data-lucide="check" style="width:13px;height:13px;"></i>':'')+'</div><span class="ci-text">'+c.label+'</span><span class="ci-phase '+pm[c.phase]+'" style="font-size:10px;padding:3px 8px;border-radius:6px;font-weight:800;flex-shrink:0;">'+pl[c.phase]+'</span></div>';}).join('');
+  const done=CL.filter(c=>st.done[c.id]).length;
+  const cnt=document.getElementById('check-count');if(cnt)cnt.textContent=done+' / '+CL.length;
+  renderHabitAnalysis();
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function renderHabitAnalysis(){
+  const el=document.getElementById('habit-analysis');if(!el)return;
+  const hist=getHabitHistory();
+  if(hist.length<3){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">3일 이상 체크 후 습관 패턴을 분석해드려요</div>';return;}
+  const last14=hist.slice(0,14);
+  const avgScore=Math.round(last14.reduce((s,h)=>s+(h.total/CL.length*100),0)/last14.length);
+  const habitNames=['시장분석','계획수립','뇌동방어','손절준수','기록습관'];
+  const habitRates={};
+  habitNames.forEach(h=>{
+    const relevant=CL.filter(c=>c.habit===h);
+    const total=last14.length*relevant.length;
+    const done=last14.reduce((s,d)=>s+relevant.filter(c=>d.done&&d.done.includes(c.id)).length,0);
+    habitRates[h]=total>0?Math.round(done/total*100):0;
+  });
+  let streak=0;
+  for(let i=0;i<hist.length;i++){
+    const expected=new Date();expected.setDate(expected.getDate()-i);
+    if(hist[i].date===expected.toISOString().split('T')[0]&&hist[i].total>=Math.ceil(CL.length*0.7))streak++;else break;
+  }
+  const closedTrades=records.filter(r=>r.status==='profit'||r.status==='loss');
+  const winRate=closedTrades.length>0?Math.round(closedTrades.filter(r=>r.status==='profit').length/closedTrades.length*100):null;
+  const impulsiveRate=habitRates['뇌동방어']||0;
+  const stopLossRate=habitRates['손절준수']||0;
+  
+  el.innerHTML='<div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-top:16px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
+    +'<div style="font-size:14px;font-weight:800;color:var(--text);">습관 패턴 분석</div>'
+    +'<div style="font-family:var(--mono);font-size:11px;color:var(--text3);">최근 '+last14.length+'일</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">'
+    +'<div style="text-align:center;background:var(--purple-light);border-radius:12px;padding:14px;">'
+    +'<div style="font-family:var(--mono);font-size:26px;font-weight:800;color:var(--purple);">'+avgScore+'%</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:4px;">평균 달성률</div></div>'
+    +'<div style="text-align:center;background:var(--green-light);border-radius:12px;padding:14px;">'
+    +'<div style="font-family:var(--mono);font-size:26px;font-weight:800;color:var(--green);">'+streak+'일</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:4px;">연속 달성</div></div></div>'
+    +habitNames.map(h=>{const r=habitRates[h]||0;const c=r>=70?'var(--green)':r>=40?'var(--yellow)':'var(--red)';
+      return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
+        +'<div style="font-size:12px;width:60px;flex-shrink:0;color:var(--text2);font-weight:700;">'+h+'</div>'
+        +'<div style="flex:1;background:var(--input-bg);border-radius:4px;height:6px;overflow:hidden;">'
+        +'<div style="width:'+r+'%;height:6px;border-radius:4px;background:'+c+';"></div></div>'
+        +'<div style="font-family:var(--mono);font-size:12px;font-weight:800;width:36px;text-align:right;color:'+c+';">'+r+'%</div></div>';
+    }).join('')
+    +(impulsiveRate<60?'<div style="padding:10px 14px;background:var(--red-light);border-radius:10px;font-size:12.5px;color:var(--red);font-weight:700;margin-top:10px;">⚠️ 뇌동방어 '+impulsiveRate+'% — 충동 매매 위험</div>':'')
+    +(stopLossRate<60?'<div style="padding:10px 14px;background:var(--yellow-light);border-radius:10px;font-size:12.5px;color:var(--yellow);font-weight:700;margin-top:8px;">⚠️ 손절 준수 '+stopLossRate+'% — 원칙 이행 강화 필요</div>':'')
+    +(avgScore>=70&&streak>=3?'<div style="padding:10px 14px;background:var(--green-light);border-radius:10px;font-size:12.5px;color:var(--green);font-weight:700;margin-top:8px;">✅ 훌륭해요! 루틴이 몸에 배고 있어요</div>':'')
+    +'</div>';
 }
 
 function updateClock(){
