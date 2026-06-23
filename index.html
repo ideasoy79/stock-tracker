@@ -763,26 +763,41 @@ body {
    RESPONSIVE
    ══════════════════════════════ */
 @media(max-width:580px) {
-  .topbar { padding: 0 12px; height: 56px; }
-  .tab-bar { top: 56px; }
-  .tab { font-size: 12.5px; padding: 14px 6px; gap: 5px; }
-  .main { padding: 16px 12px; }
-  .modal { padding: 24px 16px; border-radius: 24px 24px 0 0; }
+  .topbar { padding: 0 10px; height: 52px; }
+  .brand-name { font-size: 13px !important; }
+  .tab-bar { top: 52px; }
+  .tab { font-size: 12px; padding: 12px 4px; gap: 4px; }
+  .tab i { width:14px !important; height:14px !important; }
+  .main { padding: 14px 12px; }
+  .modal { padding: 22px 14px; border-radius: 22px 22px 0 0; }
   .m-row { grid-template-columns: 1fr; }
   .num-grid { grid-template-columns: repeat(2,1fr); }
-  .t-btn span { display: none; }
+  /* 탑바 버튼: 아이콘만 표시 */
+  .t-btn span { display: none !important; }
+  .t-btn { padding: 7px 8px; font-size: 0; gap: 0; }
+  .t-btn i { width: 16px !important; height: 16px !important; }
   #sync-text { display: none; }
-  .sync-indicator { padding: 8px; border-radius: 50%; }
-  .vision-card { padding: 44px 24px; }
-  .login-card { padding: 36px 24px; }
-  .gemini-header { padding: 18px 20px; }
-  .gemini-body { padding: 18px 20px; }
+  .sync-indicator { padding: 7px; border-radius: 50%; min-width: unset; }
+  /* 빠른기록 타이틀 줄바꿈 방지 */
+  .qb-title { font-size: 14px; flex-wrap: nowrap; }
+  .qb-title span { display: none; } /* 부제목 숨김 */
+  .q-btn { font-size: 13.5px; padding: 13px 10px; }
+  /* 홈 스윙 카드 */
+  .swing-home-card { margin: 0 -2px; }
+  .vision-card { padding: 40px 20px; }
+  .vision-title { font-size: 22px; }
+  .vision-sub { font-size: 14px; }
+  .login-card { padding: 32px 20px; }
+  .gemini-header { padding: 16px 18px; }
+  .gemini-body { padding: 16px 18px; }
+  .ai-tab-btn { font-size: 12.5px; padding: 12px 6px; gap: 5px; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
 }
 @media(max-width:380px) {
   .link-grid { grid-template-columns: 1fr; }
   .qb-grid { grid-template-columns: 1fr; }
-  .stat-grid { grid-template-columns: 1fr 1fr; }
-  .tab { font-size: 11.5px; padding: 12px 4px; }
+  .tab { font-size: 11px; padding: 11px 3px; }
+  .q-btn { font-size: 12.5px; }
 }
 @media(min-width:740px) {
   .main { padding: 24px 24px; }
@@ -844,6 +859,93 @@ body {
   background: var(--text3); transition: background 0.2s;
 }
 .tour-dot.active { background: var(--purple); }
+
+/* ── 홈 스윙 추천 카드 ── */
+.swing-home-card {
+  background: linear-gradient(135deg, rgba(0,229,160,0.08) 0%, rgba(16,185,129,0.04) 100%);
+  border: 1px solid rgba(0,229,160,0.22);
+  border-radius: var(--r); padding: 20px;
+  margin-bottom: 16px; cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.swing-home-card:hover { border-color: rgba(0,229,160,0.45); transform: translateY(-1px); }
+.swing-home-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.swing-home-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800; color: var(--text); }
+.swing-home-badge { font-size: 10.5px; font-weight: 800; color: var(--green); background: var(--green-light); padding: 3px 9px; border-radius: 20px; }
+.swing-home-desc { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+.swing-home-items { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.swing-home-item { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px 12px; }
+.swing-home-item-num { font-size: 10px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.swing-home-item-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.swing-home-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--green), #059669); color: white; border: none; border-radius: var(--r-sm); font-size: 14px; font-weight: 800; cursor: pointer; font-family: var(--sans); display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
+.swing-home-btn:hover { opacity: 0.9; }
+
+
+/* ── API 키 설정 모달 ── */
+.api-setup-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+  z-index: 8000; align-items: center; justify-content: center; padding: 20px;
+}
+.api-setup-overlay.open { display: flex; }
+.api-setup-card {
+  background: var(--card); border: 1px solid rgba(129,140,248,0.25);
+  border-radius: 24px; padding: 28px 24px;
+  max-width: 420px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(129,140,248,0.1);
+  animation: fadeUp 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.api-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px; border-radius: 12px; margin-bottom: 8px;
+  background: var(--input-bg); border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+.api-step:hover { border-color: rgba(129,140,248,0.25); }
+.api-step-num {
+  width: 24px; height: 24px; min-width: 24px;
+  border-radius: 50%; background: var(--purple);
+  color: white; font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.api-step-body { font-size: 12.5px; color: var(--text2); line-height: 1.6; }
+.api-step-body b { color: var(--text); }
+.api-key-input-wrap { position: relative; margin: 16px 0; }
+.api-key-input {
+  width: 100%; padding: 13px 44px 13px 14px;
+  background: var(--input-bg); border: 1.5px solid var(--border);
+  border-radius: 12px; color: var(--text); font-size: 13.5px;
+  font-family: var(--mono); outline: none;
+  transition: border-color 0.2s;
+}
+.api-key-input:focus { border-color: var(--purple); }
+.api-key-input::placeholder { color: var(--text3); font-family: var(--sans); }
+.api-key-toggle {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--text3); cursor: pointer; padding: 4px;
+}
+.api-save-btn {
+  width: 100%; padding: 13px; background: var(--grad-purple);
+  color: white; border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  font-family: var(--sans); margin-bottom: 8px;
+  transition: opacity 0.2s;
+}
+.api-save-btn:hover { opacity: 0.9; }
+.api-cancel-btn {
+  width: 100%; padding: 11px; background: transparent;
+  border: 1px solid var(--border); color: var(--text3);
+  border-radius: 12px; font-size: 13px; cursor: pointer;
+  font-family: var(--sans);
+}
+.api-status-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 800; padding: 3px 9px;
+  border-radius: 20px;
+}
+.api-status-active { background: var(--green-light); color: var(--green); }
+.api-status-none   { background: var(--input-bg);    color: var(--text3); }
+
 </style>
 </head>
 <body>
@@ -865,7 +967,7 @@ body {
   <div class="login-card">
     <div class="login-logo"><i data-lucide="trending-up" style="width:48px;height:48px;margin:0 auto;display:block;"></i></div>
     <div class="login-title">생각콩 × AI 주식 트래커</div>
-    <div class="login-sub" id="login-sub">이메일로 로그인하면<br>모든 기기에서 같은 데이터를 볼 수 있어요</div>
+    <div class="login-sub" id="login-sub">이메일로 가입하면<br>모든 기기에서 같은 데이터를 볼 수 있어요</div>
     <div class="login-error" id="login-error"></div>
     <input class="login-input" id="login-email" type="email" placeholder="이메일">
     <input class="login-input" id="login-pw" type="password" placeholder="비밀번호">
@@ -878,8 +980,7 @@ body {
     <div style="text-align:right;margin:-4px 0 16px;">
       <span onclick="showPasswordReset()" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline;">비밀번호를 잊으셨나요?</span>
     </div>
-    <div class="login-divider">또는</div>
-    <button class="login-btn secondary" onclick="loginWithGoogle()"><i data-lucide="chrome" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Google 계정으로 로그인</button>
+
     <div class="login-switch" id="login-switch">처음이세요? <span onclick="toggleSignup()">회원가입</span></div>
     
     <!-- 비밀번호 재설정 패널 -->
@@ -916,8 +1017,15 @@ body {
     <div class="brand"><div class="brand-dot"></div><span class="brand-name" id="user-greeting">AI Tracker</span></div>
     <div class="topbar-actions">
       <div class="sync-indicator" id="sync-indicator" style="display:none;"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">동기화됨</span></div>
-      <button class="t-btn accent" onclick="triggerGeminiBriefing()" title="내 현황 분석"><i data-lucide="user" style="width:14px;height:14px;"></i> <span style="font-size:11.5px;">분석</span></button>
-      <button class="t-btn" onclick="triggerSwingRecommend()" title="오늘 스윙 추천" style="border-color:rgba(0,229,160,0.25);color:var(--green);background:rgba(0,229,160,0.08);"><i data-lucide="trending-up" style="width:14px;height:14px;"></i> <span style="font-size:11.5px;">스윙</span></button>
+      <button class="t-btn accent" onclick="triggerGeminiBriefing()" title="내 현황 분석">
+        <i data-lucide="user" style="width:15px;height:15px;"></i>
+        <span>분석</span>
+      </button>
+      <button class="t-btn" onclick="triggerSwingRecommend()" title="스윙 추천"
+        style="border-color:rgba(0,229,160,0.25);color:var(--green);background:rgba(0,229,160,0.08);">
+        <i data-lucide="trending-up" style="width:15px;height:15px;"></i>
+        <span>스윙</span>
+      </button>
       <button class="t-btn" onclick="copyForClaude()" title="Claude 복사"><i data-lucide="bot" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="exportData()" title="백업"><i data-lucide="download" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="document.getElementById('imp').click()" title="가져오기"><i data-lucide="upload" style="width:14px;height:14px;"></i></button>
@@ -933,6 +1041,44 @@ body {
   <div class="main">
 
     <div class="panel active" id="panel-home">
+
+      <!-- 오늘의 스윙 추천 카드 -->
+      <div class="swing-home-card" onclick="triggerSwingRecommend()">
+        <div class="swing-home-header">
+          <div class="swing-home-title">
+            <i data-lucide="trending-up" style="width:18px;height:18px;color:var(--green);"></i>
+            오늘의 스윙 종목 추천
+          </div>
+          <span class="swing-home-badge">AI 분석</span>
+        </div>
+        <div class="swing-home-desc">
+          오늘 시장 환경과 주요 뉴스·테마를 기반으로<br>
+          Claude AI가 스윙 후보를 직접 추천해드려요.
+        </div>
+        <div class="swing-home-items">
+          <div class="swing-home-item">
+            <div class="swing-home-item-num">01 시장 환경</div>
+            <div class="swing-home-item-text">미국 마감 + 오늘 코스피/코스닥 방향</div>
+          </div>
+          <div class="swing-home-item">
+            <div class="swing-home-item-num">02 핵심 테마</div>
+            <div class="swing-home-item-text">오늘 주목할 섹터·테마 뉴스</div>
+          </div>
+          <div class="swing-home-item">
+            <div class="swing-home-item-num">03 스윙 후보</div>
+            <div class="swing-home-item-text">진입가·목표가·손절선 포함</div>
+          </div>
+          <div class="swing-home-item">
+            <div class="swing-home-item-num">04 주의사항</div>
+            <div class="swing-home-item-text">오늘 절대 하지 말아야 할 것</div>
+          </div>
+        </div>
+        <button class="swing-home-btn" onclick="event.stopPropagation();triggerSwingRecommend()">
+          <i data-lucide="sparkles" style="width:16px;height:16px;"></i>
+          Claude로 스윙 추천 받기
+        </button>
+      </div>
+
       <div class="quick-bar">
         <div class="qb-title"><i data-lucide="zap" style="width:16px;height:16px;color:var(--yellow);"></i> 오늘의 투자 판단 기록<span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:8px;">매수·관망·패스 모든 판단을 남겨요</span></div>
         <div class="qb-grid">
@@ -1162,8 +1308,16 @@ body {
 <div id="gemini-drawer" onclick="if(event.target===this)closeGemini()">
   <div class="gemini-content">
     <div class="gemini-header">
-      <div class="gemini-title"><i data-lucide="bot" style="color:var(--purple);"></i> Claude AI 트레이딩 코치</div>
-      <button class="modal-close" onclick="closeGemini()"><i data-lucide="x"></i></button>
+      <div class="gemini-title"><i data-lucide="bot" style="color:var(--purple);"></i> Claude AI 코치</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="refreshAiResult()" title="새로 고침"
+          style="background:var(--input-bg);border:1px solid var(--border);color:var(--text2);
+                 width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+                 justify-content:center;cursor:pointer;">
+          <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+        </button>
+        <button class="modal-close" onclick="closeGemini()"><i data-lucide="x"></i></button>
+      </div>
     </div>
 
     <!-- 탭 선택 -->
@@ -1198,6 +1352,106 @@ body {
         <div>스윙 추천 프롬프트 생성 중...</div>
       </div>
       <div id="swing-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- API 키 설정 모달 -->
+<div class="api-setup-overlay" id="api-setup-overlay" onclick="if(event.target===this)closeApiSetup()">
+  <div class="api-setup-card">
+    <!-- 헤더 -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <i data-lucide="bot" style="width:18px;height:18px;color:var(--purple);"></i>
+          <div style="font-size:16px;font-weight:800;color:var(--text);">API 직접 연결</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);">
+          앱 안에서 실시간 AI 분석 · 복사 없이 바로 사용
+        </div>
+      </div>
+      <button onclick="closeApiSetup()" style="background:var(--input-bg);border:1px solid var(--border);
+        color:var(--text2);width:32px;height:32px;border-radius:50%;display:flex;
+        align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:2px;">
+        <i data-lucide="x" style="width:14px;height:14px;"></i>
+      </button>
+    </div>
+
+    <!-- 현재 상태 -->
+    <div id="api-current-status" style="margin-bottom:16px;"></div>
+
+    <!-- 안내 단계 -->
+    <div style="margin-bottom:16px;">
+      <div class="api-step">
+        <div class="api-step-num">1</div>
+        <div class="api-step-body">
+          <a href="https://console.anthropic.com" target="_blank"
+            style="color:var(--purple);font-weight:800;text-decoration:none;">
+            console.anthropic.com
+          </a> 접속 후 로그인<br>
+          <span style="font-size:11.5px;color:var(--text3);">계정이 없으면 무료 가입 → 카드 등록 → 최소 $5 충전</span>
+        </div>
+      </div>
+      <div class="api-step">
+        <div class="api-step-num">2</div>
+        <div class="api-step-body">
+          <b>API Keys → Create Key</b> 클릭<br>
+          <span style="font-size:11.5px;color:var(--text3);">이름 입력 후 생성 → 키 복사 (한 번만 보임)</span>
+        </div>
+      </div>
+      <div class="api-step">
+        <div class="api-step-num">3</div>
+        <div class="api-step-body">
+          <b>아래에 붙여넣기 후 저장</b><br>
+          <span style="font-size:11.5px;color:var(--text3);">키는 이 기기에만 저장, 서버 전송 없음</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 비용 안내 -->
+    <div style="font-size:12px;color:var(--text2);padding:12px 14px;
+         background:var(--input-bg);border-radius:10px;margin-bottom:16px;line-height:1.7;
+         border:1px solid var(--border);">
+      <div style="font-weight:800;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+        <i data-lucide="wallet" style="width:13px;height:13px;color:var(--green);"></i> 예상 비용
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px;">내 현황 분석 1회</div>
+          <div style="font-size:13px;font-weight:800;color:var(--text);">약 15~30원</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px;">스윙 추천 1회 (웹검색)</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green);">약 30~60원</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);">
+        최소 충전 $5 (약 7,000원) → 스윙 추천 약 100~200회 사용 가능
+      </div>
+    </div>
+
+    <!-- 키 입력 -->
+    <div class="api-key-input-wrap">
+      <input class="api-key-input" id="api-key-input"
+        type="password" placeholder="sk-ant-api03-..." autocomplete="off"
+        oninput="validateApiKeyInput()"
+        onkeydown="if(event.key==='Enter'&&!document.getElementById('api-save-btn').disabled)saveApiKey()">
+      <button class="api-key-toggle" onclick="toggleApiKeyVisibility()" id="api-eye-btn">
+        <i data-lucide="eye" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+    <div id="api-key-feedback" style="font-size:11.5px;margin-top:-8px;margin-bottom:14px;color:var(--text3);"></div>
+
+    <button class="api-save-btn" id="api-save-btn" onclick="saveApiKey()" disabled
+      style="opacity:0.5;">
+      <i data-lucide="key" style="width:15px;height:15px;"></i> API 키 저장하기
+    </button>
+    <button class="api-cancel-btn" onclick="closeApiSetup()">취소</button>
+
+    <!-- 키 삭제 버튼 (키 있을 때만 표시) -->
+    <div id="api-delete-wrap" style="display:none;margin-top:12px;text-align:center;">
+      <button onclick="deleteApiKey()" style="font-size:12px;color:var(--red);background:none;border:none;
+        cursor:pointer;text-decoration:underline;">API 키 삭제</button>
     </div>
   </div>
 </div>
@@ -1250,15 +1504,7 @@ auth.onAuthStateChanged(async (user) => {
 });
 
 // Google 리다이렉트 결과 처리 (페이지 로드 시)
-auth.getRedirectResult().then((result) => {
-  if (result && result.user) {
-    // 리다이렉트 로그인 성공 - onAuthStateChanged가 자동 처리
-  }
-}).catch((e) => {
-  if (e.code !== 'auth/no-current-user') {
-    showLoginError('Google 로그인 오류: ' + (e.code || e.message));
-  }
-});
+
 
 // ── 클라우드 읽기/쓰기 ──────────────────────────────────
 async function loadFromCloud(uid) {
@@ -1343,10 +1589,7 @@ window.loginWithEmail = async function() {
   }
 };
 
-window.loginWithGoogle = function() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithRedirect(provider);
-};
+
 
 window.logoutUser = async function() {
   if (!confirm('로그아웃 할까요?')) return;
@@ -1400,6 +1643,17 @@ function resetLogDate() {
   const el = document.getElementById('log-date-filter');
   if (el) { el.value = new Date().toISOString().split('T')[0]; renderLogs(); }
 }
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') {
+    const apiOverlay = document.getElementById('api-setup-overlay');
+    if(apiOverlay && apiOverlay.classList.contains('open')) { closeApiSetup(); return; }
+    const overlay = document.getElementById('overlay');
+    if(overlay && overlay.classList.contains('open')) { closeModal(); return; }
+    const gemini = document.getElementById('gemini-drawer');
+    if(gemini && gemini.classList.contains('open')) { closeGemini(); return; }
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   // Firebase onAuthStateChanged가 로그인 상태를 감지해서 앱을 시작해요
@@ -2072,44 +2326,84 @@ function openAiDrawer(tab) {
   if(typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-// ── 기존 브리핑 버튼 → 내 현황 분석 탭 열기 ─────────
+// ── 내 현황 분석 ─────────────────────────────────────
 async function triggerGeminiBriefing() {
   openAiDrawer('coach');
-  const result = document.getElementById('coach-result');
-  const loader = document.getElementById('coach-loader');
-  // 이미 결과 있으면 재사용
-  if(result && result.innerHTML && !result.innerHTML.includes('시작하기')) return;
-  if(loader) { loader.style.display = 'flex'; }
-  if(result) { result.innerHTML = ''; }
-
-  const summary = buildSummaryForAI();
-  const prompt = `당신은 10년 이상 경력의 국내 주식 스윙 트레이딩 코치입니다.
-아래 트레이더 데이터를 분석하고, 전문 트레이더 관점(리스크 관리, 승률 최적화, 포지션 사이징)과 실력 있는 개인투자자 관점(실전 체감, 감정 관리, 손익비)을 통합해 코칭해주세요.
-
-${summary}
-
-## 요청 사항 (반드시 아래 형식으로 답변)
-
-### 1. 포지션 리뷰 (보유 중 종목별)
-각 종목에 대해: 현재 리스크 수준 / 오늘 대응 액션 / 손절 재확인
-
-### 2. 오늘의 최우선 과제 (1가지만)
-가장 중요한 행동 하나를 구체적으로.
-
-### 3. 나의 패턴 피드백
-약점 패턴에 대한 구체적 개선 방법 1가지.
-
-### 4. 오늘 하지 말아야 할 것 (한 줄)
-
-※ 수치와 근거 필수. 확실하지 않으면 "모름"으로 답해주세요.`;
-
   const coachResult = document.getElementById('coach-result');
   const coachLoader = document.getElementById('coach-loader');
 
+  // 이미 결과 있으면 재사용 (새로 복사 버튼으로만 갱신)
+  if(coachResult && coachResult.dataset.loaded === '1') return;
+
+  // 로더 표시
+  if(coachLoader) coachLoader.style.display = 'flex';
+  if(coachResult) coachResult.innerHTML = '';
+
   function renderCoachResult(html_content) {
     if(coachLoader) coachLoader.style.display = 'none';
-    if(coachResult) { coachResult.innerHTML = html_content; }
+    if(coachResult) {
+      coachResult.innerHTML = html_content;
+      coachResult.dataset.loaded = '1';
+    }
     if(typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  // 데이터 없을 때 안내
+  const total = records.length + todayLogs.length;
+  const holding = records.filter(r => ['buy','hold'].includes(r.status));
+  const closed  = records.filter(r => ['profit','loss'].includes(r.status));
+
+  if(total === 0) {
+    renderCoachResult(`
+      <div style="text-align:center;padding:32px 16px;">
+        <div style="width:56px;height:56px;border-radius:16px;background:var(--purple-light);
+             display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <i data-lucide="clipboard-list" style="width:26px;height:26px;color:var(--purple);"></i>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;">기록이 아직 없어요</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:18px;">
+          홈 탭에서 오늘 본 종목과 판단을 기록하거나<br>
+          <b style="color:var(--purple)">+ 버튼</b>으로 매수 기록을 추가하면<br>
+          AI가 내 포트폴리오를 분석해줘요.
+        </div>
+        <div style="font-size:12px;color:var(--text3);padding:12px;background:var(--input-bg);
+             border-radius:10px;line-height:1.7;">
+          ✓ 보유 종목·손절선·목표가가 있으면 더 정확한 코칭을 받을 수 있어요
+        </div>
+      </div>`);
+    return;
+  }
+
+  const summary = buildSummaryForAI();
+  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  const prompt = `당신은 10년 이상 경력의 국내 주식 스윙 트레이딩 코치입니다.
+오늘 날짜: ${today}
+
+아래 트레이더 데이터를 분석하고 실전 코칭해주세요.
+
+${summary}
+
+## 답변 형식
+
+### 1. 포지션 리뷰
+보유 종목별: 현재 리스크 / 오늘 대응 / 손절선 재확인
+(보유 종목 없으면 이 항목 생략)
+
+### 2. 오늘의 최우선 과제 (1가지)
+가장 중요한 행동 하나.
+
+### 3. 패턴 피드백
+내 약점 패턴 개선 방법 1가지.
+(기록이 적으면 "데이터 부족 — 계속 기록하세요"로 답해도 됩니다)
+
+### 4. 오늘 하지 말아야 할 것 (한 줄)
+
+※ 수치와 근거 필수. 모르면 솔직하게 "모름"으로.`;
+
+  // API 키 있으면 직접 호출
+  if(getApiKey()) {
+    await renderApiResponse(prompt, coachResult, coachLoader, false);
+    return;
   }
 
   try {
@@ -2164,6 +2458,18 @@ ${summary}
             <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> 데이터 새로 복사
           </button>
         </div>
+
+        <!-- 더 편하게: 작은 링크 스타일 -->
+        <div style="text-align:center;margin-top:10px;">
+          <button onclick="openApiSetup()" style="background:none;border:none;cursor:pointer;
+            font-size:11.5px;color:var(--text3);font-family:var(--sans);
+            display:inline-flex;align-items:center;gap:5px;padding:4px 8px;
+            border-radius:6px;transition:color 0.2s;"
+            onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text3)'">
+            <i data-lucide="settings" style="width:12px;height:12px;"></i>
+            API 키 연결로 앱 안에서 바로 받기
+          </button>
+        </div>
       </div>`);
   } catch(e) {
     renderCoachResult(`
@@ -2198,55 +2504,59 @@ async function triggerSwingRecommend() {
   if(loader) loader.style.display = 'flex';
   if(result) result.innerHTML = '';
 
-  const holding = records.filter(r => ['buy','hold'].includes(r.status));
-  const watching = records.filter(r => ['watch','analyze'].includes(r.status));
-
-  let portfolioCtx = '';
-  if(holding.length) {
-    portfolioCtx += '\n[보유 포지션]\n';
-    holding.forEach(r => {
-      portfolioCtx += `- ${r.stock}: 매수가 ${r.entry||'?'}원, 손절선 ${r.stoploss||'미설정'}원, 목표가 ${r.target||'미설정'}원\n`;
-    });
-  }
-  if(watching.length) {
-    portfolioCtx += '\n[관망/분석 중]\n';
-    watching.forEach(r => portfolioCtx += `- ${r.stock} (${r.issue||''})\n`);
-  }
-
-  const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  const now = new Date();
+  const today = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  const todayISO = now.toISOString().split('T')[0];
+  const hour = now.getHours();
+  const timeCtx = hour < 9 ? '장 시작 전 (오전 9시 이전)' : hour < 15 ? '장중' : '장 종료 후';
 
   const swingPrompt = `당신은 국내 주식 스윙 트레이딩 전문 애널리스트입니다.
-오늘 날짜: ${today}
 
-아래 4가지 항목을 순서대로 답해주세요.
+⚠️ 중요: 오늘 날짜는 ${today} (${timeCtx})입니다.
+반드시 이 날짜 기준 최신 데이터만 사용하세요.
+사용하는 모든 데이터에 "날짜(출처)" 형식으로 출처를 명시하세요.
+오래된 데이터가 있으면 "최신 데이터 없음 — ${todayISO} 기준 확인 불가"라고 명시하세요.
 
-### 1. 어젯밤 미국 장 + 오늘 시장 환경 체크
-- 나스닥/S&P500 마감 결과 (출처와 날짜 명시)
-- 오늘 코스피/코스닥 시초 방향 예상 (선물 기준)
-- 오늘 주목할 섹터/테마 1~2가지
+---
 
-### 2. 내 보유/관망 종목별 오늘 대응 전략
-${portfolioCtx || '(보유 종목 없음)'}
-각 종목에 대해: 오늘 주목할 가격대 / 대응 방향 (홀드/분할매도/손절 대기 등)
+### 1. 오늘 시장 환경 (날짜·출처 필수)
+- 어젯밤 미국 증시 마감 결과
+  예) 나스닥 +1.2% (2025.01.15 마감, 출처: investing.com)
+- 오늘 코스피·코스닥 시초가 방향 예상 (선물 기준)
+- 달러/원 환율, 국제유가 등 주요 변수
+- 오늘 한국 시장 영향 줄 뉴스 1~2개 (날짜 명시)
 
-### 3. 오늘 스윙 후보 추천 (1~3개)
-각 후보에 대해 반드시 아래 형식으로:
-- 종목명 (코드)
-- 진입 조건: (가격대 또는 조건)
-- 목표가: (원)
-- 손절선: (원)
-- 추천 이유: (2~3줄, 시장 컨텍스트 포함)
-※ 확신이 없으면 "오늘은 관망 권장"으로 답하고 이유를 써주세요.
+### 2. 오늘 주목할 테마·섹터
+- 오늘 돈이 몰릴 가능성이 높은 테마 1~2개 (이유 포함)
+- 해당 테마 대표 종목 언급
 
-### 4. 오늘 절대 하지 말아야 할 것 (딱 1가지)
-한 줄로. 오늘 시장 상황에 맞게.
+### 3. 스윙 후보 추천 (1~3개)
+순수하게 오늘 시장 환경·뉴스·테마 기반으로만 선정.
+각 후보:
+- 종목명 (종목코드)
+- 진입 조건: 구체적 가격대 또는 조건
+- 목표가: 원 (근거)
+- 손절선: 원
+- 추천 근거: 오늘 어떤 뉴스/테마/차트 이유인지 2~3줄
+※ 확신 없으면 "오늘은 관망 권장 — 이유:" 로 답하세요.
 
-※ 모든 수치는 출처 또는 근거 명시. 모르는 건 모른다고 솔직하게.`;
+### 4. 오늘 절대 하지 말아야 할 것 (1가지)
+오늘 시장 상황에 맞는 구체적 경고 한 줄.
+
+---
+⚠️ 최종 확인: 위 분석에 사용한 가장 최근 데이터의 날짜를 맨 마지막에 한 줄로 명시해주세요.
+예) [분석 기준 최신 데이터: 미국 마감 2025.01.15 / 한국 선물 2025.01.16 오전]`;
 
   function renderSwingResult(html_content) {
     if(loader) loader.style.display = 'none';
-    if(result) result.innerHTML = html_content;
+    if(result) { result.innerHTML = html_content; result.dataset.loaded = '1'; }
     if(typeof lucide !== 'undefined') lucide.createIcons();
+  }
+
+  // API 키 있으면 직접 호출
+  if(getApiKey()) {
+    await renderApiResponse(swingPrompt, result, loader, true);
+    return;
   }
 
   try {
@@ -2327,6 +2637,306 @@ ${portfolioCtx || '(보유 종목 없음)'}
           <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹 열기
         </a>
       </div>`);
+  }
+}
+
+// ════════════════════════════════════════════════
+// API 키 관리
+// ════════════════════════════════════════════════
+const API_KEY_STORAGE = 'sv4_claude_api_key';
+
+function getApiKey() {
+  return localStorage.getItem(API_KEY_STORAGE) || '';
+}
+
+function saveApiKey() {
+  const input = document.getElementById('api-key-input');
+  if(!input) return;
+  const key = input.value.trim();
+  if(!key.startsWith('sk-ant-')) {
+    showToast('올바른 API 키 형식이 아니에요');
+    return;
+  }
+  localStorage.setItem(API_KEY_STORAGE, key);
+  showToast('API 키가 저장됐어요! 이제 앱 안에서 바로 답변을 받을 수 있어요 ✅');
+  closeApiSetup();
+  // 결과 캐시 초기화 (새 키로 다시 실행)
+  const cr = document.getElementById('coach-result');
+  const sr = document.getElementById('swing-result');
+  if(cr) { cr.innerHTML=''; cr.dataset.loaded=''; }
+  if(sr) { sr.innerHTML=''; sr.dataset.loaded=''; }
+}
+
+function deleteApiKey() {
+  if(!confirm('API 키를 삭제하면 복사·붙여넣기 방식으로 돌아가요. 삭제할까요?')) return;
+  localStorage.removeItem(API_KEY_STORAGE);
+  showToast('API 키가 삭제됐어요');
+  closeApiSetup();
+  const cr = document.getElementById('coach-result');
+  const sr = document.getElementById('swing-result');
+  if(cr) { cr.innerHTML=''; cr.dataset.loaded=''; }
+  if(sr) { sr.innerHTML=''; sr.dataset.loaded=''; }
+}
+
+function openApiSetup() {
+  const overlay = document.getElementById('api-setup-overlay');
+  if(!overlay) return;
+  overlay.style.display = 'flex';
+  setTimeout(() => overlay.classList.add('open'), 10);
+  // 현재 키 상태 표시
+  const key = getApiKey();
+  const statusEl = document.getElementById('api-current-status');
+  const deleteWrap = document.getElementById('api-delete-wrap');
+  const keyInput = document.getElementById('api-key-input');
+  if(statusEl) {
+    statusEl.innerHTML = key
+      ? '<div style="display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--green-light);border-radius:10px;border:1px solid rgba(0,229,160,0.2);margin-bottom:4px;">'
+        + '<i data-lucide="check-circle" style="width:15px;height:15px;color:var(--green);flex-shrink:0;"></i>'
+        + '<div><div style="font-size:12.5px;font-weight:800;color:var(--green);">API 키 연결됨</div>'
+        + '<div style="font-size:11px;color:var(--text3);">••••' + key.slice(-6) + '</div></div></div>'
+      : '<div style="font-size:12px;color:var(--text3);margin-bottom:4px;">아직 API 키가 없어요. 아래 안내를 따라 연결해보세요.</div>';
+  }
+  if(deleteWrap) deleteWrap.style.display = key ? 'block' : 'none';
+  if(keyInput) keyInput.value = '';
+  const saveBtn = document.getElementById('api-save-btn');
+  if(saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.5'; }
+  const feedback = document.getElementById('api-key-feedback');
+  if(feedback) feedback.textContent = '';
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeApiSetup() {
+  const overlay = document.getElementById('api-setup-overlay');
+  if(!overlay) return;
+  overlay.classList.remove('open');
+  setTimeout(() => { overlay.style.display = 'none'; }, 300);
+}
+
+function validateApiKeyInput() {
+  const input = document.getElementById('api-key-input');
+  const saveBtn = document.getElementById('api-save-btn');
+  const feedback = document.getElementById('api-key-feedback');
+  if(!input || !saveBtn) return;
+  const val = input.value.trim();
+  if(!val) {
+    saveBtn.disabled = true; saveBtn.style.opacity = '0.5';
+    if(feedback) feedback.textContent = '';
+    return;
+  }
+  if(val.startsWith('sk-ant-')) {
+    saveBtn.disabled = false; saveBtn.style.opacity = '1';
+    if(feedback) { feedback.textContent = '✅ 올바른 형식이에요'; feedback.style.color = 'var(--green)'; }
+  } else {
+    saveBtn.disabled = true; saveBtn.style.opacity = '0.5';
+    if(feedback) { feedback.textContent = '⚠️ Claude API 키는 sk-ant- 로 시작해요'; feedback.style.color = 'var(--yellow)'; }
+  }
+}
+
+function toggleApiKeyVisibility() {
+  const input = document.getElementById('api-key-input');
+  const btn = document.getElementById('api-eye-btn');
+  if(!input) return;
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  if(btn) btn.innerHTML = isHidden
+    ? '<i data-lucide="eye-off" style="width:16px;height:16px;"></i>'
+    : '<i data-lucide="eye" style="width:16px;height:16px;"></i>';
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// ═══════════════════════════════════════════════
+// API 직접 호출 (키 있을 때)
+// ═══════════════════════════════════════════════
+// useWebSearch: true이면 최신 web_search_20260318 도구 포함
+async function callClaudeAPI(prompt, onChunk, onDone, onError, useWebSearch) {
+  const apiKey = getApiKey();
+  if(!apiKey) { onError('API 키 없음'); return; }
+
+  const body = {
+    model: 'claude-sonnet-4-6',   // 웹서치 지원 최신 모델
+    max_tokens: 2000,
+    stream: true,
+    messages: [{ role: 'user', content: prompt }]
+  };
+
+  // 웹서치 도구 추가 (최신 버전 web_search_20260318)
+  if(useWebSearch) {
+    body.tools = [{
+      type: 'web_search_20260318',
+      name: 'web_search',
+      max_uses: 5
+    }];
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if(!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const code = err.error?.type || '';
+      if(res.status === 401) { onError('API 키가 잘못됐어요. 설정에서 다시 확인해주세요.'); return; }
+      if(res.status === 429) { onError('잠시 후 다시 시도해주세요. (요청 한도 초과)'); return; }
+      if(res.status === 400) { onError('요청 오류: ' + (err.error?.message || '알 수 없는 오류')); return; }
+      onError('API 오류 ' + res.status + ': ' + (err.error?.message || res.statusText));
+      return;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let hasText = false;
+
+    while(true) {
+      const { done, value } = await reader.read();
+      if(done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for(const line of lines) {
+        if(!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if(!raw || raw === '[DONE]') continue;
+        try {
+          const ev = JSON.parse(raw);
+          // 일반 텍스트 델타
+          if(ev.type === 'content_block_delta' && ev.delta?.type === 'text_delta' && ev.delta.text) {
+            hasText = true;
+            onChunk(ev.delta.text);
+          }
+          // 웹서치 중 알림 (검색 쿼리 표시)
+          if(ev.type === 'content_block_start' && ev.content_block?.type === 'server_tool_use') {
+            onChunk('\n🔍 웹 검색 중...\n');
+          }
+          // 검색 완료
+          if(ev.type === 'content_block_start' && ev.content_block?.type === 'web_search_tool_result') {
+            onChunk('✅ 검색 완료, 분석 중...\n\n');
+          }
+        } catch(_) {}
+      }
+    }
+    onDone();
+  } catch(e) {
+    if(e.name === 'TypeError' && e.message.includes('fetch')) {
+      onError('네트워크 연결을 확인해주세요.');
+    } else {
+      onError('오류: ' + e.message);
+    }
+  }
+}
+
+// 마크다운 → 간단한 HTML 변환
+function mdToHtml(text) {
+  return text
+    .replace(/^### (.+)$/gm, '<h4 style="font-size:13.5px;font-weight:800;color:var(--text);margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border);">$1</h4>')
+    .replace(/^## (.+)$/gm,  '<h3 style="font-size:14px;font-weight:800;color:var(--purple);margin:14px 0 8px;">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/`(.+?)`/g, '<code style="background:var(--input-bg);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:12px;">$1</code>')
+    .replace(/^- (.+)$/gm, '<div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--purple);flex-shrink:0;">▸</span><span>$1</span></div>')
+    .replace(/\n{2,}/g, '</p><p style="margin-bottom:8px;">')
+    .replace(/\n/g, '<br>');
+}
+
+// ── API 직접 호출 렌더링 (스트리밍) ──
+// useWebSearch: 스윙 추천 시 true, 내 현황 분석 시 false
+async function renderApiResponse(prompt, resultEl, loaderEl, useWebSearch) {
+  if(loaderEl) loaderEl.style.display = 'flex';
+  if(resultEl) resultEl.innerHTML = '';
+
+  const apiKey = getApiKey();
+  if(!apiKey) return false;
+
+  // 웹서치 사용 시 안내 배너
+  if(useWebSearch && loaderEl) {
+    loaderEl.innerHTML =
+      '<div style="text-align:center;">'
+      + '<div class="spinner" style="margin:0 auto 14px;"></div>'
+      + '<div style="font-size:13px;font-weight:700;color:var(--text2);">실시간 시장 데이터 검색 중...</div>'
+      + '<div style="font-size:11.5px;color:var(--text3);margin-top:6px;">나스닥·코스피·뉴스를 직접 검색하고 있어요</div>'
+      + '</div>';
+    loaderEl.style.display = 'flex';
+  }
+
+  const streamDiv = document.createElement('div');
+  streamDiv.style.cssText = 'padding:4px;font-size:13.5px;color:var(--text2);line-height:1.8;';
+  if(loaderEl) loaderEl.style.display = 'none';
+  if(resultEl) resultEl.appendChild(streamDiv);
+
+  let fullText = '';
+  const cursor = '<span style="display:inline-block;width:2px;height:14px;background:var(--purple);vertical-align:middle;animation:breathe 0.8s infinite;margin-left:2px;"></span>';
+
+  await callClaudeAPI(
+    prompt,
+    (chunk) => {
+      fullText += chunk;
+      streamDiv.innerHTML = mdToHtml(fullText) + cursor;
+    },
+    () => {
+      streamDiv.innerHTML = mdToHtml(fullText);
+      if(resultEl) {
+        resultEl.dataset.loaded = '1';
+        // 웹서치 사용 시 출처 안내 표시
+        if(useWebSearch) {
+          const srcNote = document.createElement('div');
+          srcNote.style.cssText = 'font-size:11px;color:var(--text3);margin-top:12px;padding:8px 12px;'
+            + 'background:var(--input-bg);border-radius:8px;line-height:1.6;';
+          srcNote.innerHTML = '🔍 위 분석은 실시간 웹 검색 결과를 기반으로 작성됐어요. '
+            + '투자 결정 전 직접 확인을 권장해요.';
+          resultEl.appendChild(srcNote);
+        }
+        const btnWrap = document.createElement('div');
+        btnWrap.style.cssText = 'margin-top:12px;';
+        btnWrap.innerHTML =
+          '<button onclick="refreshAiResult()" class="ai-action-btn" style="width:100%;justify-content:center;'
+          + 'background:var(--input-bg);border:1px solid var(--border);color:var(--text3);font-size:13px;">'
+          + '<i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> 다시 분석</button>';
+        resultEl.appendChild(btnWrap);
+      }
+      if(typeof lucide !== 'undefined') lucide.createIcons();
+    },
+    (errMsg) => {
+      if(loaderEl) { loaderEl.innerHTML='<div class="spinner"></div>'; loaderEl.style.display = 'none'; }
+      if(resultEl) {
+        resultEl.innerHTML =
+          '<div style="padding:20px;text-align:center;">'
+          + '<div style="width:44px;height:44px;border-radius:12px;background:var(--red-light);'
+          + 'display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'
+          + '<i data-lucide="alert-circle" style="width:22px;height:22px;color:var(--red);"></i></div>'
+          + '<div style="font-size:13px;color:var(--red);margin-bottom:14px;line-height:1.6;">' + errMsg + '</div>'
+          + '<button onclick="openApiSetup()" class="ai-action-btn" style="justify-content:center;margin-bottom:8px;">'
+          + '<i data-lucide="key" style="width:14px;height:14px;"></i> API 키 설정 확인</button>'
+          + '<button onclick="refreshAiResult()" class="ai-action-btn" style="justify-content:center;'
+          + 'background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">'
+          + '<i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> 다시 시도</button>'
+          + '</div>';
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    },
+    useWebSearch  // ← 웹서치 여부 전달
+  );
+  return true;
+}
+
+function refreshAiResult() {
+  // 현재 활성 탭 리셋 후 재실행
+  const coachResult = document.getElementById('coach-result');
+  const swingResult = document.getElementById('swing-result');
+  const coachPanel = document.getElementById('ai-panel-coach');
+  const isCoach = coachPanel && coachPanel.style.display !== 'none';
+  if(isCoach) {
+    if(coachResult) { coachResult.innerHTML = ''; coachResult.dataset.loaded = ''; }
+    triggerGeminiBriefing();
+  } else {
+    if(swingResult) { swingResult.innerHTML = ''; swingResult.dataset.loaded = ''; }
+    triggerSwingRecommend();
   }
 }
 
