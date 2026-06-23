@@ -1062,7 +1062,7 @@ body {
           </div>
           <div class="swing-home-item">
             <div class="swing-home-item-num">02 핵심 테마</div>
-            <div class="swing-home-item-text">오늘 주목할 섹터·테마 뉴스</div>
+            <div class="swing-home-item-text">오늘 돈이 몰리는 섹터·테마</div>
           </div>
           <div class="swing-home-item">
             <div class="swing-home-item-num">03 스윙 후보</div>
@@ -2579,8 +2579,8 @@ async function triggerSwingRecommend() {
                letter-spacing:0.8px;margin-bottom:12px;">프롬프트 포함 내용</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             ${[
-              ['globe','어젯밤 미국 장 + 오늘 시장 환경 체크 (출처 표기 요청)'],
-              ['briefcase','내 보유/관망 종목별 오늘 대응 전략'],
+              ['globe','어젯밤 미국 장 + 오늘 시장 환경 체크 (출처·날짜 명시)'],
+              ['layers','오늘 주목할 테마·섹터 (돈이 몰리는 곳)'],
               ['trending-up','스윙 후보 추천 (진입가·목표가·손절선)'],
               ['alert-octagon','오늘 절대 하지 말아야 할 것 1가지']
             ].map(([icon,label],i)=>
@@ -2747,7 +2747,7 @@ function toggleApiKeyVisibility() {
 // ═══════════════════════════════════════════════
 // API 직접 호출 (키 있을 때)
 // ═══════════════════════════════════════════════
-// useWebSearch: true이면 최신 web_search_20260318 도구 포함
+// useWebSearch: true이면 최신 web_search_20260209 도구 포함
 async function callClaudeAPI(prompt, onChunk, onDone, onError, useWebSearch) {
   const apiKey = getApiKey();
   if(!apiKey) { onError('API 키 없음'); return; }
@@ -2759,10 +2759,10 @@ async function callClaudeAPI(prompt, onChunk, onDone, onError, useWebSearch) {
     messages: [{ role: 'user', content: prompt }]
   };
 
-  // 웹서치 도구 추가 (최신 버전 web_search_20260318)
+  // 웹서치 도구 추가 (최신 버전 web_search_20260209)
   if(useWebSearch) {
     body.tools = [{
-      type: 'web_search_20260318',
+      type: 'web_search_20260209',
       name: 'web_search',
       max_uses: 5
     }];
@@ -3183,7 +3183,7 @@ function buildSummary(){
   return t;
 }
 function copyForClaude(){let t=buildSummary()+'위 현황 바탕으로 분석과 조언 부탁해.';navigator.clipboard.writeText(t).then(()=>showToast('🤖 복사 완료!')).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('🤖 복사 완료!');});}
-function aiDailyBriefing(){let t=buildSummary();t+='오늘 데일리 브리핑 부탁해:\n1. 어젯밤 미국 장 + 오늘 시장 환경 (날짜·출처 표기)\n2. 내 보유/관망 종목별 오늘 대응 전략\n3. 오늘 스윙 후보 추천 (진입가·목표가·손절선 포함)\n4. 오늘 절대 하지 말아야 할 것 1가지';const url='https://claude.ai/new?q='+encodeURIComponent(t);navigator.clipboard.writeText(t).catch(()=>{});window.open(url,'_blank');showToast('☀️ Claude로 이동 중!');}
+function aiDailyBriefing(){let t=buildSummary();t+='오늘 데일리 브리핑 부탁해:\n1. 어젯밤 미국 장 + 오늘 시장 환경 (날짜·출처 표기)\n2. 오늘 주목할 테마·섹터 (돈이 몰릴 곳)\n3. 오늘 스윙 후보 추천 (진입가·목표가·손절선 포함)\n4. 오늘 절대 하지 말아야 할 것 1가지';const url='https://claude.ai/new?q='+encodeURIComponent(t);navigator.clipboard.writeText(t).catch(()=>{});window.open(url,'_blank');showToast('☀️ Claude로 이동 중!');}
 function toggleFaq(el){const a=el.querySelector('.faq-a');const q=el.querySelector('.faq-q span');a.classList.toggle('open');if(q)q.textContent=a.classList.contains('open')?'−':'+';}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 </script></body></html>
