@@ -690,12 +690,16 @@ body {
 #instant-feedback { margin-top: 8px; }
 
 /* ── Gemini Drawer ── */
-#gemini-drawer {
+#gemini-drawer,
+#coach-drawer,
+#swing-drawer {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   z-index: 7000; align-items: flex-end; justify-content: center;
 }
-#gemini-drawer.open { display: flex; }
+#gemini-drawer.open,
+#coach-drawer.open,
+#swing-drawer.open { display: flex; }
 .gemini-content {
   background: var(--bg); border: 1px solid rgba(129,140,248,0.25);
   box-shadow: 0 0 60px rgba(99,102,241,0.15), var(--shadow-md);
@@ -1017,16 +1021,17 @@ body {
     <div class="brand"><div class="brand-dot"></div><span class="brand-name" id="user-greeting">AI Tracker</span></div>
     <div class="topbar-actions">
       <div class="sync-indicator" id="sync-indicator" style="display:none;"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">동기화됨</span></div>
-      <button class="t-btn accent" onclick="triggerGeminiBriefing()" title="내 현황 분석">
+      <button class="t-btn accent" onclick="triggerGeminiBriefing()" title="내 현황 분석"
+        id="topbar-coach-btn">
         <i data-lucide="user" style="width:15px;height:15px;"></i>
         <span>분석</span>
       </button>
-      <button class="t-btn" onclick="triggerSwingRecommend()" title="스윙 추천"
+      <button class="t-btn" onclick="triggerSwingRecommend()" title="오늘 스윙 추천"
+        id="topbar-swing-btn"
         style="border-color:rgba(0,229,160,0.25);color:var(--green);background:rgba(0,229,160,0.08);">
         <i data-lucide="trending-up" style="width:15px;height:15px;"></i>
         <span>스윙</span>
       </button>
-      <button class="t-btn" onclick="copyForClaude()" title="Claude 복사"><i data-lucide="bot" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="exportData()" title="백업"><i data-lucide="download" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="document.getElementById('imp').click()" title="가져오기"><i data-lucide="upload" style="width:14px;height:14px;"></i></button>
       <button class="t-btn" onclick="logoutUser()" title="로그아웃"><i data-lucide="log-out" style="width:14px;height:14px;"></i></button>
@@ -1305,53 +1310,65 @@ body {
   </div>
 </div>
 <!-- Gemini AI Drawer -->
-<div id="gemini-drawer" onclick="if(event.target===this)closeGemini()">
+<!-- 드로어 1: 내 현황 분석 -->
+<div id="coach-drawer" onclick="if(event.target===this)closeCoachDrawer()">
   <div class="gemini-content">
     <div class="gemini-header">
-      <div class="gemini-title"><i data-lucide="bot" style="color:var(--purple);"></i> Claude AI 코치</div>
+      <div class="gemini-title">
+        <i data-lucide="user" style="color:var(--purple);width:17px;height:17px;"></i>
+        내 현황 분석
+      </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="refreshAiResult()" title="새로 고침"
+        <div id="coach-search-indicator" style="font-size:11.5px;color:var(--text3);display:none;
+          background:var(--input-bg);padding:5px 10px;border-radius:8px;
+          border:1px solid var(--border);white-space:nowrap;max-width:160px;overflow:hidden;"></div>
+        <button onclick="rerunCoach()" title="다시 분석"
           style="background:var(--input-bg);border:1px solid var(--border);color:var(--text2);
                  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
                  justify-content:center;cursor:pointer;">
           <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
         </button>
-        <button class="modal-close" onclick="closeGemini()"><i data-lucide="x"></i></button>
+        <button class="modal-close" onclick="closeCoachDrawer()"><i data-lucide="x"></i></button>
       </div>
     </div>
-
-    <!-- 탭 선택 -->
-    <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;">
-      <button id="ai-tab-coach" onclick="switchAiTab('coach')"
-        style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:2px solid var(--purple);
-               font-size:13.5px;font-weight:800;color:var(--purple);cursor:pointer;font-family:var(--sans);
-               display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;">
-        <i data-lucide="user" style="width:15px;height:15px;"></i> 내 현황 분석
-      </button>
-      <button id="ai-tab-swing" onclick="switchAiTab('swing')"
-        style="flex:1;padding:14px 8px;background:none;border:none;border-bottom:2px solid transparent;
-               font-size:13.5px;font-weight:800;color:var(--text3);cursor:pointer;font-family:var(--sans);
-               display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;">
-        <i data-lucide="trending-up" style="width:15px;height:15px;"></i> 오늘의 스윙 추천
-      </button>
-    </div>
-
-    <!-- 내 현황 분석 탭 -->
-    <div id="ai-panel-coach" class="gemini-body">
-      <div class="gemini-loader" id="coach-loader" style="display:none;">
+    <div class="gemini-body" id="coach-panel">
+      <div class="gemini-loader" id="coach-loader">
         <div class="spinner"></div>
-        <div>포트폴리오를 분석 중입니다...</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text2);">포트폴리오 분석 중...</div>
       </div>
-      <div id="coach-result"></div>
+      <div id="coach-result" style="display:none;"></div>
     </div>
+  </div>
+</div>
 
-    <!-- 오늘의 스윙 추천 탭 -->
-    <div id="ai-panel-swing" class="gemini-body" style="display:none;">
-      <div class="gemini-loader" id="swing-loader" style="display:none;">
-        <div class="spinner"></div>
-        <div>스윙 추천 프롬프트 생성 중...</div>
+<!-- 드로어 2: 오늘의 스윙 추천 -->
+<div id="swing-drawer" onclick="if(event.target===this)closeSwingDrawer()">
+  <div class="gemini-content" style="border-color:rgba(0,229,160,0.25);">
+    <div class="gemini-header" style="border-bottom-color:rgba(0,229,160,0.15);">
+      <div class="gemini-title" style="background:linear-gradient(90deg,var(--green),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        <i data-lucide="trending-up" style="color:var(--green);width:17px;height:17px;-webkit-text-fill-color:initial;"></i>
+        오늘의 스윙 추천
       </div>
-      <div id="swing-result"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div id="swing-search-indicator" style="font-size:11.5px;color:var(--text3);display:none;
+          background:var(--input-bg);padding:5px 10px;border-radius:8px;
+          border:1px solid var(--border);white-space:nowrap;max-width:160px;overflow:hidden;"></div>
+        <button onclick="rerunSwing()" title="다시 분석"
+          style="background:var(--input-bg);border:1px solid var(--border);color:var(--text2);
+                 width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+                 justify-content:center;cursor:pointer;">
+          <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+        </button>
+        <button class="modal-close" onclick="closeSwingDrawer()"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+    <div class="gemini-body" id="swing-panel">
+      <div class="gemini-loader" id="swing-loader">
+        <div class="spinner"></div>
+        <div style="font-size:13px;font-weight:700;color:var(--text2);">실시간 시장 데이터 검색 중...</div>
+        <div style="font-size:11.5px;color:var(--text3);margin-top:6px;">나스닥·뉴스·테마 검색 후 분석해요</div>
+      </div>
+      <div id="swing-result" style="display:none;"></div>
     </div>
   </div>
 </div>
@@ -1650,8 +1667,10 @@ document.addEventListener('keydown', (e) => {
     if(apiOverlay && apiOverlay.classList.contains('open')) { closeApiSetup(); return; }
     const overlay = document.getElementById('overlay');
     if(overlay && overlay.classList.contains('open')) { closeModal(); return; }
-    const gemini = document.getElementById('gemini-drawer');
-    if(gemini && gemini.classList.contains('open')) { closeGemini(); return; }
+    const cd = document.getElementById('coach-drawer');
+    if(cd && cd.classList.contains('open')) { closeCoachDrawer(); return; }
+    const sd = document.getElementById('swing-drawer');
+    if(sd && sd.classList.contains('open')) { closeSwingDrawer(); return; }
   }
 });
 
@@ -2296,39 +2315,62 @@ async function openClaude(prompt) {
   }, 1200);
 }
 
-// ── AI 드로어 탭 전환 ──────────────────────────────
-function switchAiTab(tab) {
-  const isCoach = tab === 'coach';
-  // 탭 버튼 스타일
-  const coachBtn = document.getElementById('ai-tab-coach');
-  const swingBtn = document.getElementById('ai-tab-swing');
-  if(coachBtn) {
-    coachBtn.style.borderBottomColor = isCoach ? 'var(--purple)' : 'transparent';
-    coachBtn.style.color = isCoach ? 'var(--purple)' : 'var(--text3)';
-  }
-  if(swingBtn) {
-    swingBtn.style.borderBottomColor = !isCoach ? 'var(--green)' : 'transparent';
-    swingBtn.style.color = !isCoach ? 'var(--green)' : 'var(--text3)';
-  }
-  // 패널 전환
-  const coachPanel = document.getElementById('ai-panel-coach');
-  const swingPanel = document.getElementById('ai-panel-swing');
-  if(coachPanel) coachPanel.style.display = isCoach ? 'block' : 'none';
-  if(swingPanel) swingPanel.style.display = !isCoach ? 'block' : 'none';
+// ── 코치 드로어 열기/닫기 ────────────────────────────
+function openCoachDrawer() {
+  const d = document.getElementById('coach-drawer');
+  if(!d) return;
+  d.style.display = 'flex';
+  setTimeout(() => d.classList.add('open'), 10);
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+}
+function closeCoachDrawer() {
+  const d = document.getElementById('coach-drawer');
+  if(!d) return;
+  d.classList.remove('open');
+  setTimeout(() => { d.style.display = 'none'; }, 300);
 }
 
-// ── 드로어 열기 (탭 지정 가능) ──────────────────────
-function openAiDrawer(tab) {
-  const drawer = document.getElementById('gemini-drawer');
-  drawer.style.display = 'flex';
-  setTimeout(() => drawer.classList.add('open'), 10);
-  switchAiTab(tab || 'coach');
+// ── 스윙 드로어 열기/닫기 ────────────────────────────
+function openSwingDrawer() {
+  const d = document.getElementById('swing-drawer');
+  if(!d) return;
+  d.style.display = 'flex';
+  setTimeout(() => d.classList.add('open'), 10);
   if(typeof lucide !== 'undefined') lucide.createIcons();
+}
+function closeSwingDrawer() {
+  const d = document.getElementById('swing-drawer');
+  if(!d) return;
+  d.classList.remove('open');
+  setTimeout(() => { d.style.display = 'none'; }, 300);
+}
+
+// ── 재실행 ───────────────────────────────────────────
+function rerunCoach() {
+  const cr = document.getElementById('coach-result');
+  if(cr) { cr.innerHTML = ''; cr.style.display = 'none'; cr.dataset.loaded = ''; }
+  const cl = document.getElementById('coach-loader');
+  if(cl) cl.style.display = 'flex';
+  triggerGeminiBriefing();
+}
+function rerunSwing() {
+  const sr = document.getElementById('swing-result');
+  if(sr) { sr.innerHTML = ''; sr.style.display = 'none'; sr.dataset.loaded = ''; }
+  const sl = document.getElementById('swing-loader');
+  if(sl) sl.style.display = 'flex';
+  window._searchCount = 0;
+  triggerSwingRecommend();
+}
+
+// 구버전 호환 (ESC 닫기 등에서 참조)
+function openAiDrawer(tab) {
+  if(tab === 'swing') openSwingDrawer();
+  else openCoachDrawer();
 }
 
 // ── 내 현황 분석 ─────────────────────────────────────
 async function triggerGeminiBriefing() {
-  openAiDrawer('coach');
+  openCoachDrawer();
   const coachResult = document.getElementById('coach-result');
   const coachLoader = document.getElementById('coach-loader');
 
@@ -2337,12 +2379,13 @@ async function triggerGeminiBriefing() {
 
   // 로더 표시
   if(coachLoader) coachLoader.style.display = 'flex';
-  if(coachResult) coachResult.innerHTML = '';
+  if(coachResult) { coachResult.innerHTML = ''; coachResult.style.display = 'none'; }
 
   function renderCoachResult(html_content) {
     if(coachLoader) coachLoader.style.display = 'none';
     if(coachResult) {
       coachResult.innerHTML = html_content;
+      coachResult.style.display = 'block';
       coachResult.dataset.loaded = '1';
     }
     if(typeof lucide !== 'undefined') lucide.createIcons();
@@ -2400,6 +2443,7 @@ ${summary}
 
 ※ 수치와 근거 필수. 모르면 솔직하게 "모름"으로.`;
 
+  window._lastCoachPrompt = prompt;
   // API 키 있으면 직접 호출
   if(getApiKey()) {
     await renderApiResponse(prompt, coachResult, coachLoader, false);
@@ -2443,31 +2487,30 @@ ${summary}
           매일 대화 맥락이 누적돼서 코칭 정확도가 높아져요.
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(prompt)}'.replace(/%20/g,' ')))"
-            class="ai-action-btn" style="justify-content:center;width:100%;">
-            <i data-lucide="bot" style="width:15px;height:15px;"></i> Claude 앱 열기
-          </button>
+        <!-- 주 액션 -->
+        <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(prompt)}'.replace(/%20/g,' ')))"
+          class="ai-action-btn" style="justify-content:center;width:100%;margin-bottom:8px;">
+          <i data-lucide="bot" style="width:15px;height:15px;"></i> 복사 후 Claude 앱에서 보기
+        </button>
+        <!-- 보조 행 -->
+        <div style="display:flex;gap:8px;">
           <a href="https://claude.ai/new" target="_blank" class="ai-action-btn"
-            style="text-decoration:none;justify-content:center;
-                   background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.3);color:var(--purple);">
-            <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹에서 열기
+            style="flex:1;text-decoration:none;justify-content:center;font-size:12.5px;
+                   background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.25);color:var(--purple);">
+            <i data-lucide="external-link" style="width:13px;height:13px;"></i> 웹에서 열기
           </a>
-          <button onclick="triggerGeminiBriefing()" class="ai-action-btn"
-            style="justify-content:center;background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">
-            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> 데이터 새로 복사
+          <button onclick="rerunCoach()" class="ai-action-btn"
+            style="flex:1;justify-content:center;font-size:12.5px;
+                   background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> 다시 복사
           </button>
         </div>
-
-        <!-- 더 편하게: 작은 링크 스타일 -->
+        <!-- API 연결 안내 -->
         <div style="text-align:center;margin-top:10px;">
           <button onclick="openApiSetup()" style="background:none;border:none;cursor:pointer;
-            font-size:11.5px;color:var(--text3);font-family:var(--sans);
-            display:inline-flex;align-items:center;gap:5px;padding:4px 8px;
-            border-radius:6px;transition:color 0.2s;"
-            onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text3)'">
-            <i data-lucide="settings" style="width:12px;height:12px;"></i>
-            API 키 연결로 앱 안에서 바로 받기
+            font-size:11px;color:var(--text3);font-family:var(--sans);padding:3px 6px;">
+            <i data-lucide="key" style="width:11px;height:11px;vertical-align:middle;"></i>
+            API 연결 시 앱 안에서 바로 확인 가능
           </button>
         </div>
       </div>`);
@@ -2496,13 +2539,13 @@ ${summary}
 
 // ── 오늘의 스윙 추천 ─────────────────────────────────
 async function triggerSwingRecommend() {
-  openAiDrawer('swing');
+  openSwingDrawer();
   const result = document.getElementById('swing-result');
   const loader = document.getElementById('swing-loader');
   // 이미 결과 있으면 재사용
-  if(result && result.innerHTML && !result.innerHTML.includes('시작하기')) return;
+  if(result && result.dataset.loaded === '1') return;
   if(loader) loader.style.display = 'flex';
-  if(result) result.innerHTML = '';
+  if(result) { result.innerHTML = ''; result.style.display = 'none'; }
 
   const now = new Date();
   const today = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'short'});
@@ -2549,7 +2592,7 @@ async function triggerSwingRecommend() {
 
   function renderSwingResult(html_content) {
     if(loader) loader.style.display = 'none';
-    if(result) { result.innerHTML = html_content; result.dataset.loaded = '1'; }
+    if(result) { result.innerHTML = html_content; result.style.display = 'block'; result.dataset.loaded = '1'; }
     if(typeof lucide !== 'undefined') lucide.createIcons();
   }
 
@@ -2600,20 +2643,31 @@ async function triggerSwingRecommend() {
           미국 마감 데이터가 최신이고, 오늘 전략 수립에 가장 효과적이에요.
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(swingPrompt)}'.replace(/%20/g,' ')))"
-            class="ai-action-btn" style="justify-content:center;width:100%;
-            background:linear-gradient(135deg,var(--green),#059669);">
-            <i data-lucide="bot" style="width:15px;height:15px;"></i> Claude 앱에서 바로 받기
-          </button>
+        <!-- 주 액션 -->
+        <button onclick="openClaude(decodeURIComponent('${encodeURIComponent(swingPrompt)}'.replace(/%20/g,' ')))"
+          class="ai-action-btn" style="justify-content:center;width:100%;margin-bottom:8px;
+          background:linear-gradient(135deg,var(--green),#059669);">
+          <i data-lucide="bot" style="width:15px;height:15px;"></i> 복사 후 Claude 앱에서 보기
+        </button>
+        <!-- 보조 행 -->
+        <div style="display:flex;gap:8px;">
           <a href="https://claude.ai/new" target="_blank" class="ai-action-btn"
-            style="text-decoration:none;justify-content:center;
-                   background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.25);color:var(--green);">
-            <i data-lucide="external-link" style="width:14px;height:14px;"></i> Claude 웹에서 열기
+            style="flex:1;text-decoration:none;justify-content:center;font-size:12.5px;
+                   background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:var(--green);">
+            <i data-lucide="external-link" style="width:13px;height:13px;"></i> 웹에서 열기
           </a>
-          <button onclick="triggerSwingRecommend()" class="ai-action-btn"
-            style="justify-content:center;background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">
-            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> 새로 복사
+          <button onclick="rerunSwing()" class="ai-action-btn"
+            style="flex:1;justify-content:center;font-size:12.5px;
+                   background:var(--input-bg);border:1px solid var(--border);color:var(--text3);">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> 다시 복사
+          </button>
+        </div>
+        <!-- API 연결 안내 -->
+        <div style="text-align:center;margin-top:10px;">
+          <button onclick="openApiSetup()" style="background:none;border:none;cursor:pointer;
+            font-size:11px;color:var(--text3);font-family:var(--sans);padding:3px 6px;">
+            <i data-lucide="key" style="width:11px;height:11px;vertical-align:middle;"></i>
+            API 연결 시 앱 안에서 실시간 추천
           </button>
         </div>
       </div>`);
@@ -2764,7 +2818,7 @@ async function callClaudeAPI(prompt, onChunk, onDone, onError, useWebSearch) {
     body.tools = [{
       type: 'web_search_20260209',
       name: 'web_search',
-      max_uses: 5
+      max_uses: 2
     }];
   }
 
@@ -2812,13 +2866,15 @@ async function callClaudeAPI(prompt, onChunk, onDone, onError, useWebSearch) {
             hasText = true;
             onChunk(ev.delta.text);
           }
-          // 웹서치 중 알림 (검색 쿼리 표시)
+          // 웹서치 상태는 고정 인디케이터로만 표시 (스트림에 텍스트 안 씀)
           if(ev.type === 'content_block_start' && ev.content_block?.type === 'server_tool_use') {
-            onChunk('\n🔍 웹 검색 중...\n');
+            window._searchCount = (window._searchCount || 0) + 1;
+            const ind = document.getElementById('swing-search-indicator');
+            if(ind) ind.textContent = '🔍 웹 검색 중... (' + window._searchCount + '회)';
           }
-          // 검색 완료
           if(ev.type === 'content_block_start' && ev.content_block?.type === 'web_search_tool_result') {
-            onChunk('✅ 검색 완료, 분석 중...\n\n');
+            const ind = document.getElementById('swing-search-indicator');
+            if(ind) ind.textContent = '✅ 검색 완료, 답변 생성 중...';
           }
         } catch(_) {}
       }
@@ -2854,15 +2910,13 @@ async function renderApiResponse(prompt, resultEl, loaderEl, useWebSearch) {
   const apiKey = getApiKey();
   if(!apiKey) return false;
 
-  // 웹서치 사용 시 안내 배너
-  if(useWebSearch && loaderEl) {
-    loaderEl.innerHTML =
-      '<div style="text-align:center;">'
-      + '<div class="spinner" style="margin:0 auto 14px;"></div>'
-      + '<div style="font-size:13px;font-weight:700;color:var(--text2);">실시간 시장 데이터 검색 중...</div>'
-      + '<div style="font-size:11.5px;color:var(--text3);margin-top:6px;">나스닥·코스피·뉴스를 직접 검색하고 있어요</div>'
-      + '</div>';
-    loaderEl.style.display = 'flex';
+  // 웹서치 사용 시 인디케이터 초기화
+  window._searchCount = 0;
+  const indicatorId = useWebSearch ? 'swing-search-indicator' : 'coach-search-indicator';
+  const indicator = document.getElementById(indicatorId);
+  if(indicator && useWebSearch) {
+    indicator.textContent = '🔍 실시간 검색 준비 중...';
+    indicator.style.display = 'block';
   }
 
   const streamDiv = document.createElement('div');
@@ -2882,22 +2936,31 @@ async function renderApiResponse(prompt, resultEl, loaderEl, useWebSearch) {
     () => {
       streamDiv.innerHTML = mdToHtml(fullText);
       if(resultEl) {
+        resultEl.style.display = 'block';
         resultEl.dataset.loaded = '1';
+        // 인디케이터 숨기기
+        const indicatorId2 = useWebSearch ? 'swing-search-indicator' : 'coach-search-indicator';
+        const ind2 = document.getElementById(indicatorId2);
+        if(ind2) ind2.style.display = 'none';
         // 웹서치 사용 시 출처 안내 표시
         if(useWebSearch) {
           const srcNote = document.createElement('div');
           srcNote.style.cssText = 'font-size:11px;color:var(--text3);margin-top:12px;padding:8px 12px;'
             + 'background:var(--input-bg);border-radius:8px;line-height:1.6;';
-          srcNote.innerHTML = '🔍 위 분석은 실시간 웹 검색 결과를 기반으로 작성됐어요. '
-            + '투자 결정 전 직접 확인을 권장해요.';
+          srcNote.innerHTML = '🔍 위 분석은 실시간 웹 검색 결과 기반이에요. 투자 결정 전 직접 확인을 권장해요.';
           resultEl.appendChild(srcNote);
         }
         const btnWrap = document.createElement('div');
-        btnWrap.style.cssText = 'margin-top:12px;';
+        btnWrap.style.cssText = 'margin-top:14px;';
         btnWrap.innerHTML =
-          '<button onclick="refreshAiResult()" class="ai-action-btn" style="width:100%;justify-content:center;'
-          + 'background:var(--input-bg);border:1px solid var(--border);color:var(--text3);font-size:13px;">'
-          + '<i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> 다시 분석</button>';
+          '<button onclick="rerunCoach()" class="ai-action-btn" style="width:100%;justify-content:center;'
+          + 'background:var(--input-bg);border:1px solid var(--border);color:var(--text3);font-size:13px;margin-bottom:8px;">'
+          + '<i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> 다시 분석</button>'
+          + '<div id="copy-prompt-toggle" style="text-align:center;">'
+          + '<button onclick="togglePromptCopy(this, window._lastCoachPrompt||window._lastSwingPrompt)" style="background:none;border:none;'
+          + 'cursor:pointer;font-size:11px;color:var(--text3);font-family:var(--sans);padding:3px 6px;">'
+          + '<i data-lucide="copy" style="width:11px;height:11px;vertical-align:middle;"></i>'
+          + ' 프롬프트 복사 후 Claude 앱/웹에서 보기</button></div>';
         resultEl.appendChild(btnWrap);
       }
       if(typeof lucide !== 'undefined') lucide.createIcons();
@@ -2926,24 +2989,35 @@ async function renderApiResponse(prompt, resultEl, loaderEl, useWebSearch) {
 }
 
 function refreshAiResult() {
-  // 현재 활성 탭 리셋 후 재실행
-  const coachResult = document.getElementById('coach-result');
-  const swingResult = document.getElementById('swing-result');
-  const coachPanel = document.getElementById('ai-panel-coach');
-  const isCoach = coachPanel && coachPanel.style.display !== 'none';
-  if(isCoach) {
-    if(coachResult) { coachResult.innerHTML = ''; coachResult.dataset.loaded = ''; }
-    triggerGeminiBriefing();
-  } else {
-    if(swingResult) { swingResult.innerHTML = ''; swingResult.dataset.loaded = ''; }
-    triggerSwingRecommend();
+  rerunCoach();
+}
+
+// API 있을 때 결과화면 하단 "복사 후 앱에서 보기" 토글
+async function togglePromptCopy(btnEl, prompt) {
+  if(!prompt) { showToast('프롬프트를 찾을 수 없어요'); return; }
+  try {
+    await navigator.clipboard.writeText(prompt);
+    showToast('복사 완료! Claude 앱에서 붙여넣기 하세요');
+    // 버튼 옆에 열기 버튼 추가
+    const wrap = btnEl.closest('div');
+    if(wrap && !wrap.querySelector('.copy-open-btn')) {
+      const a = document.createElement('a');
+      a.href = 'https://claude.ai/new'; a.target = '_blank';
+      a.className = 'copy-open-btn';
+      a.style.cssText = 'display:inline-flex;align-items:center;gap:5px;font-size:11px;'
+        + 'color:var(--purple);text-decoration:none;padding:3px 6px;';
+      a.innerHTML = '<i data-lucide="external-link" style="width:11px;height:11px;"></i> Claude 웹 열기';
+      wrap.appendChild(a);
+      if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+  } catch(e) {
+    showToast('복사 실패 — 직접 복사해주세요');
   }
 }
 
 function closeGemini() {
-  const d = document.getElementById('gemini-drawer');
-  d.classList.remove('open');
-  setTimeout(() => { d.style.display = 'none'; }, 300);
+  closeCoachDrawer();
+  closeSwingDrawer();
 }
 
 function sL(s){return {watch:'관망',analyze:'분석중',pass:'패스',buy:'매수',hold:'보유',profit:'익절',loss:'손절',sell:'매도'}[s]||s;}
@@ -3183,7 +3257,7 @@ function buildSummary(){
   return t;
 }
 function copyForClaude(){let t=buildSummary()+'위 현황 바탕으로 분석과 조언 부탁해.';navigator.clipboard.writeText(t).then(()=>showToast('🤖 복사 완료!')).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('🤖 복사 완료!');});}
-function aiDailyBriefing(){let t=buildSummary();t+='오늘 데일리 브리핑 부탁해:\n1. 어젯밤 미국 장 + 오늘 시장 환경 (날짜·출처 표기)\n2. 오늘 주목할 테마·섹터 (돈이 몰릴 곳)\n3. 오늘 스윙 후보 추천 (진입가·목표가·손절선 포함)\n4. 오늘 절대 하지 말아야 할 것 1가지';const url='https://claude.ai/new?q='+encodeURIComponent(t);navigator.clipboard.writeText(t).catch(()=>{});window.open(url,'_blank');showToast('☀️ Claude로 이동 중!');}
+// aiDailyBriefing: triggerGeminiBriefing로 통합됨);window.open(url,'_blank');showToast('☀️ Claude로 이동 중!');}
 function toggleFaq(el){const a=el.querySelector('.faq-a');const q=el.querySelector('.faq-q span');a.classList.toggle('open');if(q)q.textContent=a.classList.contains('open')?'−':'+';}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 </script></body></html>
