@@ -92,15 +92,24 @@ def list_from_naver():
     return out
 
 
+def list_from_tracker():
+    """최후 수단: 저장소의 index.html 안 KRX_STOCKS 목록(종목명·코드)을 사용"""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    html = open(os.path.join(root, "index.html"), encoding="utf-8").read()
+    m = re.search(r"KRX_STOCKS\s*=\s*(\[.*?\]);?\s*\n", html, re.S)
+    data = json.loads(m.group(1))
+    return [{"code": x["code"], "name": x["name"], "market": ""} for x in data if x.get("code")]
+
+
 def get_universe():
-    for fn in (list_from_kind, list_from_naver):
+    for fn in (list_from_kind, list_from_naver, list_from_tracker):
         try:
             lst = fn()
             if len(lst) > 1000:
                 print(f"[목록] {fn.__name__}: {len(lst)}개", flush=True)
                 return lst
         except Exception as e:  # noqa
-            print(f"[목록] {fn.__name__} 실패: {e}", flush=True)
+            print(f"[목록] {fn.__name__} 실패: {type(e).__name__}: {e}", flush=True)
     sys.exit("종목 목록을 가져오지 못했습니다.")
 
 

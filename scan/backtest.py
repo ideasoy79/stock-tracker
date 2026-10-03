@@ -202,6 +202,9 @@ def main():
             if k % 300 == 0:
                 print(f"  … {k}/{len(universe)}", flush=True)
 
+    print(f"[시세] 성공 {done} · 실패 {fails}", flush=True)
+    if done == 0:
+        sys.exit("시세를 한 종목도 받지 못했습니다 → 네이버 접속이 막혔거나 주소가 바뀌었을 수 있어요 (KIS 키를 넣으면 KIS로 시도)")
     results = []
     for (fk, ek), tr in trades.items():
         sm = summarize(tr)
