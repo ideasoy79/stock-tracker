@@ -1,0 +1,34 @@
+name: volume-scan
+on:
+  schedule:
+    - cron: "10 7 * * 1-5"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: volume-scan
+  cancel-in-progress: true
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pandas lxml
+      - name: 전 종목 스캔
+        env:
+          KIS_APPKEY: ${{ secrets.KIS_APPKEY }}
+          KIS_APPSECRET: ${{ secrets.KIS_APPSECRET }}
+        run: python scan/volume_scan.py
+      - name: 결과 저장
+        run: |
+          git config user.name "volume-scan-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git pull --rebase || true
+          git add scan/latest.json
+          git diff --cached --quiet && exit 0
+          git commit -m "scan: $(date -u +%F)"
+          git push
