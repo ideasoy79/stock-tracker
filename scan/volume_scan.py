@@ -182,7 +182,7 @@ class KIS:
     def daily(self, code, count=COUNT):
         """일봉 (최대 100개씩 → 두 번 호출해서 count개)"""
         rows, end = {}, datetime.now(KST).date()
-        for _ in range(2):
+        for _ in range(count // 100 + 1):
             js = self.get("/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice", "FHKST03010100", {
                 "FID_COND_MRKT_DIV_CODE": "J", "FID_INPUT_ISCD": code,
                 "FID_INPUT_DATE_1": (end - timedelta(days=170)).strftime("%Y%m%d"),
