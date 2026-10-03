@@ -62,11 +62,11 @@ EXITS = {
 
 
 def features(rows, i):
-    r, pc = rows[i], rows[i - 1]["c"]
+    r, pc = rows[i], (rows[i - 1]["c"] or rows[i]["c"])
     w60 = rows[max(0, i - 59):i + 1]
     w120 = rows[max(0, i - 119):i + 1]
-    low60 = min(x["l"] for x in w60)
-    high120 = max(x["h"] for x in w120)
+    low60 = min(x["l"] for x in w60) or r["l"] or 1
+    high120 = max(x["h"] for x in w120) or r["h"] or 1
     rng = r["h"] - r["l"]
     upper = (r["h"] - max(r["o"], r["c"])) / rng if rng else 0
     chg = (r["c"] / pc - 1) * 100
@@ -165,6 +165,7 @@ def main():
                 rows = vs.kis.daily(s["code"], BT_DAYS)
             except Exception:
                 pass
+        rows = [x for x in rows if min(x["o"], x["h"], x["l"], x["c"]) > 0]   # 0으로 찍힌 봉 제거
         return s, rows
 
     trades = {(fk, ek): [] for fk in FILTERS for ek in EXITS}

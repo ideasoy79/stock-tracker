@@ -127,7 +127,7 @@ def fetch_daily(code: str, count: int = COUNT):
             rows = []
             for d, o, h, l, c, v in ITEM_RE.findall(r.text):
                 o, h, l, c, v = float(o), float(h), float(l), float(c), int(v)
-                if c <= 0:
+                if min(o, h, l, c) <= 0:          # 거래정지일 등 0으로 찍힌 봉은 제외
                     continue
                 rows.append({"d": f"{d[:4]}-{d[4:6]}-{d[6:]}", "o": o, "h": h, "l": l, "c": c, "v": v})
             return rows
@@ -203,7 +203,7 @@ class KIS:
             for x in out:
                 d = x["stck_bsop_date"]
                 c = float(x.get("stck_clpr") or 0)
-                if c <= 0:
+                if c <= 0 or min(float(x.get(k) or 0) for k in ("stck_oprc", "stck_hgpr", "stck_lwpr")) <= 0:
                     continue
                 rows[d] = {"d": f"{d[:4]}-{d[4:6]}-{d[6:]}", "o": float(x["stck_oprc"]), "h": float(x["stck_hgpr"]),
                            "l": float(x["stck_lwpr"]), "c": c, "v": int(float(x["acml_vol"])),
@@ -290,12 +290,12 @@ def analyze(stock, rows):
 
     i, ratio, avg, amount = hit
     r = rows[i]
-    pc = rows[i - 1]["c"]
+    pc = rows[i - 1]["c"] or r["c"]
     chg = (r["c"] / pc - 1) * 100
     win60 = rows[max(0, i - 59):i + 1]
     win120 = rows[max(0, i - 119):i + 1]
-    low60 = min(x["l"] for x in win60)
-    high120 = max(x["h"] for x in win120)
+    low60 = min(x["l"] for x in win60) or r["l"] or 1
+    high120 = max(x["h"] for x in win120) or r["h"] or 1
     rng = r["h"] - r["l"]
     upper = (r["h"] - max(r["o"], r["c"])) / rng if rng else 0
     lower = (min(r["o"], r["c"]) - r["l"]) / rng if rng else 0
