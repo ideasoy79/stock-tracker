@@ -944,6 +944,10 @@ body {
 .vs-stat td:first-child,.vs-stat th:first-child{text-align:left;font-family:var(--sans)}
 .vs-stat-empty{font-size:12px;color:var(--text3);line-height:1.7}
 .vs-missed{font-size:12px;color:var(--yellow);margin-top:8px;line-height:1.6}
+.bt-verdict{font-size:13px;font-weight:700;border-radius:10px;padding:10px 12px;margin:4px 0 10px;line-height:1.55;background:var(--input-bg)}
+.bt-verdict.pos{color:var(--green)}.bt-verdict.neg{color:var(--red)}.bt-verdict.dim{color:var(--text2)}
+.vs-stat.bt td:first-child{font-size:11.5px;line-height:1.4}.vs-stat.bt .dim{color:var(--text3);font-weight:400}
+.vs-stat tr.base td{color:var(--text3)}
 .scr-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
 .scr-card h4{font-size:14px;color:var(--text);margin-bottom:8px}
 .scr-card p,.scr-card li{font-size:12.5px;color:var(--text2);line-height:1.75}
@@ -1496,10 +1500,11 @@ export default {
       <div class="scr-card">
         <h4>⚙ 처음 한 번 — ② 자동 스캔 (GitHub Actions, PC 불필요)</h4>
         <ol>
-          <li>트래커가 올라가 있는 GitHub 저장소에 파일 2개 추가<br><code>scan/volume_scan.py</code> · <code>.github/workflows/volume-scan.yml</code></li>
+          <li>트래커가 올라가 있는 GitHub 저장소에 파일 2개 추가<br><code>scan/volume_scan.py</code> · <code>scan/backtest.py</code> · <code>.github/workflows/volume-scan.yml</code> · <code>.github/workflows/backtest.yml</code></li>
           <li>저장소 Settings › Actions › General › Workflow permissions › <b>Read and write</b> 선택</li>
           <li>저장소 Settings › Secrets and variables › Actions › <b>New repository secret</b> → <code>KIS_APPKEY</code>, <code>KIS_APPSECRET</code> 등록</li>
           <li>Actions 탭 › volume-scan › <b>Run workflow</b>로 첫 실행 (3~6분) → <code>scan/latest.json</code> 생성 확인</li>
+          <li>Actions 탭 › backtest › <b>Run workflow</b> (20~40분) → 급증 점검 화면 <b>🧪 과거 검증</b>에 결과 표시, 매월 1일 자동 갱신</li>
           <li>이후 평일 16:10에 자동 실행. 트래커와 같은 저장소면 설정 주소는 기본값 그대로</li>
         </ol>
         <div class="scr-pre"><button class="vs-b" onclick="scrCopy('scr-yml')">복사</button><pre id="scr-yml"># 생각콩 × AI 주식 트래커 — 거래량 급증 자동 스캔
@@ -3786,6 +3791,40 @@ function statsHtml(){
     +'<div class="vs-note">D+N 수익률은 신호일 종가 기준 · 표본이 30건은 넘어야 의미가 생겨요</div>';
 }
 
+
+/* ── 과거 검증 (백테스트 결과) ── */
+let btData=null,btTried=false,btAll=false;
+async function loadBacktest(){
+  if(btTried)return;btTried=true;
+  const u=(cfg().scanUrl||'scan/latest.json').replace(/latest\.json(\?.*)?$/,'backtest.json');
+  try{const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j.kind==='sv4-backtest')btData=j;}}catch(e){}
+  renderScan();
+}
+window.vsBtAll=function(){btAll=!btAll;renderScan();};
+function btVerdict(r,base){
+  if(!r)return {cls:'neg',t:'표본 50건 이상인 규칙이 없어요'};
+  const edge=r.avg-(base&&base.avg!=null?base.avg:0);
+  const stable=r.split&&r.split.after!=null&&r.split.after>0;
+  if(r.avg<=0)return {cls:'neg',t:'가장 나은 규칙도 비용을 빼면 손해예요 — 이 신호만으로 매매하는 건 권하지 않아요'};
+  if(edge>=0.5&&r.pf>=1.2&&stable)return {cls:'pos',t:'쓸 만한 후보예요 — 아무 종목이나 산 것보다 거래당 '+edge.toFixed(2)+'%p 낫고, 최근 기간에도 플러스였어요'};
+  if(!stable)return {cls:'neg',t:'전체로는 플러스지만 최근 기간 성과가 꺾였어요 — 실전 적용은 보류가 맞아요'};
+  return {cls:'dim',t:'플러스지만 기준선 대비 차이가 작아요 — 비용·실수에 쉽게 묻힐 수준이에요'};
+}
+function btHtml(){
+  if(!btData)return '<div class="vs-stat-empty">아직 과거 검증 결과가 없어요. GitHub Actions에서 <b>backtest</b>를 한 번 실행하면 여기에 "이 신호가 과거에 돈이 됐는지"가 표로 나와요.</div>';
+  const b=btData.baseline||{},rs=(btData.results||[]);
+  const solid=rs.filter(r=>r.n>=50);
+  const list=(btAll?rs:solid.slice(0,6));
+  const v=btVerdict(solid[0],b);
+  const row=r=>'<tr><td><b>'+esc(r.filter)+'</b><br><span class="dim">'+esc(r.exit)+'</span></td><td>'+r.n+'</td><td>'+r.win+'%</td><td class="'+(r.avg>=0?'pos':'neg')+'">'+pct(r.avg,2)+'</td><td>'+(r.pf==null?'—':r.pf)+'</td><td>'+(r.split?pct(r.split.before,1)+' → <span class="'+((r.split.after||0)>=0?'pos':'neg')+'">'+pct(r.split.after,1)+'</span>':'—')+'</td></tr>';
+  return '<div class="vs-metaline">'+esc(btData.period.from)+' ~ '+esc(btData.period.to)+' · '+btData.universe+'종목 · 다음날 시가 진입 · 비용 '+btData.params.costPct+'% 반영</div>'
+    +'<div class="bt-verdict '+v.cls+'">'+v.t+'</div>'
+    +'<table class="vs-stat bt"><thead><tr><th>신호 · 매매 규칙</th><th>건수</th><th>승률</th><th>거래당</th><th>PF</th><th>앞→뒤 기간</th></tr></thead><tbody>'
+    +'<tr class="base"><td>기준선 <span class="dim">아무 종목 10일 보유</span></td><td>'+(b.n||'—')+'</td><td>'+(b.win??'—')+'%</td><td>'+pct(b.avg,2)+'</td><td>—</td><td>—</td></tr>'
+    +list.map(row).join('')+'</tbody></table>'
+    +'<button class="vs-b" style="margin-top:8px" onclick="vsBtAll()">'+(btAll?'상위만 보기':'전체 '+rs.length+'개 규칙 보기')+'</button>'
+    +'<div class="vs-note">PF = 총이익 ÷ 총손실 (1.2 이상이면 양호) · 앞→뒤 기간 = 과거 2/3 vs 최근 1/3 평균, 최근에도 플러스여야 믿을 만해요<br>'+(btData.caveats||[]).map(esc).join(' · ')+'</div>';
+}
 /* ── 렌더 ── */
 function trackHtml(it){
   const t=it.track||{};const cell=(lab,x)=>x?'<span>'+lab+' '+(x.held?'✅':'✕')+' <b class="'+(x.ret>=0?'pos':'neg')+'">'+pct(x.ret)+'</b></span>':'<span class="dim">'+lab+' 대기</span>';
@@ -3852,6 +3891,7 @@ function renderScan(){
      +'<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;color:var(--text2)"><input type="checkbox" id="vs-cfg-auto"'+(c.autoLoad?' checked':'')+'> 이 화면을 열 때 자동으로 불러오기·가격 추적</label>'
      +'<button class="vs-b vs-b-p" style="margin-top:10px" onclick="vsSaveCfg()">저장</button></div>'
    +'</div>'
+   +'<div class="card vs-top"><div class="vs-title">🧪 과거 검증 <span>이 신호, 예전에 돈이 됐나</span></div>'+btHtml()+'</div>'
    +'<div class="card vs-top"><div class="vs-title">📊 신호 성적표 <span>내 판단이 맞았는지 숫자로</span></div>'+statsHtml()+'</div>'
    +'<div class="filter-row">'+[['check','점검중'],['watch','관심'],['pass','패스'],['ex','제외'],['all','전체']].map(f=>'<button class="f-btn'+(vsFilter===f[0]?' active':'')+'" onclick="vsFilter(\''+f[0]+'\')">'+f[1]+' '+cnt[f[0]]+'</button>').join('')+'</div>'
    +(shown.length?shown.map(cardHtml).join(''):'<div class="vs-empty">'+(list.length?'이 필터에는 카드가 없어요':'🔄 자동 스캔을 불러오거나 ＋ 종목 추가로 시작하세요')+'</div>')
@@ -3860,7 +3900,7 @@ function renderScan(){
 window.renderScan=renderScan;
 window.scrCopy=function(id){const el=$(id);if(!el)return;const t=el.textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('📋 복사 완료')).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 복사 완료');});};
 window.vsOnOpen=function(){
-  renderScan();
+  renderScan();loadBacktest();
   if(vsBooted)return;vsBooted=true;
   const c=cfg();if(!c.autoLoad)return;
   (async()=>{if(c.scanUrl)await vsLoadAuto(true);await vsRefreshTracking(false);})();
