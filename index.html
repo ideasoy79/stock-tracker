@@ -1152,6 +1152,12 @@ body{font-size:15px;letter-spacing:-0.01em;padding-bottom:calc(var(--nav-h) + en
 @media (min-width:768px){.rd{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 .main,.panel{max-width:100%;overflow-x:hidden}
 html,body{overflow-x:hidden}
+
+/* 종목 시세 링크 */
+a.st-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentColor;border-bottom-color:color-mix(in srgb,currentColor 40%,transparent)}
+a.st-link::after{content:"↗";font-size:.75em;margin-left:2px;opacity:.55}
+a.st-link:active{opacity:.6}
+.sc-ticker a.st-link{border-bottom:none}
 </style>
 </head>
 <body>
@@ -3402,7 +3408,7 @@ function renderStocks(){
     )+'</div>';return;}
   el.innerHTML=list.map(r=>{
     const sl=(r.status==='buy'||r.status==='hold')&&r.stoploss&&r.current&&r.current<r.stoploss;
-    return '<div class="stock-card"><div class="sc-header" onclick="toggleStock('+r.id+')"><div class="sc-left"><span class="sc-ticker">'+r.stock+'</span><span class="badge '+bC(r.status)+'">'+sL(r.status)+'</span>'+(sl?'<span class="badge b-loss">⚠️ 손절선 이탈</span>':'')+(r.exitPct!=null?'<span class="sc-pnl '+(r.exitPct>=0?'pos':'neg')+'">'+(r.exitPct>=0?'+':'')+r.exitPct+'%</span>':'')+(r.pct!=null&&(r.status==='buy'||r.status==='hold')?'<span class="sc-pnl '+(r.pct>=0?'pos':'neg')+'">'+(r.pct>=0?'+':'')+r.pct+'%</span>':'')+'</div><div style="display:flex;align-items:center;gap:6px;"><span class="sc-meta">'+r.date+'</span><span class="chevron" id="chev-'+r.id+'">▼</span></div></div><div class="sc-body" id="scb-'+r.id+'">'+(r.phase_logs&&r.phase_logs.length?'<div class="tl-wrap">'+r.phase_logs.map(pl=>'<div class="tl-item"><div class="tl-dot '+pl.status+'"></div><div><div class="tl-date">'+pl.date+'</div><div class="tl-note"><span class="badge '+bC(pl.status)+'" style="font-size:10px;">'+sL(pl.status)+'</span> '+(pl.note||'')+'</div></div></div>').join('')+'</div>':'')+'<div class="detail-box"><div class="num-grid">'+(r.entry?'<div class="num-item"><div class="num-label">진입가</div><div class="num-val nv-base">'+r.entry.toLocaleString()+'원</div></div>':'')+(r.qty?'<div class="num-item"><div class="num-label">수량</div><div class="num-val nv-base">'+r.qty+'주</div></div>':'')+(r.current?'<div class="num-item"><div class="num-label">현재가</div><div class="num-val '+(r.pct!=null&&r.pct>=0?'nv-up':'nv-dn')+'">'+r.current.toLocaleString()+'원</div></div>':'')+(r.stoploss?'<div class="num-item"><div class="num-label">손절선</div><div class="num-val nv-dn">'+r.stoploss.toLocaleString()+'원</div></div>':'')+(r.target?'<div class="num-item"><div class="num-label">목표가</div><div class="num-val nv-up">'+r.target.toLocaleString()+'원</div></div>':'')+(r.exit?'<div class="num-item"><div class="num-label">매도가</div><div class="num-val '+(r.exitPct!=null&&r.exitPct>=0?'nv-up':'nv-dn')+'">'+r.exit.toLocaleString()+'원</div></div>':'')+(r.pnl?'<div class="num-item"><div class="num-label">실현손익</div><div class="num-val '+(r.pnl>=0?'nv-up':'nv-dn')+'">'+(r.pnl>=0?'+':'')+r.pnl.toLocaleString()+'원</div></div>':'')+'</div>'+(r.issue?'<div class="info-box"><b>📌 근거:</b> '+r.issue+'</div>':'')+(r.memo?'<div class="info-box"><b>✏️ 회고:</b> '+r.memo+'</div>':'')+(r.claude?'<div class="claude-box">✦ '+r.claude+'</div>':'')+(r.tags&&r.tags.length?'<div class="tags">'+r.tags.map(t=>'<span class="tag">'+t+'</span>').join('')+'</div>':'')+'<div class="card-actions"><button class="t-btn" onclick="openModal('+r.id+')">수정</button>'+(r.chartUrl?'<a href="'+r.chartUrl+'" target="_blank" class="t-btn" style="text-decoration:none;">차트 →</a>':'')+'</div></div></div></div>';
+    return '<div class="stock-card"><div class="sc-header" onclick="toggleStock('+r.id+')"><div class="sc-left"><span class="sc-ticker">'+(typeof stLink==='function'?stLink(((r.stock.match(/[0-9A-Z]{6}/)||[])[0]||((typeof KRX_STOCKS!=='undefined'&&KRX_STOCKS.find(x=>x.name===r.stock.split(' ')[0]))||{}).code),r.stock):r.stock)+'</span><span class="badge '+bC(r.status)+'">'+sL(r.status)+'</span>'+(sl?'<span class="badge b-loss">⚠️ 손절선 이탈</span>':'')+(r.exitPct!=null?'<span class="sc-pnl '+(r.exitPct>=0?'pos':'neg')+'">'+(r.exitPct>=0?'+':'')+r.exitPct+'%</span>':'')+(r.pct!=null&&(r.status==='buy'||r.status==='hold')?'<span class="sc-pnl '+(r.pct>=0?'pos':'neg')+'">'+(r.pct>=0?'+':'')+r.pct+'%</span>':'')+'</div><div style="display:flex;align-items:center;gap:6px;"><span class="sc-meta">'+r.date+'</span><span class="chevron" id="chev-'+r.id+'">▼</span></div></div><div class="sc-body" id="scb-'+r.id+'">'+(r.phase_logs&&r.phase_logs.length?'<div class="tl-wrap">'+r.phase_logs.map(pl=>'<div class="tl-item"><div class="tl-dot '+pl.status+'"></div><div><div class="tl-date">'+pl.date+'</div><div class="tl-note"><span class="badge '+bC(pl.status)+'" style="font-size:10px;">'+sL(pl.status)+'</span> '+(pl.note||'')+'</div></div></div>').join('')+'</div>':'')+'<div class="detail-box"><div class="num-grid">'+(r.entry?'<div class="num-item"><div class="num-label">진입가</div><div class="num-val nv-base">'+r.entry.toLocaleString()+'원</div></div>':'')+(r.qty?'<div class="num-item"><div class="num-label">수량</div><div class="num-val nv-base">'+r.qty+'주</div></div>':'')+(r.current?'<div class="num-item"><div class="num-label">현재가</div><div class="num-val '+(r.pct!=null&&r.pct>=0?'nv-up':'nv-dn')+'">'+r.current.toLocaleString()+'원</div></div>':'')+(r.stoploss?'<div class="num-item"><div class="num-label">손절선</div><div class="num-val nv-dn">'+r.stoploss.toLocaleString()+'원</div></div>':'')+(r.target?'<div class="num-item"><div class="num-label">목표가</div><div class="num-val nv-up">'+r.target.toLocaleString()+'원</div></div>':'')+(r.exit?'<div class="num-item"><div class="num-label">매도가</div><div class="num-val '+(r.exitPct!=null&&r.exitPct>=0?'nv-up':'nv-dn')+'">'+r.exit.toLocaleString()+'원</div></div>':'')+(r.pnl?'<div class="num-item"><div class="num-label">실현손익</div><div class="num-val '+(r.pnl>=0?'nv-up':'nv-dn')+'">'+(r.pnl>=0?'+':'')+r.pnl.toLocaleString()+'원</div></div>':'')+'</div>'+(r.issue?'<div class="info-box"><b>📌 근거:</b> '+r.issue+'</div>':'')+(r.memo?'<div class="info-box"><b>✏️ 회고:</b> '+r.memo+'</div>':'')+(r.claude?'<div class="claude-box">✦ '+r.claude+'</div>':'')+(r.tags&&r.tags.length?'<div class="tags">'+r.tags.map(t=>'<span class="tag">'+t+'</span>').join('')+'</div>':'')+'<div class="card-actions"><button class="t-btn" onclick="openModal('+r.id+')">수정</button>'+((_c=>_c&&typeof stUrl==='function'?'<a href="'+stUrl(_c,1)+'" target="_blank" class="t-btn" style="text-decoration:none;">차트 →</a>':(r.chartUrl?'<a href="'+r.chartUrl+'" target="_blank" class="t-btn" style="text-decoration:none;">차트 →</a>':''))(((r.stock.match(/[0-9A-Z]{6}/)||[])[0]||((typeof KRX_STOCKS!=='undefined'&&KRX_STOCKS.find(x=>x.name===r.stock.split(' ')[0]))||{}).code)))+'</div></div></div></div>';
   }).join('');
 }
 function toggleStock(id){const b=document.getElementById('scb-'+id);const c=document.getElementById('chev-'+id);if(b){b.classList.toggle('open');if(c)c.classList.toggle('open');}}
@@ -3728,6 +3734,13 @@ const jget=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;
 const jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
 const toast=m=>{if(typeof showToast==='function')showToast(m);};
 const eok=n=>n?(n>=1e12?(n/1e12).toFixed(1)+'조':Math.round(n/1e8).toLocaleString()+'억'):'—';
+/* 종목 시세·차트 링크 (모바일은 네이버 모바일 증권, PC는 네이버 금융) */
+const ST_MOB=/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent);
+window.stUrl=function(code,chart){code=String(code||'');
+  if(ST_MOB)return chart?'https://m.stock.naver.com/fchart/domestic/stock/'+code:'https://m.stock.naver.com/domestic/stock/'+code+'/total';
+  return chart?'https://finance.naver.com/item/fchart.naver?code='+code:'https://finance.naver.com/item/main.naver?code='+code;};
+window.stLink=function(code,label,cls){if(!/^[0-9A-Z]{6}$/.test(String(code||'')))return label;
+  return '<a class="st-link'+(cls?' '+cls:'')+'" href="'+stUrl(code)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+label+'</a>';};
 const pct=(n,d=1)=>n==null||isNaN(n)?'—':(n>0?'+':'')+Number(n).toFixed(d)+'%';
 const daysBetween=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
 
@@ -3928,7 +3941,7 @@ window.vsToWatch=function(id){
   if(rec){rec.phase_logs=rec.phase_logs||[];rec.phase_logs.push({date:d,status:rec.status,note:'거래량 급증 재포착 x'+(it.ratio||'?')});
     if(!(rec.tags||[]).includes('거래량급증'))rec.tags=[...(rec.tags||[]),'거래량급증'];}
   else{rec={id:Date.now(),date:d,stock,status:'watch',entry:0,qty:0,current:it.lastClose||0,amount:0,stoploss:it.bar?it.bar.l:0,target:0,exit:0,pnl:0,pct:null,exitPct:null,
-    issue:sum,premortem:it.counter,premortemAt:d,memo:'실패 가정: '+it.counter+(it.memo?' / '+it.memo:''),claude:'',tags:['거래량급증'],chartUrl:'https://finance.naver.com/item/main.naver?code='+it.code,
+    issue:sum,premortem:it.counter,premortemAt:d,memo:'실패 가정: '+it.counter+(it.memo?' / '+it.memo:''),claude:'',tags:['거래량급증'],chartUrl:stUrl(it.code),
     phase_logs:[{date:d,status:'watch',note:'거래량 급증 점검 → 관심 등록'}]};records.unshift(rec);}
   it.status='watch';it.recordId=rec.id;it.decidedAt=d;
   logDecision(it,'watch','거래량 급증 점검 후 관심 등록 · 충족 '+score(it).ok+'/7 · 실패 가정: '+it.counter);
@@ -4055,7 +4068,7 @@ function picksHtml(tf){
   if(pk.rest){h+='<div class="pk-row"><b>오늘은 쉬는 구간이에요</b><div class="pk-op">시장 전체(테마 평균) 60일 수익률이 '+pct(pk.mkt60,1)+'라서 규칙상 새로 사지 않아요. 백테스트에서 이 필터가 최대 낙폭을 -36% → -16%로 줄였어요.</div></div>';}
   else if(pk.today&&pk.today.length){
     h+=pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> 20일 · '+(x.n||'')+'종목'+(x.phase==='과열 주의'?' · 과열 주의':'')+'</span></div>'
-      +'<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m"><div class="pk-mh"><a href="https://finance.naver.com/item/main.naver?code='+esc(m.code)+'" target="_blank">'+esc(stockName(m.code))+'</a>'
+      +'<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m"><div class="pk-mh">'+stLink(m.code,esc(stockName(m.code)))
         +(m.state?'<span class="pk-s s-'+({'진입 검토':'go','추세 양호':'ok','눌림 대기':'wait','보류':'no'}[m.state]||'ok')+'">'+m.state+'</span>':'')
         +'<span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(m.gap!=null?'<span class="dim">20일선 '+pct(m.gap,0)+'</span>':'')+'</div>'
         +(m.note?'<div class="pk-n">'+esc(m.note)+'</div>':'')+'</div>').join('')+'</div></div>').join('');
@@ -4150,7 +4163,7 @@ function cardHtml(it){
     ?'신호일 '+it.sigDate+' · 등락 <b class="'+(it.chg>=0?'pos':'neg')+'">'+pct(it.chg,2)+'</b> · 거래대금'+(it.amountReal?' ':'≈')+eok(it.amountEst)+(it.inv?' · 외인 <b class="'+(it.inv.frgn>=0?'pos':'neg')+'">'+(it.inv.frgn>0?'+':'')+it.inv.frgn.toLocaleString()+'</b> 기관 <b class="'+(it.inv.orgn>=0?'pos':'neg')+'">'+(it.inv.orgn>0?'+':'')+it.inv.orgn.toLocaleString()+'</b>주':'')+(['54','59'].includes(it.stat)?' · <b class="neg">'+STAT[it.stat]+'</b>':'')+' · 60일저점 '+pct(it.fromLow60)+' · 120일고점 '+pct(it.fromHigh120)
     :'추가일 '+it.sigDate+' · <span class="dim">가격 정보 없음 — 시세 서버를 연결하면 자동으로 채워져요</span>';
   return '<div class="vs-card'+(ex.length&&st==='check'?' vs-ex':'')+'">'
-   +'<div class="vs-hd"><div class="vs-name"><b>'+esc(it.name)+'</b><span class="vs-code">'+esc(it.code)+'</span>'+badge+'<span class="vs-src">'+srcTag+'</span></div>'
+   +'<div class="vs-hd"><div class="vs-name"><b>'+stLink(it.code,esc(it.name))+'</b><span class="vs-code">'+esc(it.code)+'</span>'+badge+'<span class="vs-src">'+srcTag+'</span></div>'
    +'<div class="vs-ratio">'+(it.ratio?'x'+Number(it.ratio).toFixed(1):'')+'</div></div>'
    +'<div class="vs-meta">'+meta+'</div>'
    +(ex.length?'<div class="vs-exr">⛔ 제외 사유: '+ex.join(' · ')+'</div>':'')
@@ -4163,7 +4176,7 @@ function cardHtml(it){
      +(st==='check'?'<button class="vs-b vs-b-p" onclick="vsToWatch('+it.id+')">👀 관심종목으로</button><button class="vs-b" onclick="vsPass('+it.id+')">패스</button>'
                    :'<button class="vs-b" onclick="vsReopen('+it.id+')">다시 점검</button>')
      +'<button class="vs-b" onclick="vsAskClaude('+it.id+')">🤖 6·7번 확인</button>'
-     +'<a class="vs-b" href="https://finance.naver.com/item/main.naver?code='+esc(it.code)+'" target="_blank">차트</a>'
+     +'<a class="vs-b" href="'+stUrl(it.code,1)+'" target="_blank" rel="noopener">차트</a>'
      +'<a class="vs-b" href="https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm='+encodeURIComponent(it.name)+'" target="_blank">공시</a>'
      +'<button class="vs-b vs-b-x" onclick="vsDel('+it.id+')">삭제</button>'
    +'</div></div>';
@@ -4353,7 +4366,7 @@ function renderToday(){
     const room=r.stoploss&&r.current?(r.current-r.stoploss)/r.current*100:null;
     const span=r.entry&&r.stoploss?Math.max((r.entry-r.stoploss)/r.entry*100,1):8;
     const w=room==null?0:Math.max(0,Math.min(100,room/(span*2)*100));
-    return '<li><div class="l1"><span class="nm">'+nm(r)+(room!=null&&room<0?'<span class="rd-pill">손절 이탈</span>':'')+'</span>'
+    return '<li><div class="l1"><span class="nm">'+(typeof stLink==='function'?stLink(codeOf(r.stock),nm(r)):nm(r))+(room!=null&&room<0?'<span class="rd-pill">손절 이탈</span>':'')+'</span>'
       +'<span class="pc num '+(p==null?'':p>=0?'up':'down')+'">'+(p==null?'—':(p>=0?'+':'')+p.toFixed(1)+'%')+'</span></div>'
       +'<div class="l2 num"><span>현재 '+(r.current?fmt(r.current):'—')+' · 진입 '+(r.entry?fmt(r.entry):'—')+'</span><span>'+(room==null?'손절선 미입력':'손절까지 '+room.toFixed(1)+'%')+'</span></div>'
       +(room==null?'':'<div class="rd-bar'+(room<2?' risk':'')+'"><i style="width:'+w+'%"></i></div>')+'</li>';}).join('')
