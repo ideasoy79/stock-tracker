@@ -36,6 +36,7 @@ BT_DAYS = int(os.environ.get("BT_DAYS", 760))       # 약 3년
 COST = float(os.environ.get("BT_COST", 0.35))        # 왕복 비용 %
 RATIO_MIN = float(os.environ.get("RATIO_MIN", 3.0))
 AMOUNT_MIN = float(os.environ.get("AMOUNT_MIN", 5e9))
+CUTOFF = (datetime.now() - __import__("datetime").timedelta(days=int(BT_DAYS * 1.45))).strftime("%Y-%m-%d")
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest.json")
 
 # ── 비교할 신호 필터 (점검표 1~4번 조합) ──
@@ -76,14 +77,14 @@ def features(rows, i):
             "short_upper": upper <= 0.3}
 
 
-def simulate(rows, i, rule):
+def simulate(rows, i, rule, stopref=None):
     """신호일 i → 다음날 시가 진입. (수익률%, 보유일, 청산사유) 또는 None"""
     if i + rule["hold"] > len(rows) - 1:   # 보유기간이 아직 안 끝난 최근 신호는 제외 (부분 결과로 왜곡 방지)
         return None
     entry = rows[i + 1]["o"]
     if entry <= 0:
         return None
-    stop = rows[i]["l"] if rule["stop"] == "siglow" else entry * (1 + rule["stop"] / 100)
+    stop = (stopref or rows[i]["l"]) if rule["stop"] == "siglow" else entry * (1 + rule["stop"] / 100)
     if stop >= entry:                      # 시가가 이미 신호일 저가 아래 → 진입 안 함
         return None
     target = entry * (1 + rule["target"] / 100) if rule["target"] else None
@@ -97,6 +98,51 @@ def simulate(rows, i, rule):
         if target and d["h"] >= target:
             return (target / entry - 1) * 100 - COST, j - i, "목표"
     return (rows[last]["c"] / entry - 1) * 100 - COST, last - i, "기간만료"
+
+
+def vol_ratio(rows, i, win=20):
+    avg = sum(x["v"] for x in rows[i - win:i]) / win
+    return (rows[i]["v"] / avg if avg > 0 else 0), avg
+
+
+def amount(r):
+    return r.get("a") or r["c"] * r["v"]
+
+
+def family_signals(rows):
+    """거래량 급증 '당일 매수' 말고, 다른 진입 방식들. {이름: [(i, stopref), ...]}"""
+    out = {k: [] for k in FAMILIES}
+    n = len(rows)
+    hh250 = None
+    for i in range(250, n - 1):
+        r = rows[i]
+        ratio, avg = vol_ratio(rows, i)
+        amt = amount(r)
+        # ① 신고가 돌파: 250일 최고가를 종가로 넘김 + 거래량 x2 + 50억
+        if amt >= AMOUNT_MIN and ratio >= 2:
+            if r["c"] > max(x["h"] for x in rows[i - 250:i]):
+                out["250일 신고가 돌파 + 거래량 x2"].append((i, r["l"]))
+            elif r["c"] > max(x["h"] for x in rows[i - 20:i]):
+                out["20일 고점 돌파 + 거래량 x2"].append((i, r["l"]))
+        # 급증일(양봉, 0% 이상)을 기준으로 이후 흐름을 보고 진입
+        if ratio >= RATIO_MIN and amt >= AMOUNT_MIN and r["c"] >= r["o"] and r["c"] >= rows[i - 1]["c"]:
+            # ② 급증 후 3일 버팀: 3일 동안 급증일 저가를 안 깨고 종가가 급증일 종가의 97% 이상 → 3일째 종가 확인 후 진입
+            if i + 3 < n - 1:
+                nxt = rows[i + 1:i + 4]
+                if min(x["l"] for x in nxt) >= r["l"] and min(x["c"] for x in nxt) >= r["c"] * 0.97:
+                    out["급증 후 3일 버팀 확인"].append((i + 3, r["l"]))
+            # ③ 눌림목: 2~10일 안에 거래량이 평소보다 줄면서 급증일 종가 -3% 이하로 눌렸지만 급증일 저가는 지킨 첫날
+            for j in range(i + 2, min(i + 11, n - 1)):
+                d = rows[j]
+                if d["l"] < r["l"]:
+                    break
+                if d["c"] <= r["c"] * 0.97 and d["v"] < avg and d["c"] >= d["o"]:
+                    out["급증 후 눌림목(거래량 감소·양봉)"].append((j, r["l"]))
+                    break
+    return out
+
+
+FAMILIES = ["250일 신고가 돌파 + 거래량 x2", "20일 고점 돌파 + 거래량 x2", "급증 후 3일 버팀 확인", "급증 후 눌림목(거래량 감소·양봉)"]
 
 
 def signals(rows):
@@ -165,20 +211,22 @@ def main():
                 rows = vs.kis.daily(s["code"], BT_DAYS)
             except Exception:
                 pass
-        rows = [x for x in rows if min(x["o"], x["h"], x["l"], x["c"]) > 0]   # 0으로 찍힌 봉 제거
+        rows = [x for x in rows if min(x["o"], x["h"], x["l"], x["c"]) > 0 and x["d"] >= CUTOFF]   # 0원 봉·오래된 봉 제거
         return s, rows
 
-    trades = {(fk, ek): [] for fk in FILTERS for ek in EXITS}
+    trades = {(fk, ek): [] for fk in list(FILTERS) + FAMILIES for ek in EXITS}
     base_fwd = []                                          # 기준선: 아무 날 아무 종목 다음날 시가 매수 → 10일 뒤 종가
     fails, done, first_date, last_date = 0, 0, None, None
+    keep = {}                                              # 테마 순환 백테스트용
     with ThreadPoolExecutor(max_workers=vs.WORKERS) as ex:
         futs = [ex.submit(load, s) for s in universe]
         for k, f in enumerate(as_completed(futs), 1):
             s, rows = f.result()
-            if len(rows) < 200:
+            if len(rows) < 260:
                 fails += 1
                 continue
             done += 1
+            keep[s["code"]] = [{"d": x["d"], "c": x["c"], "a": x.get("a") or x["c"] * x["v"]} for x in rows]
             first_date = min(first_date or rows[0]["d"], rows[0]["d"])
             last_date = max(last_date or rows[-1]["d"], rows[-1]["d"])
             for i in range(120, len(rows) - 11, 23):       # 기준선 표본 (약 한 달 간격)
@@ -186,17 +234,20 @@ def main():
                 if e > 0:
                     base_fwd.append((rows[i + 11]["c"] / e - 1) * 100 - COST)
             sigs = signals(rows)
-            for fk, fn in FILTERS.items():
-                picked = [(i, ft) for i, ft in sigs if fn(ft)]
+            groups = {fk: [(i, rows[i]["l"]) for i, ft in sigs if fn(ft)] for fk, fn in FILTERS.items()}
+            groups.update(family_signals(rows))
+            for fk, picked in groups.items():
                 for ek, rule in EXITS.items():
                     busy_until = -1
-                    for i, ft in picked:
+                    for i, sref in picked:
                         if i <= busy_until:
                             continue
-                        res = simulate(rows, i, rule)
+                        res = simulate(rows, i, rule, sref)
                         if not res:
                             continue
                         ret, days, why = res
+                        if abs(ret) > 80:          # 액면분할·데이터 오류로 보이는 값은 제외
+                            continue
                         busy_until = i + days
                         trades[(fk, ek)].append({"code": s["code"], "name": s["name"], "date": rows[i]["d"],
                                                  "ret": round(ret, 2), "days": days, "why": why})
@@ -218,10 +269,21 @@ def main():
                 b = [t["ret"] for t in tr_sorted if t["date"] >= cut]
                 sm["split"] = {"cut": cut, "before": round(st.mean(a), 2) if a else None, "after": round(st.mean(b), 2) if b else None}
             sm["filter"], sm["exit"] = fk, ek
+            sm["family"] = "다른 진입" if fk in FAMILIES else "급증 당일"
             sm["recent"] = sorted(tr, key=lambda x: x["date"])[-8:]
             results.append(sm)
     results.sort(key=lambda x: (x["n"] >= 50, x["avg"]), reverse=True)
 
+    theme_res = None
+    try:
+        import theme_bt
+        import theme_flow
+        theme_res = theme_bt.run(keep, theme_flow.load_themes(), COST)
+        if theme_res:
+            ll = theme_res.get("leadLag") or {}
+            print(f"[테마] {theme_res['themes']}개 테마 · 선후관계 표본외 {ll.get('outSample')}", flush=True)
+    except Exception as e:
+        print(f"[테마] 백테스트 실패: {e}", flush=True)
     base = {"n": len(base_fwd), "avg": round(st.mean(base_fwd), 2) if base_fwd else None,
             "win": round(sum(1 for x in base_fwd if x > 0) / len(base_fwd) * 100, 1) if base_fwd else None}
     out = {
@@ -236,6 +298,7 @@ def main():
                     "같은 날 손절·목표가 모두 닿으면 손절로 처리(보수적)",
                     "과거 성과는 미래 수익을 보장하지 않음"],
         "results": results,
+        "theme": theme_res,
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)

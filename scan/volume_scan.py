@@ -335,6 +335,21 @@ def analyze(stock, rows):
     }
 
 
+def theme_payload(keep):
+    try:
+        import theme_flow
+        th = theme_flow.load_themes()
+        if not th:
+            print("[테마] themes.json 없음 → 테마 흐름 생략", flush=True)
+            return None
+        p = theme_flow.daily_payload(keep, th)
+        print(f"[테마] {p['count'] if p else 0}개 테마 흐름 계산", flush=True)
+        return p
+    except Exception as e:
+        print(f"[테마] 계산 실패: {e}", flush=True)
+        return None
+
+
 def main():
     t0 = time.time()
     init_kis()
@@ -342,6 +357,7 @@ def main():
     print(f"[대상] 보통주 {len(universe)}개", flush=True)
 
     hits, base_dates, fails, srcs = [], {}, 0, {}
+    keep = {}                                   # 테마 흐름 계산용 (종목별 최근 일봉)
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
         futs = {ex.submit(fetch_rows, s["code"]): s for s in universe}
         for k, f in enumerate(as_completed(futs), 1):
@@ -352,6 +368,7 @@ def main():
                 fails += 1
                 continue
             base_dates[rows[-1]["d"]] = base_dates.get(rows[-1]["d"], 0) + 1
+            keep[s["code"]] = [{"d": x["d"], "c": x["c"], "a": x.get("a") or x["c"] * x["v"]} for x in rows]
             res = analyze(s, rows)
             if res:
                 hits.append(res)
@@ -385,6 +402,7 @@ def main():
         "sources": srcs,
         "note": "amountReal=false 이면 거래대금은 종가×거래량 추정치. stat: 51관리 52투자위험 53투자경고 54투자주의 58거래정지 59단기과열.",
         "hits": hits,
+        "themes": theme_payload(keep),
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)
