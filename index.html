@@ -1158,6 +1158,37 @@ a.st-link{color:inherit;text-decoration:none;border-bottom:1px dashed currentCol
 a.st-link::after{content:"↗";font-size:.75em;margin-left:2px;opacity:.55}
 a.st-link:active{opacity:.6}
 .sc-ticker a.st-link{border-bottom:none}
+
+/* 우선 신호 · 테마 태그 */
+.vs-tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.vs-th{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg2,rgba(127,127,127,.12));color:var(--text2)}
+.vs-th.hot{color:var(--up);background:color-mix(in srgb,var(--up) 12%,transparent)}
+.vs-th b{font-weight:700}
+.vs-pr{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+.vs-pr.p0{background:var(--accent,#14a38b);color:#fff}
+.vs-pr.p1{background:color-mix(in srgb,var(--accent,#14a38b) 15%,transparent);color:var(--accent,#14a38b)}
+.vs-topnote{font-size:12.5px;line-height:1.6;color:var(--text2);padding:10px 12px;margin:0 0 10px;border-radius:12px;background:color-mix(in srgb,var(--accent,#14a38b) 8%,transparent)}
+/* 과거 검증 요약 */
+.bt-sum{list-style:none;margin:8px 0 4px;padding:0;display:grid;gap:8px}
+.bt-sum li{font-size:13px;line-height:1.55;color:var(--text2);padding:9px 11px;border-radius:10px;background:var(--bg2,rgba(127,127,127,.08));border-left:3px solid transparent}
+.bt-sum li.pos{border-left-color:var(--accent,#14a38b)}
+.bt-sum li.neg{border-left-color:var(--up)}
+.bt-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent,#14a38b);color:#fff;margin-left:6px;vertical-align:middle}
+.bt-badge.warn{background:var(--up)}
+.bt-det{margin-top:10px}
+.bt-det>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);padding:8px 0;list-style:none}
+.bt-det>summary::before{content:"▸ ";}
+.bt-det[open]>summary::before{content:"▾ ";}
+.bt-guide{font-size:12.5px;line-height:1.7;color:var(--text2);padding:10px 12px;border-radius:10px;background:var(--bg2,rgba(127,127,127,.08));margin-bottom:10px}
+.vs-title .bt-badge{color:#fff;font-size:11px;font-weight:700;margin-left:6px}
+
+/* 눌림 후 재상승 */
+.pb-h{font-size:13px;font-weight:700;color:var(--text);margin:12px 0 6px}
+.pb-row{padding:10px 0;border-top:1px solid var(--border,rgba(127,127,127,.18))}
+.pb-num{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--text2);margin:6px 0 4px}
+.pb-num b{color:var(--text);font-weight:700}
+.pb-num em{font-style:normal;font-weight:700;margin-left:2px}
+.pb-mini{font-size:13px;padding:7px 0;border-top:1px solid var(--border,rgba(127,127,127,.12));line-height:1.6}
 </style>
 </head>
 <body>
@@ -3725,7 +3756,7 @@ const CHECKS=[
 const STAT={'51':'관리종목','52':'투자위험','53':'투자경고','54':'투자주의','58':'거래정지','59':'단기과열'};
 const ICON={ok:'✅',est:'⚠️',unk:'❓',no:'✕'};
 const NEXT={unk:'ok',ok:'est',est:'no',no:'unk'};
-let vsFilter='check', vsBooted=false, vsBusy=false;
+let vsFilter=null, vsBooted=false, vsBusy=false;
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -3846,7 +3877,7 @@ async function enrich(it){ // KIS 연결 시: 신호일 수급 + 종목상태
 function mergeHit(h,source){
   const list=scans();
   const ex=list.find(x=>x.code===h.code&&x.sigDate===h.sigDate);
-  const fields=['amountReal','inv','stat','halt','market','bar','prevClose','chg','ratio','avg20','amountEst','fromLow60','fromHigh120','upperTail','lowerTail','lastDate','lastClose','track'];
+  const fields=['amountReal','inv','stat','halt','market','bar','prevClose','chg','ratio','avg20','amountEst','fromLow60','fromHigh120','upperTail','lowerTail','lastDate','lastClose','track','themes','trend'];
   if(ex){fields.forEach(f=>{if(h[f]!==undefined)ex[f]=h[f];});applyAuto(ex);return false;}
   const it={id:Date.now()+Math.floor(Math.random()*1e6),code:h.code,name:h.name,sigDate:h.sigDate,source:source,status:'check',counter:'',memo:'',addedAt:todayISO(),checks:{},src:{}};
   fields.forEach(f=>{if(h[f]!==undefined)it[f]=h[f];});
@@ -3858,9 +3889,10 @@ function ingestScan(js,source){
   const hits=js.hits.filter(h=>range>=20||(h.daysAgo||0)<=range);
   let added=0;hits.forEach(h=>{if(mergeHit(h,source))added++;});
   // 이미 들고 있는 종목은 범위와 무관하게 최신 추적값으로 갱신
-  js.hits.forEach(h=>{const ex=scans().find(x=>x.code===h.code&&x.sigDate===h.sigDate);if(ex&&h.track){ex.track=h.track;ex.lastClose=h.lastClose;ex.lastDate=h.lastDate;applyAuto(ex);}});
+  js.hits.forEach(h=>{const ex=scans().find(x=>x.code===h.code&&x.sigDate===h.sigDate);if(ex){if(h.themes)ex.themes=h.themes;if(h.trend)ex.trend=h.trend;if(h.track){ex.track=h.track;ex.lastClose=h.lastClose;ex.lastDate=h.lastDate;applyAuto(ex);}}});
   prune();
   if(js.themes)jset('sv4_theme_flow',js.themes);
+  if(js.pullbacks)jset('sv4_pullbacks',Object.assign({date:js.baseDate},js.pullbacks));
   jset(META_KEY,{baseDate:js.baseDate,generatedAt:js.generatedAt,total:js.hits.length,inRange:hits.length,loadedAt:new Date().toISOString(),source});
   saveScans();return {added,total:js.hits.length,inRange:hits.length};
 }
@@ -4115,12 +4147,53 @@ function themeBtHtml(){
    +'<table class="vs-stat bt"><thead><tr><th>전략</th><th>회당</th><th>평균 대비</th><th>이긴 비율</th><th>앞→뒤</th></tr></thead><tbody>'+ss.map(row).join('')+'</tbody></table>'
    +llh+'<div class="vs-note">테마 구성은 현재 기준이라 과거엔 없던 테마가 섞여 결과가 좋게 나올 수 있어요.</div>';
 }
+/* ── 눌림 후 재상승: 급등 → 되돌림 → 다시 출발 ── */
+function pbVerdict(){
+  const pb=btData&&btData.theme&&btData.theme.pullback;if(!pb||!pb.groups)return null;
+  const solid=pb.groups.filter(g=>g.n>=50).sort((a,b)=>b.avg-a.avg);
+  const best=solid[0],all=pb.groups.find(g=>g.group==='재상승 신호 전체'&&g.exit.indexOf('고점')>=0);
+  const ok=best&&best.avg>=0.3&&best.split&&best.split.after>0&&(best.pf||0)>=1.1;
+  return {pb,best,all,ok};
+}
+window.vsPbAsk=function(){
+  const d=jget('sv4_pullbacks',null);if(!d||!d.trigger||!d.trigger.length){toast('오늘 재상승 신호가 없어요');return;}
+  let t='['+d.date+' 기준 · 내 트래커의 "급등 → 되돌림 → 재상승" 신호]\n규칙: 20%+ 급등(거래량 3배) 뒤 오른 폭의 25~65% 되돌림, 거래량 감소 후 첫 양봉+전날 고가 돌파\n\n';
+  d.trigger.slice(0,8).forEach(x=>{t+='- '+x.name+'('+x.code+') 현재 '+Math.round(x.close).toLocaleString()+'원 · 이전 고점 '+x.H.toLocaleString()+'원(+'+x.up+'%) · 되돌림 저점 '+x.stop.toLocaleString()+'원(-'+x.risk+'%) · 급등 +'+x.rise+'% 후 '+x.depth+'% 되돌림 '+x.days+'일째'+(x.themes&&x.themes[0]?' · 테마 '+x.themes[0].t+' 상위 '+x.themes[0].r+'%':'')+'\n';});
+  t+='\n[요청] 쉬운 말로 종목마다 3줄: ① 지금 사도 되나(사도 됨/기다림/사지 않음 + 이유) ② 손절가와 이전 고점 근처에서 어떻게 할지 ③ 최근 3일 뉴스·공시 악재(출처·날짜, 못 찾으면 "확인 못 함"). 내가 준 숫자로만 계산하고 전문용어는 괄호로 풀어줘. 결정은 내가 해.';
+  try{navigator.clipboard.writeText(t);}catch(e){}
+  window.open('https://claude.ai/new?q='+encodeURIComponent(t),'_blank');toast('🤖 신호 데이터를 담아 Claude를 열어요');
+};
+window.vsOpenPb=function(){setTimeout(()=>{const e=$('pb-card');if(e)e.scrollIntoView({behavior:'smooth',block:'start'});},120);};
+function pbHtml(){
+  const d=jget('sv4_pullbacks',null),v=pbVerdict();
+  let h='<div class="card vs-top" id="pb-card"><div class="vs-title">눌림 후 재상승 <span>급등 → 쉬어감 → 다시 출발</span></div>';
+  if(v&&v.best){
+    h+='<ul class="bt-sum">'
+      +(v.pb.baseReach7!=null&&v.all?'<li class="dim">📊 과거 3년: 급등 뒤 되돌림이 나온 '+v.pb.baseN.toLocaleString()+'번 중 <b>7일 안에 이전 고점까지 회복한 건 '+v.pb.baseReach7+'%</b>. 재상승 신호가 나온 뒤엔 '+v.all.reach7+'%.</li>':'')
+      +'<li class="'+(v.ok?'pos':'dim')+'">🎯 가장 나은 방식: <b>'+esc(v.best.group)+' · '+esc(v.best.exit)+'</b> — 회당 '+pct(v.best.avg,2)+', 승률 '+v.best.win+'%, '+v.best.n+'회, 최근 기간 '+pct(v.best.split&&v.best.split.after,2)+' → '+(v.ok?'<b>쓸 만해요.</b> 소액으로 실전 기록부터':'아직 확실한 우위는 없어요. <b>관찰용</b>으로만')+'</li></ul>';
+  }else h+='<div class="vs-note" style="margin:4px 0 8px">이 패턴이 실제로 몇 %나 다시 오르는지는 다음 <b>backtest</b> 실행 때 계산돼요. 그전까진 관찰용이에요.</div>';
+  if(!d){return h+'<div class="vs-stat-empty">다음 자동 스캔(volume-scan)부터 표시돼요.</div></div>';}
+  const tags=x=>(x.themes||[]).slice(0,2).map(t=>'<span class="vs-th'+(t.r<=10?' hot':'')+'">'+(t.pick?'★ ':'')+esc(t.t)+' <b>상위 '+Math.max(1,t.r)+'%</b></span>').join('');
+  const tr=d.trigger||[],su=d.setup||[];
+  h+='<div class="pb-h">오늘 재상승 신호 <b>'+tr.length+'</b></div>';
+  h+=tr.length?tr.slice(0,10).map(x=>{const rr=x.risk>0?(x.up/x.risk):0;
+      return '<div class="pb-row"><div class="pk-mh">'+stLink(x.code,esc(x.name))+(x.themes&&x.themes[0]&&x.themes[0].r<=10?'<span class="vs-pr p0">💰 강한 테마</span>':'')+'</div>'
+        +'<div class="vs-tags">'+tags(x)+'</div>'
+        +'<div class="pb-num"><span>이전 고점 <b>'+x.H.toLocaleString()+'</b> <em class="pos">+'+x.up+'%</em></span><span>손절 <b>'+x.stop.toLocaleString()+'</b> <em class="neg">-'+x.risk+'%</em></span><span>손익비 <b>'+rr.toFixed(1)+'</b></span></div>'
+        +'<div class="pk-n">급등 +'+x.rise+'% → 오른 폭의 '+x.depth+'% 되돌림 · 고점 후 '+x.days+'일 · 쉬는 동안 거래량 '+x.dry+'%로 감소. '+(rr>=1.5?'고점까지 거리가 손절폭보다 충분히 커요.':'고점까지 남은 폭이 손절폭에 비해 작아 매력이 떨어져요.')+'</div></div>';}).join('')
+     +'<button class="vs-b" style="margin-top:8px" onclick="vsPbAsk()">🤖 이 신호로 Claude에게 묻기</button>'
+    :'<div class="vs-note" style="margin:2px 0 8px">오늘은 없어요.</div>';
+  if(su.length)h+='<details class="bt-det"><summary>되돌림 진행 중 '+su.length+'종목 — 양봉 + 전날 고가 돌파가 나오면 신호</summary>'
+    +su.slice(0,25).map(x=>'<div class="pb-mini">'+stLink(x.code,esc(x.name))+' <span class="dim">'+x.depth+'% 되돌림 · '+x.days+'일째 · 고점까지 +'+x.up+'%</span>'+(x.themes&&x.themes[0]?' <span class="vs-th'+(x.themes[0].r<=10?' hot':'')+'">'+esc(x.themes[0].t)+'</span>':'')+'</div>').join('')+'</details>';
+  h+='<div class="vs-note">규칙: ① 최근 저점에서 +20% 이상 급등(거래량 평소 3배↑) ② 고점 뒤 1~8일, 오른 폭의 25~65% 반납 · 거래량 절반 이하로 줄어듦 ③ 첫 양봉 + 전날 고가 위 마감 = 신호. 다음날 시가 진입 · 되돌림 저점 이탈 시 손절 · 이전 고점이 1차 목표. 고점을 넘어 계속 가는 종목은 종가가 5일선 아래로 내려올 때까지 들고 가는 방식도 함께 검증해요.</div></div>';
+  return h;
+}
 /* ── 과거 검증 (백테스트 결과) ── */
 let btData=null,btTried=false,btAll=false;
 async function loadBacktest(){
   if(btTried)return;btTried=true;
   const u=(cfg().scanUrl||'scan/latest.json').replace(/latest\.json(\?.*)?$/,'backtest.json');
-  try{const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j.kind==='sv4-backtest')btData=j;}}catch(e){}
+  try{const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j.kind==='sv4-backtest'){btData=j;btFlagSave();}}}catch(e){}
   renderScan();
 }
 window.vsBtAll=function(){btAll=!btAll;renderScan();};
@@ -4132,6 +4205,47 @@ function btVerdict(r,base){
   if(edge>=0.5&&r.pf>=1.2&&stable)return {cls:'pos',t:'쓸 만한 후보예요 — 아무 종목이나 산 것보다 거래당 '+edge.toFixed(2)+'%p 낫고, 최근 기간에도 플러스였어요'};
   if(!stable)return {cls:'neg',t:'전체로는 플러스지만 최근 기간 성과가 꺾였어요 — 실전 적용은 보류가 맞아요'};
   return {cls:'dim',t:'플러스지만 기준선 대비 차이가 작아요 — 비용·실수에 쉽게 묻힐 수준이에요'};
+}
+/* 과거 검증: 평소엔 접어두고 핵심 3~4줄만. 새 결과·규칙 약화 때만 알림 */
+const BT_SEEN='sv4_bt_seen',BT_FLAG='sv4_bt_flag';
+let btOpen=false;
+function btSummary(){
+  if(!btData)return null;
+  const th=btData.theme||{},ss=th.strategies||[],L=[];
+  const ad=ss.find(x=>x.strategy==='모멘텀 3테마 + 시장 필터'&&x.hold===10);
+  let alert=false;
+  if(ad){alert=ad.excess<=0||(ad.split&&ad.split.after!=null&&ad.split.after<=0);
+    L.push({c:alert?'neg':'pos',t:'📌 <b>지금 쓰는 규칙</b>(강한 테마 3개 + 시장 필터, 10일 보유): 회당 '+pct(ad.avg,2)+', 아무 테마보다 '+pct(ad.excess,2)+'p'+(ad.split?', 최근 기간 '+pct(ad.split.after,2):'')+' → '+(alert?'<b>약해졌어요. 비중을 줄이고 다음 결과까지 지켜보세요</b>':'유지')});}
+  const solid=(btData.results||[]).filter(r=>r.n>=50),b=btData.baseline||{};
+  if(solid.length){const r=solid[0],good=r.avg>0&&r.avg-(b.avg||0)>=0.5;
+    L.push({c:good?'pos':'dim',t:'🔥 <b>거래량 급증만 보고 사기</b>: 가장 나은 방법도 거래당 '+pct(r.avg,2)+' (아무 종목 '+pct(b.avg,2)+') → '+(good?'쓸 만한 규칙이 생겼어요: '+esc(r.filter):'급증은 사는 신호가 아니라 <b>살펴볼 목록</b>이에요')});}
+  const sv=surgeVerdict();
+  if(sv)L.push({c:sv.ok?'pos':'dim',t:'🎯 <b>급증 + 강한 테마 + 상승 추세</b>(💰 우선 조건): 회당 '+pct(sv.pr.avg,2)+' ('+sv.pr.n+'회, 최근 '+pct(sv.pr.split&&sv.pr.split.after,2)+') → '+(sv.ok?'급증 전체보다 확실히 나아요':'아직 확실한 우위는 없어요')});
+  const pv=pbVerdict();
+  if(pv&&pv.best)L.push({c:pv.ok?'pos':'dim',t:'↩️ <b>눌림 후 재상승</b>: 가장 나은 방식 회당 '+pct(pv.best.avg,2)+' ('+pv.best.n+'회, 최근 '+pct(pv.best.split&&pv.best.split.after,2)+') → '+(pv.ok?'쓸 만해요':'아직 관찰용')});
+  const ll=th.leadLag;
+  if(ll&&ll.outSample){const ok=ll.outSample.avgExcess>0.3&&ll.outSample.n>=30;
+    L.push({c:ok?'pos':'dim',t:'🔄 <b>다음 테마 미리 맞히기</b>: 과거에 찾은 순서가 최근엔 '+pct(ll.outSample.avgExcess,2)+' (적중 '+ll.outSample.hit+'%) → '+(ok?'일부 통했어요(표본 작음 주의)':'안 통해요. 순서 예측 대신 <b>지금 강한 테마를 따라가기</b>')});}
+  return {lines:L,alert,gen:btData.generatedAt||''};
+}
+function btFlagSave(){const sm=btSummary();if(sm)jset(BT_FLAG,{gen:sm.gen,alert:sm.alert});}
+window.vsBtToggle=function(el){btOpen=el.open;if(el.open&&btData){jset(BT_SEEN,btData.generatedAt||'');if(typeof window.renderToday==='function')try{window.renderToday();}catch(e){}}};
+window.vsOpenBt=function(){btOpen=true;renderScan();setTimeout(()=>{const e=$('bt-card');if(e)e.scrollIntoView({behavior:'smooth',block:'start'});if(btData)jset(BT_SEEN,btData.generatedAt||'');},80);};
+function btCardHtml(){
+  const sm=btSummary(),isNew=sm&&jget(BT_SEEN,'')!==sm.gen;
+  const badge=sm&&sm.alert?'<span class="bt-badge warn">⚠️ 점검</span>':isNew?'<span class="bt-badge">새 결과</span>':'';
+  const open=btOpen||(sm&&sm.alert);
+  return '<div class="card vs-top" id="bt-card"><div class="vs-title">과거 검증 요약 '+badge+'<span>월 1회 갱신 · 매일 볼 필요 없어요</span></div>'
+    +(sm?'<div class="vs-metaline">'+esc(btData.period.from)+' ~ '+esc(btData.period.to)+' · '+btData.universe+'종목 · 비용 반영</div><ul class="bt-sum">'+sm.lines.map(x=>'<li class="'+x.c+'">'+x.t+'</li>').join('')+'</ul>':'')
+    +'<details class="bt-det"'+(open?' open':'')+' ontoggle="vsBtToggle(this)"><summary>자세한 표 · 읽는 법</summary>'
+    +'<div class="bt-guide"><b>표 읽는 법</b><br>'
+      +'· <b>회당 / 거래당</b>: 한 번 사고팔 때 평균 수익률 (수수료·세금 0.35% 뺀 값)<br>'
+      +'· <b>평균 대비</b>: 같은 날 아무 테마나 샀을 때보다 얼마나 나았나 — <b>여기가 플러스여야 의미</b>가 있어요<br>'
+      +'· <b>이긴 비율</b>(테마): 평균보다 잘한 횟수 비율 · <b>승률</b>(종목): 수익으로 끝난 거래 비율<br>'
+      +'· <b>앞→뒤</b>: 3년을 앞 2/3와 최근 1/3로 나눈 성과 — <b>뒤 숫자도 플러스</b>여야 지금도 통하는 규칙<br>'
+      +'· <b>PF</b>: 번 돈 ÷ 잃은 돈 (1.2 이상이면 양호)<br>'
+      +'· <b>순환 예측 표</b>: 상관이 높아도 검증기간 숫자가 마이너스면 우연이었다는 뜻</div>'
+    +btHtml()+'</details></div>';
 }
 function btHtml(){
   if(!btData)return '<div class="vs-stat-empty">아직 과거 검증 결과가 없어요. GitHub Actions에서 <b>backtest</b>를 한 번 실행하면 여기에 "이 신호가 과거에 돈이 됐는지"가 표로 나와요.</div>';
@@ -4147,6 +4261,38 @@ function btHtml(){
     +list.map(row).join('')+'</tbody></table>'
     +'<button class="vs-b" style="margin-top:8px" onclick="vsBtAll()">'+(btAll?'상위만 보기':'전체 '+rs.length+'개 규칙 보기')+'</button>'
     +themeBtHtml()+'<div class="vs-note">PF = 총이익 ÷ 총손실 (1.2 이상이면 양호) · 앞→뒤 기간 = 과거 2/3 vs 최근 1/3 평균, 최근에도 플러스여야 믿을 만해요<br>'+(btData.caveats||[]).map(esc).join(' · ')+'</div>';
+}
+/* ── 수익 관점 우선순위: 백테스트에서 유일하게 돈이 된 '강한 테마 따라가기'와 겹치는 신호만 위로 ── */
+function bestTheme(it){return (it.themes&&it.themes.length)?it.themes[0]:null;}
+function prio(it){
+  const bt=bestTheme(it),tr=it.trend,ex=excludeReasons(it).length>0;
+  if(ex||it.status==='pass')return 3;
+  if(bt&&bt.r<=10&&tr&&tr.up&&tr.gap<=15)return 0;      // 우선: 강한 테마 + 상승 추세 + 덜 떠 있음
+  if(bt&&bt.r<=10)return 1;                              // 테마는 강하지만 차트가 아직
+  return 2;
+}
+function prioSort(a,b){
+  const pa=prio(a),pb=prio(b);if(pa!==pb)return pa-pb;
+  const ka=bestTheme(a),kb=bestTheme(b);
+  const pk=(kb&&kb.pick?1:0)-(ka&&ka.pick?1:0);if(pk)return pk;
+  const ra=ka?ka.r:999,rb=kb?kb.r:999;if(ra!==rb)return ra-rb;
+  return (b.sigDate||'').localeCompare(a.sigDate||'')||(b.ratio||0)-(a.ratio||0);
+}
+function themeTagHtml(it){
+  const ts=it.themes||[],tr=it.trend;
+  if(!ts.length&&!tr)return '';
+  const p=prio(it);
+  const lab=p===0?'<span class="vs-pr p0">💰 우선</span>':p===1?'<span class="vs-pr p1">테마 강함 · 차트 대기</span>':'';
+  return '<div class="vs-tags">'+lab
+    +ts.map(x=>'<span class="vs-th'+(x.r<=10?' hot':'')+'">'+(x.pick?'★ ':'')+esc(x.t)+' <b>상위 '+Math.max(1,x.r)+'%</b></span>').join('')
+    +(tr?'<span class="vs-th">20일선 '+(tr.up?'위·상승':'아래/하락')+' '+(tr.gap>0?'+':'')+tr.gap+'%</span>':'')+'</div>';
+}
+function surgeVerdict(){
+  const g=btData&&btData.theme&&btData.theme.surge&&btData.theme.surge.groups;if(!g)return null;
+  const all=g.find(x=>x.group==='급증 전체'),pr=g.find(x=>x.group==='급증 + 상위 10% 테마 + 20일선 위·상승');
+  if(!all||!pr)return null;
+  const ok=pr.avg>0&&pr.avg-all.avg>=0.5&&pr.split&&pr.split.after>0&&pr.n>=50;
+  return {ok,pr,all};
 }
 /* ── 렌더 ── */
 function trackHtml(it){
@@ -4165,7 +4311,7 @@ function cardHtml(it){
   return '<div class="vs-card'+(ex.length&&st==='check'?' vs-ex':'')+'">'
    +'<div class="vs-hd"><div class="vs-name"><b>'+stLink(it.code,esc(it.name))+'</b><span class="vs-code">'+esc(it.code)+'</span>'+badge+'<span class="vs-src">'+srcTag+'</span></div>'
    +'<div class="vs-ratio">'+(it.ratio?'x'+Number(it.ratio).toFixed(1):'')+'</div></div>'
-   +'<div class="vs-meta">'+meta+'</div>'
+   +'<div class="vs-meta">'+meta+'</div>'+themeTagHtml(it)
    +(ex.length?'<div class="vs-exr">⛔ 제외 사유: '+ex.join(' · ')+'</div>':'')
    +'<div class="vs-checks">'+CHECKS.map((c,i)=>{const v=it.checks[c.k]||'unk';
       return '<button class="vs-chk st-'+v+'" title="'+esc(c.h)+'" onclick="vsCycle('+it.id+',\''+c.k+'\')">'+ICON[v]+' '+(i+1)+'. '+c.t+(it.src[c.k]==='me'?'':(c.auto&&v!=='unk'?'<i>자동</i>':''))+'</button>';}).join('')+'</div>'
@@ -4185,10 +4331,16 @@ function renderScan(){
   const root=$('sub-scan');if(!root)return;
   const c=cfg(),meta=jget(META_KEY,null),list=scans();
   const isEx=x=>x.status==='check'&&excludeReasons(x).length>0;
-  const cnt={check:list.filter(x=>x.status==='check'&&!isEx(x)).length,watch:list.filter(x=>x.status==='watch').length,
+  const isTop=x=>x.status==='check'&&prio(x)===0;
+  const cnt={top:list.filter(isTop).length,check:list.filter(x=>x.status==='check'&&!isEx(x)).length,watch:list.filter(x=>x.status==='watch').length,
     pass:list.filter(x=>x.status==='pass').length,ex:list.filter(isEx).length,all:list.length};
-  const shown=list.filter(x=>vsFilter==='all'?true:vsFilter==='ex'?isEx(x):vsFilter==='check'?(x.status==='check'&&!isEx(x)):x.status===vsFilter)
-    .sort((a,b)=>(b.sigDate||'').localeCompare(a.sigDate||'')||score(b).ok-score(a).ok||(b.ratio||0)-(a.ratio||0));
+  const hasTheme=list.some(x=>x.themes);
+  const F=vsFilter||(cnt.top?'top':'check');
+  const shown=list.filter(x=>F==='top'?isTop(x):F==='all'?true:F==='ex'?isEx(x):F==='check'?(x.status==='check'&&!isEx(x)):x.status===F)
+    .sort(hasTheme?prioSort:(a,b)=>(b.sigDate||'').localeCompare(a.sigDate||'')||score(b).ok-score(a).ok||(b.ratio||0)-(a.ratio||0));
+  const sv=surgeVerdict();
+  const topNote=F==='top'?'<div class="vs-topnote"><b>💰 우선</b> = 지금 상위 10% 테마에 속함 + 20일선 위에서 상승 + 20일선과 15% 이내 + 제외 사유 없음. 백테스트에서 돈이 된 건 개별 급증이 아니라 <b>강한 테마를 따라가는 것</b>이라, 그와 겹치는 신호만 추렸어요.'
+    +(sv?'<br>'+(sv.ok?'✅ 과거 검증: 이 조건의 급증은 10일 보유 회당 '+pct(sv.pr.avg,2)+' ('+sv.pr.n+'회) — 급증 전체 '+pct(sv.all.avg,2)+'보다 나았고 최근 기간도 플러스예요.':'⚠️ 과거 검증: 이 조건도 회당 '+pct(sv.pr.avg,2)+' (급증 전체 '+pct(sv.all.avg,2)+') — 아직 확실한 우위는 없어요. 후보 압축용으로만.'):'<br><span class="dim">이 조건의 과거 성과는 다음 backtest 실행 때 계산돼요.</span>')+'</div>':'';
   const setupNeeded=!c.worker;
   root.innerHTML=
    '<div class="card vs-top">'
@@ -4215,16 +4367,17 @@ function renderScan(){
      +'<button class="vs-b vs-b-p" style="margin-top:10px" onclick="vsSaveCfg()">저장</button></div>'
    +'</div>'
    +'<div class="card vs-top"><div class="vs-title">테마 흐름 <span>돈이 어디로 움직이나</span></div>'+themeHtml()+'</div>'
-   +'<div class="card vs-top"><div class="vs-title">과거 검증 <span>이 신호, 예전에 돈이 됐나</span></div>'+btHtml()+'</div>'
+   +pbHtml()+btCardHtml()
    +'<div class="card vs-top"><div class="vs-title">신호 성적표 <span>내 판단이 맞았는지 숫자로</span></div>'+statsHtml()+'</div>'
-   +'<div class="filter-row">'+[['check','점검중'],['watch','관심'],['pass','패스'],['ex','제외'],['all','전체']].map(f=>'<button class="f-btn'+(vsFilter===f[0]?' active':'')+'" onclick="vsFilter(\''+f[0]+'\')">'+f[1]+' '+cnt[f[0]]+'</button>').join('')+'</div>'
-   +(shown.length?shown.map(cardHtml).join(''):'<div class="vs-empty">'+(list.length?'이 필터에는 카드가 없어요':'🔄 자동 스캔을 불러오거나 ＋ 종목 추가로 시작하세요')+'</div>')
+   +'<div class="filter-row">'+(hasTheme?[['top','💰 우선']]:[]).concat([['check','점검중'],['watch','관심'],['pass','패스'],['ex','제외'],['all','전체']]).map(f=>'<button class="f-btn'+(F===f[0]?' active':'')+'" onclick="vsFilter(\''+f[0]+'\')">'+f[1]+' '+cnt[f[0]]+'</button>').join('')+'</div>'
+   +topNote+(shown.length?shown.map(cardHtml).join(''):'<div class="vs-empty">'+(list.length?(F==='top'?'오늘은 우선 조건에 맞는 신호가 없어요 — 쉬어가도 되는 날이에요':'이 필터에는 카드가 없어요'):'🔄 자동 스캔을 불러오거나 ＋ 종목 추가로 시작하세요')+'</div>')
    +'<div class="vs-note" style="margin:14px 2px 0">앱은 매수·매도를 판정하지 않아요. 충족 개수와 근거만 보여주고, 결정은 직접 하세요. 거래대금은 종가×거래량 추정치예요.</div>';
   if(typeof window.renderToday==='function')try{window.renderToday();}catch(e){}
 }
 window.renderScan=renderScan;
-window.vsOpenCount=()=>scans().filter(x=>x.status==='check'&&!excludeReasons(x).length).length;
+window.vsOpenCount=()=>{const l=scans();return l.some(x=>x.themes)?l.filter(x=>x.status==='check'&&prio(x)===0).length:l.filter(x=>x.status==='check'&&!excludeReasons(x).length).length;};
 window.scrCopy=function(id){const el=$(id);if(!el)return;const t=el.textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('📋 복사 완료')).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 복사 완료');});};
+setTimeout(()=>{try{loadBacktest();}catch(e){}},2500);   // 오늘 탭 알림용으로 미리 한 번 확인
 window.vsOnOpen=function(){
   renderScan();loadBacktest();
   if(vsBooted)return;vsBooted=true;
@@ -4352,11 +4505,15 @@ function renderToday(){
   const items=[];
   if(broken.length)items.push({n:broken.length,t:'손절선 이탈',s:broken.map(nm).join(', '),u:1,go:"switchTab('stocks');setFilter('active')"});
   if(near.length)items.push({n:near.length,t:'손절선 2% 이내',s:near.map(nm).join(', '),u:1,go:"switchTab('stocks');setFilter('active')"});
-  items.push({n:sig,t:'점검할 급증 신호',s:'1~5번 자동 판정 · 수급·공시만 확인',go:"switchTab('signal')"});
+  items.push({n:sig,t:'우선 점검 신호',s:'강한 테마 + 상승 추세와 겹친 급증만',go:"switchTab('signal')"});
   items.push({n:unrev.length,t:'복기 대기',s:unrev.length?unrev.slice(0,3).map(nm).join(', ')+' — 30초 복기':'청산한 거래가 생기면 여기에',go:unrev.length?'openReview('+unrev[0].id+')':"switchTab('review')"});
   let tfw=null;try{tfw=JSON.parse(localStorage.getItem('sv4_theme_flow')||'null');}catch(e){}
   const pkt=tfw&&tfw.picks&&tfw.picks.today||[];
   if(pkt.length){const op=(tfw.picks.open||[])[0];items.push({n:pkt.length,t:'모멘텀 3테마 후보',s:pkt.map(x=>esc(x.theme)).join(' · ')+(op&&op.days>0?' — 진행 '+op.days+'/10일 '+(op.ret>=0?'+':'')+op.ret+'%':''),go:"switchTab('signal')"});}
+  let pbd=null;try{pbd=JSON.parse(localStorage.getItem('sv4_pullbacks')||'null');}catch(e){}
+  if(pbd&&pbd.trigger&&pbd.trigger.length)items.push({n:pbd.trigger.length,t:'눌림 후 재상승 신호',s:pbd.trigger.slice(0,3).map(x=>esc(x.name)).join(', ')+' — 손절·고점 가격 확인',go:"switchTab('signal');vsOpenPb()"});
+  let btf=null,bts='';try{btf=JSON.parse(localStorage.getItem('sv4_bt_flag')||'null');bts=JSON.parse(localStorage.getItem('sv4_bt_seen')||'""');}catch(e){}
+  if(btf&&(btf.alert||btf.gen!==bts))items.push({n:1,u:btf.alert?1:0,t:btf.alert?'지금 쓰는 규칙 점검':'과거 검증 새 결과',s:btf.alert?'최근 성과가 약해졌어요 — 요약 확인':'월간 검증이 갱신됐어요 — 요약 4줄',go:"switchTab('signal');vsOpenBt()"});
   items.push({n:arrived,t:'신호 결과 도착',s:'D+5·D+10 결과를 내 판단과 비교',go:"switchTab('signal');vsFilter('all')"});
   const total=items.reduce((a,x)=>a+x.n,0);
   const todo=total?items.map(x=>'<li><button class="'+(x.u?'urgent ':'')+(x.n?'':'zero')+'" onclick="'+x.go+'"><span class="n num">'+x.n+'</span><span class="t"><b>'+x.t+'</b><span>'+x.s+'</span></span><span class="chev" aria-hidden="true">›</span></button></li>').join('')
