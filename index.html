@@ -949,6 +949,10 @@ body {
 .bt-verdict.pos{color:var(--green)}.bt-verdict.neg{color:var(--red)}.bt-verdict.dim{color:var(--text2)}
 .vs-stat.bt td:first-child{font-size:11.5px;line-height:1.4}.vs-stat.bt .dim{color:var(--text3);font-weight:400}
 .vs-stat tr.base td{color:var(--text3)}
+.th-grp{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:6px 0}.th-gt{font-size:11px;font-weight:700;color:var(--text3);min-width:52px}.th-gt.up{color:var(--up)}.th-gt.down{color:var(--down)}.th-gt.warn{color:var(--yellow)}
+.th-chip{font-size:12px;background:var(--input-bg);border-radius:8px;padding:4px 8px;color:var(--text2)}.th-chip .pos{color:var(--up)}.th-chip .neg{color:var(--down)}
+.th-tbl td:first-child{font-size:12px}.th-ph{font-size:10px;font-weight:700;margin-left:5px;padding:1px 5px;border-radius:5px;background:var(--green-light);color:var(--green)}.th-ph.up{background:var(--up-bg);color:var(--up)}.th-ph.down{background:var(--down-bg);color:var(--down)}.th-ph.warn{background:var(--yellow-light);color:var(--yellow)}
+.th-bar{height:4px;border-radius:2px;background:var(--input-bg);margin-top:4px;overflow:hidden}.th-bar i{display:block;height:100%;border-radius:2px}.th-bar i.p{background:var(--up)}.th-bar i.n{background:var(--down)}
 .scr-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
 .scr-card h4{font-size:14px;color:var(--text);margin-bottom:8px}
 .scr-card p,.scr-card li{font-size:12.5px;color:var(--text2);line-height:1.75}
@@ -1118,6 +1122,22 @@ body{font-size:15px;letter-spacing:-0.01em;padding-bottom:calc(var(--nav-h) + en
 .rd-seg button{height:36px;border:0;border-radius:8px;background:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)}
 .rd-seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 @media (prefers-reduced-motion:reduce){.rd-sheet .pn{animation:none}}
+
+/* ── 시작 화면(다짐)·로그인 화면 ── */
+.fullscreen-screen,.login-screen{background:var(--bg)}
+.vision-card{background:var(--card);border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:24px}
+.vision-logo{background:var(--purple);border:0;box-shadow:none;border-radius:22px}
+.vision-title{background:none;-webkit-text-fill-color:currentColor;color:var(--text);letter-spacing:-0.03em}
+.vision-sub{color:var(--text2)}
+.vision-sub b{color:var(--green)}
+.vision-hint{color:var(--text3)}
+.login-card{border:0;box-shadow:none;border-radius:24px}
+.login-btn{background:var(--purple);box-shadow:none}
+.login-btn:hover{transform:none}
+.login-input:focus{background:var(--card)}
+.ob-card,.onboarding-card{background:var(--card)!important;border:0!important;box-shadow:none!important}
+.ob-title{background:none!important;-webkit-text-fill-color:currentColor!important;color:var(--text)!important}.onboarding{background:var(--bg)!important}
+.rd-nav .bd[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -3696,6 +3716,7 @@ window.vsScans=scans;
 
 /* ── 지표 계산 (스캐너와 같은 규칙) ── */
 function metricsFromRows(rows,sigDate){
+  rows=(rows||[]).filter(x=>x.o>0&&x.h>0&&x.l>0&&x.c>0);
   const n=rows.length;if(n<22)return null;
   let i=-1;
   if(sigDate){i=rows.findIndex(r=>r.d===sigDate);}
@@ -3804,6 +3825,7 @@ function ingestScan(js,source){
   // 이미 들고 있는 종목은 범위와 무관하게 최신 추적값으로 갱신
   js.hits.forEach(h=>{const ex=scans().find(x=>x.code===h.code&&x.sigDate===h.sigDate);if(ex&&h.track){ex.track=h.track;ex.lastClose=h.lastClose;ex.lastDate=h.lastDate;applyAuto(ex);}});
   prune();
+  if(js.themes)jset('sv4_theme_flow',js.themes);
   jset(META_KEY,{baseDate:js.baseDate,generatedAt:js.generatedAt,total:js.hits.length,inRange:hits.length,loadedAt:new Date().toISOString(),source});
   saveScans();return {added,total:js.hits.length,inRange:hits.length};
 }
@@ -3877,17 +3899,17 @@ function logDecision(it,action,reason){
 }
 window.vsToWatch=function(id){
   const it=find(id);if(!it)return;
-  if(!(it.counter||'').trim()){toast('반대 의견을 먼저 한 줄 적어주세요');const el=$('vs-ct-'+id);if(el)el.focus();return;}
+  if(!(it.counter||'').trim()){toast('실패 가정을 먼저 한 줄 적어주세요');const el=$('vs-ct-'+id);if(el)el.focus();return;}
   const stock=it.name+' '+it.code,d=todayISO(),sum=summaryLine(it);
   const ongoing=['watch','analyze','buy','hold'];
   let rec=records.find(r=>ongoing.includes(r.status)&&((r.stock.match(/[0-9A-Z]{6}/)||[])[0]===it.code));
   if(rec){rec.phase_logs=rec.phase_logs||[];rec.phase_logs.push({date:d,status:rec.status,note:'거래량 급증 재포착 x'+(it.ratio||'?')});
     if(!(rec.tags||[]).includes('거래량급증'))rec.tags=[...(rec.tags||[]),'거래량급증'];}
   else{rec={id:Date.now(),date:d,stock,status:'watch',entry:0,qty:0,current:it.lastClose||0,amount:0,stoploss:it.bar?it.bar.l:0,target:0,exit:0,pnl:0,pct:null,exitPct:null,
-    issue:sum,memo:'반대 의견: '+it.counter+(it.memo?' / '+it.memo:''),claude:'',tags:['거래량급증'],chartUrl:'https://finance.naver.com/item/main.naver?code='+it.code,
+    issue:sum,premortem:it.counter,premortemAt:d,memo:'실패 가정: '+it.counter+(it.memo?' / '+it.memo:''),claude:'',tags:['거래량급증'],chartUrl:'https://finance.naver.com/item/main.naver?code='+it.code,
     phase_logs:[{date:d,status:'watch',note:'거래량 급증 점검 → 관심 등록'}]};records.unshift(rec);}
   it.status='watch';it.recordId=rec.id;it.decidedAt=d;
-  logDecision(it,'watch','거래량 급증 점검 후 관심 등록 · 충족 '+score(it).ok+'/7 · 반대의견: '+it.counter);
+  logDecision(it,'watch','거래량 급증 점검 후 관심 등록 · 충족 '+score(it).ok+'/7 · 실패 가정: '+it.counter);
   persist();saveScans();renderAll();renderScan();
   toast('👀 관심종목으로 등록 (손절 기준: 신호일 저가 '+(it.bar?Math.round(it.bar.l).toLocaleString():'—')+')');
 };
@@ -3954,6 +3976,44 @@ function statsHtml(){
 }
 
 
+
+/* ── 테마 흐름 (매일 스캔 결과) ── */
+let thAll=false;
+window.vsThAll=function(){thAll=!thAll;renderScan();};
+function themeHtml(){
+  const tf=jget('sv4_theme_flow',null);
+  if(!tf||!tf.leaders)return '<div class="vs-stat-empty">자동 스캔에 테마 흐름이 아직 없어요. 저장소에 <b>scan/themes.py</b>를 올리면 다음 스캔부터 테마별 돈의 흐름이 표시돼요.</div>';
+  const chip=x=>'<span class="th-chip">'+esc(x.theme)+' <b class="'+(x.ret5>=0?'pos':'neg')+'">'+pct(x.ret5)+'</b></span>';
+  const grp=(t,arr,cls)=>arr&&arr.length?'<div class="th-grp"><div class="th-gt '+cls+'">'+t+'</div>'+arr.slice(0,6).map(chip).join('')+'</div>':'';
+  const lead=tf.leaders.slice(0,thAll?40:10);
+  const mx=Math.max(...lead.map(x=>Math.abs(x.ret20)),1);
+  return '<div class="vs-metaline">'+esc(tf.date)+' 기준 · '+tf.count+'개 테마 · 20일 수익률 순</div>'
+   +grp('주도',tf.leaders.filter(x=>x.phase==='주도'),'')+grp('떠오름',tf.rising,'up')+grp('식는 중',tf.cooling,'down')+grp('과열 주의',tf.hot,'warn')
+   +'<table class="vs-stat th-tbl"><thead><tr><th>테마</th><th>20일</th><th>5일</th><th>상승비율</th><th>거래대금</th></tr></thead><tbody>'
+   +lead.map(x=>'<tr><td><b>'+esc(x.theme)+'</b>'+(x.phase?'<span class="th-ph '+({'주도':'','떠오름':'up','식는 중':'down','과열 주의':'warn'}[x.phase]||'')+'">'+x.phase+'</span>':'')
+     +'<div class="th-bar"><i class="'+(x.ret20>=0?'p':'n')+'" style="width:'+Math.round(Math.abs(x.ret20)/mx*100)+'%"></i></div></td>'
+     +'<td class="'+(x.ret20>=0?'pos':'neg')+'">'+pct(x.ret20)+'</td><td class="'+(x.ret5>=0?'pos':'neg')+'">'+pct(x.ret5)+'</td><td>'+x.breadth5+'%</td><td>'+x.money.toFixed(1)+'배</td></tr>').join('')
+   +'</tbody></table><button class="vs-b" style="margin-top:8px" onclick="vsThAll()">'+(thAll?'상위 10개만':'상위 40개 보기')+'</button>'
+   +'<div class="vs-note">거래대금 = 최근 5일 ÷ 평소(60일) · 상승비율 = 5일간 오른 소속 종목 비율 · 국면은 규칙으로 계산한 설명일 뿐 예측이 아니에요. 과거 검증의 테마 전략 결과와 함께 보세요.</div>';
+}
+function themeBtHtml(){
+  const th=btData&&btData.theme;if(!th)return '';
+  const ss=(th.strategies||[]).filter(x=>x.hold===5).concat((th.strategies||[]).filter(x=>x.hold===10&&x.strategy.indexOf('기준선')<0));
+  const row=x=>'<tr'+(x.strategy.indexOf('기준선')===0?' class="base"':'')+'><td><b>'+esc(x.strategy)+'</b><br><span class="dim">'+x.hold+'일 보유 · '+x.n+'회</span></td><td class="'+(x.avg>=0?'pos':'neg')+'">'+pct(x.avg,2)+'</td><td class="'+(x.excess>=0?'pos':'neg')+'">'+pct(x.excess,2)+'</td><td>'+x.beat+'%</td><td>'+(x.split?pct(x.split.before,2)+' → <span class="'+(x.split.after>=0?'pos':'neg')+'">'+pct(x.split.after,2)+'</span>':'—')+'</td></tr>';
+  const ll=th.leadLag;
+  let llh='';
+  if(ll&&ll.outSample){const o=ll.outSample,i=ll.inSample;
+    const ok=o.avgExcess!=null&&o.avgExcess>0.3&&o.n>=30;
+    llh='<div class="vs-title" style="margin-top:14px;font-size:14px">순환 예측 검증 <span>"A가 강한 다음 주엔 B가 오른다"</span></div>'
+     +'<div class="bt-verdict '+(ok?'pos':'neg')+'">'+(ok?'선후 관계가 최근 기간에도 일부 유지됐어요 — 다만 표본이 작으면 우연일 수 있어요':'과거에서 찾은 순환 패턴이 최근 기간엔 거의 맞지 않았어요 — 순환 순서를 미리 맞히는 건 어렵다는 뜻이에요')+'</div>'
+     +'<div class="vs-metaline">찾은 기간(~'+esc(ll.cut)+') 다음 주 초과수익 '+pct(i.avgExcess,2)+' ('+i.n+'회) → 검증 기간 '+pct(o.avgExcess,2)+' ('+o.n+'회, 적중 '+o.hit+'%)</div>'
+     +'<table class="vs-stat th-tbl"><thead><tr><th>먼저 → 뒤따름</th><th>상관</th><th>검증기간</th></tr></thead><tbody>'
+     +ll.pairs.slice(0,8).map(p=>'<tr><td>'+esc(p.lead)+' → <b>'+esc(p.follow)+'</b></td><td>'+p.corr+'</td><td class="'+((p.oosAvg||0)>=0?'pos':'neg')+'">'+(p.oosAvg==null?'—':pct(p.oosAvg,2)+' ('+p.oosN+')')+'</td></tr>').join('')+'</tbody></table>';
+  }
+  return '<div class="vs-title" style="margin-top:16px;font-size:14px">테마 전략 <span>매주 3개 테마 바스켓 · 비용 반영</span></div>'
+   +'<table class="vs-stat bt"><thead><tr><th>전략</th><th>회당</th><th>평균 대비</th><th>이긴 비율</th><th>앞→뒤</th></tr></thead><tbody>'+ss.map(row).join('')+'</tbody></table>'
+   +llh+'<div class="vs-note">테마 구성은 현재 기준이라 과거엔 없던 테마가 섞여 결과가 좋게 나올 수 있어요.</div>';
+}
 /* ── 과거 검증 (백테스트 결과) ── */
 let btData=null,btTried=false,btAll=false;
 async function loadBacktest(){
@@ -3985,7 +4045,7 @@ function btHtml(){
     +'<tr class="base"><td>기준선 <span class="dim">아무 종목 10일 보유</span></td><td>'+(b.n||'—')+'</td><td>'+(b.win??'—')+'%</td><td>'+pct(b.avg,2)+'</td><td>—</td><td>—</td></tr>'
     +list.map(row).join('')+'</tbody></table>'
     +'<button class="vs-b" style="margin-top:8px" onclick="vsBtAll()">'+(btAll?'상위만 보기':'전체 '+rs.length+'개 규칙 보기')+'</button>'
-    +'<div class="vs-note">PF = 총이익 ÷ 총손실 (1.2 이상이면 양호) · 앞→뒤 기간 = 과거 2/3 vs 최근 1/3 평균, 최근에도 플러스여야 믿을 만해요<br>'+(btData.caveats||[]).map(esc).join(' · ')+'</div>';
+    +themeBtHtml()+'<div class="vs-note">PF = 총이익 ÷ 총손실 (1.2 이상이면 양호) · 앞→뒤 기간 = 과거 2/3 vs 최근 1/3 평균, 최근에도 플러스여야 믿을 만해요<br>'+(btData.caveats||[]).map(esc).join(' · ')+'</div>';
 }
 /* ── 렌더 ── */
 function trackHtml(it){
@@ -4009,7 +4069,7 @@ function cardHtml(it){
    +'<div class="vs-checks">'+CHECKS.map((c,i)=>{const v=it.checks[c.k]||'unk';
       return '<button class="vs-chk st-'+v+'" title="'+esc(c.h)+'" onclick="vsCycle('+it.id+',\''+c.k+'\')">'+ICON[v]+' '+(i+1)+'. '+c.t+(it.src[c.k]==='me'?'':(c.auto&&v!=='unk'?'<i>자동</i>':''))+'</button>';}).join('')+'</div>'
    +'<div class="vs-score">충족 <b>'+s.ok+'</b>/7'+(s.unk?' · 미확인 '+s.unk:'')+' <span class="dim">— 항목을 누르면 ✅→⚠️→❓→✕ 순으로 바뀌어요</span></div>'
-   +'<input id="vs-ct-'+it.id+'" class="m-input vs-counter" maxlength="100" placeholder="반대 의견: 털기·함정일 수 있는 이유 한 줄 (관심 등록 전 필수)" value="'+esc(it.counter)+'" onchange="vsSet('+it.id+',\'counter\',this.value)">'
+   +'<input id="vs-ct-'+it.id+'" class="m-input vs-counter" maxlength="100" placeholder="실패 가정: 3주 뒤 -10%라면 이유는? (관심 등록 전 필수)" value="'+esc(it.counter)+'" onchange="vsSet('+it.id+',\'counter\',this.value)">'
    +'<div class="vs-track">'+trackHtml(it)+'</div>'
    +'<div class="vs-actions">'
      +(st==='check'?'<button class="vs-b vs-b-p" onclick="vsToWatch('+it.id+')">👀 관심종목으로</button><button class="vs-b" onclick="vsPass('+it.id+')">패스</button>'
@@ -4053,6 +4113,7 @@ function renderScan(){
      +'<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;color:var(--text2)"><input type="checkbox" id="vs-cfg-auto"'+(c.autoLoad?' checked':'')+'> 이 화면을 열 때 자동으로 불러오기·가격 추적</label>'
      +'<button class="vs-b vs-b-p" style="margin-top:10px" onclick="vsSaveCfg()">저장</button></div>'
    +'</div>'
+   +'<div class="card vs-top"><div class="vs-title">테마 흐름 <span>돈이 어디로 움직이나</span></div>'+themeHtml()+'</div>'
    +'<div class="card vs-top"><div class="vs-title">과거 검증 <span>이 신호, 예전에 돈이 됐나</span></div>'+btHtml()+'</div>'
    +'<div class="card vs-top"><div class="vs-title">신호 성적표 <span>내 판단이 맞았는지 숫자로</span></div>'+statsHtml()+'</div>'
    +'<div class="filter-row">'+[['check','점검중'],['watch','관심'],['pass','패스'],['ex','제외'],['all','전체']].map(f=>'<button class="f-btn'+(vsFilter===f[0]?' active':'')+'" onclick="vsFilter(\''+f[0]+'\')">'+f[1]+' '+cnt[f[0]]+'</button>').join('')+'</div>'
@@ -4245,6 +4306,97 @@ if(typeof _sa==='function'){
   window.showApp=showApp;
 }
 if(document.getElementById('app-body')&&document.getElementById('app-body').style.display==='block'){build();renderToday();}
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════
+   사전 부검(실패 가정) — 사기 전에 "3주 뒤 -10%라면 이유는?" 한 줄
+   → 청산 후 30초 복기에서 "그 이유가 맞았나"를 체크 → 복기 탭에 적중률
+   ══════════════════════════════════════════════════════ */
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STASH={};
+const PM_Q='사기 전 실패 가정\n\n3주 뒤 이 종목이 -10%가 됐다면, 가장 그럴듯한 이유는?\n(한 줄이면 충분해요 · 비워두면 건너뜀)';
+
+/* 1) 매수 기록 저장 시 실패 가정 받기 */
+if(typeof saveRecord==='function'){
+  const _save=saveRecord;
+  saveRecord=function(){
+    const st=($('m-status')||{}).value, stock=(($('m-stock')||{}).value||'').trim(), date=($('m-date')||{}).value;
+    const prev=(typeof editId!=='undefined'&&editId)?records.find(r=>r.id===editId):null;
+    let pm=null;
+    if((st==='buy'||st==='hold')&&stock&&date&&!(prev&&prev.premortem)){
+      pm=prompt(PM_Q,'');
+      if(pm!==null)pm=pm.trim().slice(0,100);
+    }
+    const before=records.length,id=prev?prev.id:null;
+    // 기존 저장 함수는 기록을 새로 만들면서 모르는 필드를 버리므로, 실패 가정을 잠시 보관했다가 되살린다
+    if(prev&&prev.premortem)STASH[prev.id]={premortem:prev.premortem,premortemAt:prev.premortemAt};
+    _save.apply(this,arguments);
+    const rec=id?records.find(r=>r.id===id):(records.length>before?records[0]:null);
+    if(rec){
+      const keep=STASH[rec.id];
+      if(keep&&!rec.premortem){rec.premortem=keep.premortem;rec.premortemAt=keep.premortemAt;persist();}
+      else if(pm&&!rec.premortem){rec.premortem=pm;rec.premortemAt=date;persist();}
+    }
+  };
+  window.saveRecord=saveRecord;
+}
+
+/* 2) 30초 복기에 "실패 가정이 맞았나" 질문 추가 */
+const PM_HIT={yes:'그 이유 맞음',partial:'일부 맞음',no:'다른 이유'};
+if(typeof buildReviewForm==='function'){
+  const _b=buildReviewForm;
+  buildReviewForm=function(rec){
+    let h=_b.apply(this,arguments);
+    if(rec&&!rec.premortem&&STASH[rec.id])rec=Object.assign({},rec,STASH[rec.id]);
+    if(!rec||!rec.premortem)return h;
+    const cur=(rec.review||{}).pmHit;
+    const chips='<div class="rv-chips">'+Object.keys(PM_HIT).map(k=>'<button type="button" class="rv-chip'+(cur===k?' on':'')+'" data-g="pm" data-v="'+k+'" onclick="pickReview(this)">'+PM_HIT[k]+'</button>').join('')+'</div>';
+    const blk='<div class="rv-q">④ 사기 전 실패 가정: <b style="color:var(--text)">'+esc(rec.premortem)+'</b></div>'
+      +(rec.status==='loss'?'<div style="font-size:11px;color:var(--text3);margin:-2px 0 4px">손실 이유가 미리 적은 이유와 같았나요?</div>':'<div style="font-size:11px;color:var(--text3);margin:-2px 0 4px">수익이었다면, 그 위험이 실제로 나타났었나요?</div>')+chips;
+    const i=h.indexOf('<div class="modal-btns"');
+    return i>0?h.slice(0,i)+blk+h.slice(i):h+blk;
+  };
+  window.buildReviewForm=buildReviewForm;
+}
+if(typeof saveReview==='function'){
+  const _sr=saveReview;
+  saveReview=function(id){
+    const box=$('rv-box');const el=box&&box.querySelector('.rv-chip.on[data-g="pm"]');const v=el?el.getAttribute('data-v'):null;
+    _sr.apply(this,arguments);
+    if(v){const r=records.find(x=>x.id===id);if(r&&r.review){r.review.pmHit=v;persist();if(typeof renderPremortem==='function')renderPremortem();}}
+  };
+  window.saveReview=saveReview;
+}
+
+/* 3) 복기 탭: 실패 가정 성적 */
+function renderPremortem(){
+  const rv=$('panel-review');if(!rv||typeof records==='undefined')return;
+  let box=$('pm-card');
+  if(!box){box=document.createElement('div');box.id='pm-card';box.className='rd-card';box.style.marginBottom='12px';rv.insertBefore(box,rv.firstChild);}
+  const withPm=records.filter(r=>r.premortem);
+  const open=withPm.filter(r=>['buy','hold','watch','analyze'].includes(r.status));
+  const done=withPm.filter(r=>r.review&&r.review.pmHit);
+  const loss=done.filter(r=>r.status==='loss');
+  const hit=loss.filter(r=>r.review.pmHit!=='no').length;
+  const missed=loss.filter(r=>r.review.pmHit==='no');
+  let h='<div class="rd-h"><h2>실패 가정</h2><span style="font-size:12px;color:var(--text3)">사기 전에 적은 위험 vs 실제</span></div>';
+  if(!withPm.length){h+='<div class="rd-empty">매수 기록을 저장할 때 "3주 뒤 -10%라면 이유는?"을 한 줄 적으면, 청산 후 복기에서 맞았는지 비교해요. 내가 위험을 미리 보는 눈이 있는지 숫자로 보여요.</div>';}
+  else{
+    h+='<div style="display:flex;gap:16px;margin:6px 0 10px;font-size:13px;color:var(--text2)">'
+      +'<div><b style="font-size:20px;color:var(--text)">'+withPm.length+'</b> 작성</div>'
+      +'<div><b style="font-size:20px;color:var(--text)">'+loss.length+'</b> 손실 복기</div>'
+      +'<div><b style="font-size:20px;color:'+(loss.length?(hit/loss.length>=0.5?'var(--green)':'var(--yellow)'):'var(--text)')+'">'+(loss.length?Math.round(hit/loss.length*100)+'%':'—')+'</b> 예상 적중</div></div>';
+    if(missed.length)h+='<div style="font-size:12px;color:var(--text2);line-height:1.7"><b>예상 못 한 손실</b> — 다음엔 이 위험도 체크해 보세요<br>'+missed.slice(0,4).map(r=>'· '+esc(String(r.stock).split(' ')[0])+': 예상 "'+esc(r.premortem)+'"'+(r.review.lesson?' → 실제 "'+esc(r.review.lesson)+'"':'')).join('<br>')+'</div>';
+    if(open.length)h+='<div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.7"><b style="color:var(--text2)">보유·관심 중 지켜볼 위험</b><br>'+open.slice(0,5).map(r=>'· '+esc(String(r.stock).split(' ')[0])+': '+esc(r.premortem)).join('<br>')+'</div>';
+  }
+  box.innerHTML=h;
+}
+window.renderPremortem=renderPremortem;
+const _st=window.switchTab;
+if(typeof _st==='function'){window.switchTab=function(n){_st.apply(this,arguments);if(n==='review')renderPremortem();};switchTab=window.switchTab;}
 })();
 </script>
 </body></html>
