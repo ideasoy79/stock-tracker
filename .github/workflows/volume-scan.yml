@@ -39,10 +39,14 @@ jobs:
 
       - name: 결과 저장(커밋)
         run: |
-          git config user.name  "volume-scan-bot"
+          git config user.name  "tracker-bot"
           git config user.email "actions@users.noreply.github.com"
-          git pull --rebase || true
-          git add scan/latest.json scan/themes.json 2>/dev/null; git add scan/latest.json
+          git add scan/latest.json
+          if [ -f scan/themes.json ]; then git add scan/themes.json; fi
           git diff --cached --quiet && echo "변경 없음" && exit 0
           git commit -m "scan: $(date -u +%F) 거래량 급증 스캔"
-          git push
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            echo "push 재시도 $i"; sleep 5
+          done
+          exit 1
