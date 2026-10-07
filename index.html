@@ -4003,12 +4003,48 @@ function statsHtml(){
 let thAll=false;
 window.vsThAll=function(){thAll=!thAll;renderScan();};
 function stockName(code){const l=(typeof KRX_STOCKS!=='undefined')?KRX_STOCKS:[];const x=l.find(s=>s.code===code);return x?x.name:code;}
-window.vsAskPicks=function(){
+/* 종가·이평선이 비어 있으면 시세 서버에서 직접 계산 (theme_flow.chart_note 와 같은 규칙) */
+function vsNote(m,rows){
+  const cl=rows.map(r=>r.c).filter(v=>v>0);if(cl.length<25)return m;
+  const c=cl[cl.length-1],avg=a=>a.reduce((s,v)=>s+v,0)/a.length;
+  const ma5=avg(cl.slice(-5)),ma20=avg(cl.slice(-20)),ma20p=avg(cl.slice(-25,-5)),gap=(c/ma20-1)*100;
+  const stop=Math.round(Math.min(ma20,c*0.93));let state;
+  if(c<ma20)state='보류';else if(ma20<=ma20p)state='보류';else if(gap>15)state='눌림 대기';else if(c<=ma5*1.01)state='진입 검토';else state='추세 양호';
+  return Object.assign({},m,{close:c,ma5:Math.round(ma5),ma20:Math.round(ma20),gap:+gap.toFixed(1),ret5:+((c/cl[cl.length-6]-1)*100).toFixed(1),state,stop});
+}
+window.vsAskPicks=async function(){
   const tf=jget('sv4_theme_flow',null),pk=tf&&tf.picks;if(!pk||!pk.today||!pk.today.length){toast('오늘 후보가 없어요');return;}
-  let t='['+tf.date+' 기준 · 내 트래커의 규칙 기반 후보]\n규칙: 20일 수익률 상위 3테마 + 시장 필터, 10거래일 보유 (3년 백테스트 회당 +2.1%, 평균 대비 +1.6%p, 최대낙폭 -16%)\n\n';
-  pk.today.forEach(x=>{t+='■ '+x.theme+' (20일 '+pct(x.ret20)+', 5일 '+pct(x.ret5)+')\n';
-    x.top.forEach(m=>{t+='- '+stockName(m.code)+'('+m.code+') 종가 '+(m.close?Math.round(m.close).toLocaleString():'?')+' · 20일 '+pct(m.ret20,1)+' · 5일 '+pct(m.ret5,1)+' · 20일선 대비 '+pct(m.gap,1)+' · 5일선 '+(m.ma5||'?')+' · 20일선 '+(m.ma20||'?')+' · 상태 '+(m.state||'?')+'\n';});});
-  t+='\n요청: 위 데이터만 근거로, 테마별로 1~2종목을 골라 (1) 분할 진입 가격대 (2) 손절가 (3) 10거래일 안의 청산 기준을 표 하나로. 최근 3일 뉴스·공시 중 이 판단을 뒤집을 악재가 있으면 출처·날짜와 함께 한 줄. 추정은 ⚠️, 확인 못 한 건 ❓로 표시하고 결론은 짧게. 최종 결정은 내가 해.';
+  const w=cfg().worker,won=v=>v?Math.round(v).toLocaleString()+'원':'?';
+  const need=pk.today.some(x=>x.top.some(m=>!m.close));
+  if(need&&w)toast('⏳ 시세 서버에서 종가·이평선을 채우는 중…');
+  const themes=[];
+  for(const x of pk.today){
+    const top=[];
+    for(const m of x.top){
+      let mm=m;
+      if(!m.close&&w){try{const js=await (await fetch(w+'/ohlc?code='+m.code+'&count=40')).json();if(js.rows)mm=vsNote(m,js.rows);}catch(e){}}
+      top.push(mm);
+    }
+    themes.push(Object.assign({},x,{top}));
+  }
+  const miss=themes.some(x=>x.top.some(m=>!m.close));
+  if(miss&&!confirm('일부 종목은 종가를 못 가져왔어요.\n(신호 탭 ⚙ 설정에 시세 서버 주소가 있는지 확인)\n\n그래도 Claude에게 물어볼까요?'))return;
+  let t='['+tf.date+' 기준 · 내 주식 트래커가 고른 후보]\n'
+    +'고른 규칙: 최근 20일 가장 많이 오른 테마 3개, 10거래일 들고 있다가 판다. (과거 3년 시험 결과: 한 번에 평균 +2.1%, 최대 손실 구간 -16%)\n'
+    +'종목 상태 뜻: 진입 검토=쉬었다가 다시 오를 자리 / 추세 양호=오르는 중 / 눌림 대기=너무 많이 올라 기다림 / 보류=하락 추세\n\n';
+  themes.forEach(x=>{t+='■ '+x.theme+' 테마 (20일 '+pct(x.ret20)+')\n';
+    x.top.forEach(m=>{t+='- '+stockName(m.code)+'('+m.code+') 현재 '+won(m.close)+' · 상태 '+(m.state||'?')
+      +' · 20일 '+pct(m.ret20,1)+' · 5일 '+pct(m.ret5,1)+' · 20일 평균가 '+won(m.ma20)+'(현재가가 '+pct(m.gap,1)+' 위) · 5일 평균가 '+won(m.ma5)+' · 트래커 손절선 '+won(m.stop)+'\n';});});
+  t+='\n[요청] 주식 용어를 잘 모르는 사람도 바로 따라 할 수 있게, 쉬운 말로 답해줘.\n'
+    +'1) 맨 위에 한 줄: 오늘 3개 테마 중 가장 나은 1개와 그 안의 1종목, 이유 한 문장\n'
+    +'2) 그다음 테마별로 1종목씩, 아래 4줄 형식만:\n'
+    +'   · 지금 사도 되나: 사도 됨 / 기다림 / 사지 않음 — 이유 한 문장\n'
+    +'   · 살 가격: 1차 ○○원에 절반, 2차 ○○원에 나머지\n'
+    +'   · 손절: ○○원 아래로 하루 마감하면 판다\n'
+    +'   · 팔 때: 10거래일째 되는 날 또는 ○○ 상황\n'
+    +'3) 가격은 위 숫자(현재가·5일/20일 평균가·손절선)로만 계산하고, 내가 준 숫자가 "?"면 그 종목은 빼줘.\n'
+    +'4) 최근 3일 뉴스·공시 중 악재가 있으면 출처·날짜와 한 줄. 못 찾았으면 "확인 못 함"이라고만.\n'
+    +'표·영어 약어·전문용어는 쓰지 말고, 꼭 필요하면 괄호로 풀어줘. 결정은 내가 해.';
   try{navigator.clipboard.writeText(t);}catch(e){}
   window.open('https://claude.ai/new?q='+encodeURIComponent(t),'_blank');toast('🤖 후보 데이터를 담아 Claude를 열어요');
 };
