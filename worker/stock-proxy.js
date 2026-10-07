@@ -71,7 +71,7 @@ async function kisDaily(env, ctx, code, count) {
     const out = (js.output2 || []).filter((x) => x && x.stck_bsop_date);
     for (const x of out) {
       const c = +x.stck_clpr;
-      if (!(c > 0)) continue;
+      if (!(c > 0) || !(+x.stck_oprc > 0) || !(+x.stck_lwpr > 0) || !(+x.stck_hgpr > 0)) continue;
       rows.set(x.stck_bsop_date, { d: dash(x.stck_bsop_date), o: +x.stck_oprc, h: +x.stck_hgpr, l: +x.stck_lwpr, c, v: +x.acml_vol, a: +(x.acml_tr_pbmn || 0) });
     }
     if (rows.size >= count || out.length < 100) break;
@@ -92,7 +92,7 @@ async function naverDaily(code, count) {
   const re = /data="(\d{8})\|([\d.]+)\|([\d.]+)\|([\d.]+)\|([\d.]+)\|(\d+)"/g;
   let m;
   while ((m = re.exec(text))) {
-    if (+m[5] > 0) rows.push({ d: dash(m[1]), o: +m[2], h: +m[3], l: +m[4], c: +m[5], v: +m[6] });
+    if (+m[2] > 0 && +m[3] > 0 && +m[4] > 0 && +m[5] > 0) rows.push({ d: dash(m[1]), o: +m[2], h: +m[3], l: +m[4], c: +m[5], v: +m[6] });
   }
   return rows;
 }
