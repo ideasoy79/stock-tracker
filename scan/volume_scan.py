@@ -254,7 +254,10 @@ def init_kis():
 
 
 def fetch_rows(code):
-    """KIS 우선, 실패하면 네이버"""
+    """전 종목 일봉은 네이버 우선(1회 호출로 빠름) → 실패하면 KIS. KIS는 신호 종목의 수급·상태 조회에 집중"""
+    rows = fetch_daily(code)
+    if len(rows) > AVG_WIN + 2:
+        return rows, "naver"
     if kis:
         try:
             rows = kis.daily(code)
@@ -262,7 +265,7 @@ def fetch_rows(code):
                 return rows, "kis"
         except Exception:
             pass
-    return fetch_daily(code), "naver"
+    return rows, "naver"
 
 # ───────────────────────── 신호 계산 ─────────────────────────
 def analyze(stock, rows):
