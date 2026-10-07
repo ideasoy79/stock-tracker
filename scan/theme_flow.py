@@ -122,8 +122,9 @@ def daily_payload(rows_by_code, themes, top=40):
     items = [{"theme": x["theme"], "n": x["n"], "ret5": r(x["ret5"]), "ret20": r(x["ret20"]),
               "breadth5": round(x["breadth5"] * 100), "money": round(x["money"], 2),
               "rank": round(x["rank"] * 100), "rankPrev": round(x["rankPrev"] * 100), "phase": x["phase"]} for x in snap]
-    picks = update_picks(dates, idx, dret, snap)
+    picks = update_picks(dates, idx, dret, snap, rows_by_code)
     return {"date": dates[-1], "count": len(items), "picks": picks,
+            "ranks": {x["theme"]: x["rank"] for x in items},
             "leaders": items[:top],
             "rising": sorted([x for x in items if x["phase"] == "떠오름"], key=lambda x: x["rank"] - x["rankPrev"])[:12],
             "cooling": [x for x in items if x["phase"] == "식는 중"][:12],
@@ -144,8 +145,8 @@ def _mcum(rr, a, b):
     return x - 1
 
 
-def update_picks(dates, idx, dret, snap):
-    """백테스트에서 기준선을 이긴 규칙(20일 상위 3테마·과열 제외·10거래일 보유)을 매일 적용하고,
+def update_picks(dates, idx, dret, snap, rows_by_code=None):
+    """백테스트에서 가장 나은 규칙(20일 상위 3테마 + 시장 필터 · 10거래일 보유)을 매일 적용하고,
     10거래일마다 새로 고른 묶음의 실제 결과를 theme_picks.json 에 쌓는다."""
     try:
         hist = json.load(open(PICKS_FILE, encoding="utf-8"))
@@ -173,14 +174,21 @@ def update_picks(dates, idx, dret, snap):
         h["days"] = min(days, HOLD)
         if days >= HOLD:
             h["status"], h["closedAt"] = "closed", dates[end]
-    # 오늘의 후보 (과열 테마 제외)
-    hot = {x["theme"] for x in snap if x["phase"] == "과열 주의"}
-    cand = sorted([x for x in snap if x["theme"] not in hot], key=lambda x: -x["ret20"])[:3]
+    # 시장 필터: 전체 테마 평균 60일 수익률이 플러스일 때만 산다 (마이너스면 쉬기)
+    mkt60 = base_all(t - 60, t) if t >= 60 else 0
+    rest = mkt60 <= 0
+    # 오늘의 후보: 20일 수익률 상위 3테마. 종목은 '가장 많이 오른 것'이 아니라 거래대금이 큰 순 5개
+    # (백테스트에서 테마별 급등 3종목만 사면 최대 낙폭이 -54%로 커져서, 테마 전체를 고르게 담는 쪽이 낫다)
+    def liq(c):
+        rows = (rows_by_code or {}).get(c) or []
+        return sum(r.get("a", 0) for r in rows[-20:]) / max(len(rows[-20:]), 1)
+    cand = [] if rest else sorted(snap, key=lambda x: -x["ret20"])[:3]
     today = []
     for x in cand:
-        mem = sorted(idx[x["theme"]]["members"], key=lambda c: -_mcum(dret[c], t - 20, t))[:3]
+        mem = sorted(idx[x["theme"]]["members"], key=lambda c: -liq(c))[:5]
         today.append({"theme": x["theme"], "ret20": round(x["ret20"] * 100, 2), "ret5": round(x["ret5"] * 100, 2),
-                      "top": [{"code": c, "ret20": round(_mcum(dret[c], t - 20, t) * 100, 1)} for c in mem]})
+                      "phase": x["phase"], "n": len(idx[x["theme"]]["members"]),
+                      "top": [chart_note(c, rows_by_code, dret, t) for c in mem]})
     # 새 묶음 기록: 열린 기록이 없을 때만 (10거래일마다 교체)
     if today and not any(h.get("status") == "open" for h in hist):
         hist.append({"date": dates[t], "themes": [x["theme"] for x in today],
@@ -194,5 +202,34 @@ def update_picks(dates, idx, dret, snap):
         ex = [h["ret"] - h["base"] for h in closed]
         summary = {"n": len(closed), "avg": round(sum(h["ret"] for h in closed) / len(closed), 2),
                    "excess": round(sum(ex) / len(ex), 2), "beat": round(sum(1 for e in ex if e > 0) / len(ex) * 100)}
-    return {"rule": "20일 수익률 상위 3테마 · 과열 제외 · 10거래일 보유", "today": today,
+    return {"rule": "20일 수익률 상위 3테마 · 시장 필터 · 10거래일 보유", "rest": rest, "mkt60": round(mkt60 * 100, 2), "today": today,
             "open": [h for h in hist if h.get("status") == "open"], "closed": closed[-10:], "summary": summary}
+
+
+def chart_note(code, rows_by_code, dret, t):
+    """종가 기준 간단한 차트 상태와 매수 검토 코멘트 (규칙 기반 · 판단 보조용)"""
+    rows = (rows_by_code or {}).get(code) or []
+    cl = [r["c"] for r in rows]
+    out = {"code": code, "ret20": round(_mcum(dret[code], t - 20, t) * 100, 1)}
+    if len(cl) < 25:
+        return out
+    c = cl[-1]
+    ma5 = sum(cl[-5:]) / 5
+    ma20 = sum(cl[-20:]) / 20
+    ma20p = sum(cl[-25:-5]) / 20
+    gap = (c / ma20 - 1) * 100
+    rising = ma20 > ma20p
+    stop = round(min(ma20, c * 0.93))
+    if c < ma20:
+        state, note = "보류", "20일선 아래로 내려왔어요. 테마가 강해도 이 종목은 추세가 꺾인 상태라 보류."
+    elif not rising:
+        state, note = "보류", "20일선이 아직 내려가는 중이에요. 다시 올라서는지 확인한 뒤에."
+    elif gap > 15:
+        state, note = "눌림 대기", f"20일선보다 {gap:.0f}% 위라 많이 떠 있어요. 추격 대신 5일선({round(ma5):,}원) 근처로 눌릴 때 분할로."
+    elif c <= ma5 * 1.01:
+        state, note = "진입 검토", f"20일선 위 상승 추세에서 5일선 근처까지 쉬었어요. 분할 진입을 검토할 자리 · 손절 {stop:,}원."
+    else:
+        state, note = "추세 양호", f"20일선 위 상승 추세예요. 5일선({round(ma5):,}원)까지 눌릴 때 분할 진입이 유리 · 손절 {stop:,}원."
+    out.update({"close": c, "ma5": round(ma5), "ma20": round(ma20), "gap": round(gap, 1),
+                "ret5": round((c / cl[-6] - 1) * 100, 1), "state": state, "note": note, "stop": stop})
+    return out

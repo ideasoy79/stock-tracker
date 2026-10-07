@@ -226,7 +226,7 @@ def main():
                 fails += 1
                 continue
             done += 1
-            keep[s["code"]] = [{"d": x["d"], "c": x["c"], "a": x.get("a") or x["c"] * x["v"]} for x in rows]
+            keep[s["code"]] = [{"d": x["d"], "o": x["o"], "h": x["h"], "l": x["l"], "c": x["c"], "v": x["v"], "a": x.get("a") or x["c"] * x["v"]} for x in rows]
             first_date = min(first_date or rows[0]["d"], rows[0]["d"])
             last_date = max(last_date or rows[-1]["d"], rows[-1]["d"])
             for i in range(120, len(rows) - 11, 23):       # 기준선 표본 (약 한 달 간격)
@@ -278,7 +278,7 @@ def main():
     try:
         import theme_bt
         import theme_flow
-        theme_res = theme_bt.run(keep, theme_flow.load_themes(), COST)
+        theme_res = theme_bt.run(keep, theme_flow.load_themes(), COST, RATIO_MIN, AMOUNT_MIN)
         if theme_res:
             ll = theme_res.get("leadLag") or {}
             print(f"[테마] {theme_res['themes']}개 테마 · 선후관계 표본외 {ll.get('outSample')}", flush=True)

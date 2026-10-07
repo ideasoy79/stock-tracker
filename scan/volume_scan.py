@@ -27,6 +27,9 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import pullback
+
 RATIO_MIN = float(os.environ.get("RATIO_MIN", 3.0))          # 평균 대비 배수
 AMOUNT_MIN = float(os.environ.get("AMOUNT_MIN", 5e9))         # 거래대금 하한 (원)
 LOOKBACK = int(os.environ.get("LOOKBACK", 20))                # 최근 며칠 안에 발생
@@ -335,7 +338,38 @@ def analyze(stock, rows):
         "lastDate": rows[-1]["d"],
         "lastClose": rows[-1]["c"],
         "track": track,
+        "trend": trend_of(rows),
     }
+
+
+def trend_of(rows):
+    """마지막 날 기준 20일선 추세: up=20일선 위 & 20일선 상승, gap=20일선 대비 %"""
+    cl = [x["c"] for x in rows if x["c"] > 0]
+    if len(cl) < 25:
+        return None
+    ma20 = sum(cl[-20:]) / 20
+    ma20p = sum(cl[-25:-5]) / 20
+    return {"up": cl[-1] > ma20 and ma20 > ma20p, "gap": round((cl[-1] / ma20 - 1) * 100, 1)}
+
+
+def tag_themes(hits, tp):
+    """신호 종목이 속한 테마와 그 테마의 20일 수익률 순위(%, 0=1등)를 붙임"""
+    if not tp or not tp.get("ranks"):
+        return
+    try:
+        import theme_flow
+        th = theme_flow.load_themes()
+    except Exception:
+        return
+    ranks, picks = tp["ranks"], {x["theme"] for x in ((tp.get("picks") or {}).get("today") or [])}
+    by_code = {}
+    for name, codes in th.items():
+        if name in ranks:
+            for c in codes:
+                by_code.setdefault(c, []).append(name)
+    for h in hits:
+        names = sorted(by_code.get(h["code"], []), key=lambda n: ranks[n])[:3]
+        h["themes"] = [{"t": n, "r": ranks[n], "pick": n in picks} for n in names]
 
 
 def theme_payload(keep):
@@ -361,6 +395,7 @@ def main():
 
     hits, base_dates, fails, srcs = [], {}, 0, {}
     keep = {}                                   # 테마 흐름 계산용 (종목별 최근 일봉)
+    pbs = {"trigger": [], "setup": []}          # 급등 → 되돌림 → 재상승
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
         futs = {ex.submit(fetch_rows, s["code"]): s for s in universe}
         for k, f in enumerate(as_completed(futs), 1):
@@ -375,6 +410,18 @@ def main():
             res = analyze(s, rows)
             if res:
                 hits.append(res)
+            try:
+                kind, info = pullback.state(rows)
+            except Exception:
+                kind = None
+            if kind:
+                c = rows[-1]["c"]
+                pbs[kind].append({"code": s["code"], "name": s["name"], "date": rows[-1]["d"], "close": c,
+                                  "H": round(info["H"]), "L": round(info["L"]), "stop": round(info["low"]),
+                                  "rise": round(info["rise"] * 100, 1), "depth": round(info["depth"] * 100),
+                                  "days": info["days"], "dry": round(info["dry"] * 100),
+                                  "up": round((info["H"] / c - 1) * 100, 1), "risk": round((1 - info["low"] / c) * 100, 1),
+                                  "peakDate": rows[info["peak"]]["d"]})
             if k % 300 == 0:
                 print(f"  … {k}/{len(universe)}  (신호 {len(hits)})", flush=True)
 
@@ -394,6 +441,13 @@ def main():
             list(ex.map(enrich, hits))
         print(f"[KIS] 수급·상태 조회 {len(hits)}종목 (오류 {kis.errors})", flush=True)
     hits.sort(key=lambda x: (x["sigDate"], x["ratio"]), reverse=True)
+    tp = theme_payload(keep)
+    tag_themes(hits, tp)
+    for k in pbs:
+        tag_themes(pbs[k], tp)
+        pbs[k].sort(key=lambda x: (x["themes"][0]["r"] if x.get("themes") else 999, -x["up"]))
+    pbs["setup"] = pbs["setup"][:40]
+    print(f"[눌림] 재상승 신호 {len(pbs['trigger'])} · 되돌림 진행 {len(pbs['setup'])}", flush=True)
     out = {
         "kind": "sv4-volume-scan",
         "version": 1,
@@ -405,7 +459,8 @@ def main():
         "sources": srcs,
         "note": "amountReal=false 이면 거래대금은 종가×거래량 추정치. stat: 51관리 52투자위험 53투자경고 54투자주의 58거래정지 59단기과열.",
         "hits": hits,
-        "themes": theme_payload(keep),
+        "themes": tp,
+        "pullbacks": pbs,
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)
