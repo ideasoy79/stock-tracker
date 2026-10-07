@@ -953,6 +953,10 @@ body {
 .th-chip{font-size:12px;background:var(--input-bg);border-radius:8px;padding:4px 8px;color:var(--text2)}.th-chip .pos{color:var(--up)}.th-chip .neg{color:var(--down)}
 .th-tbl td:first-child{font-size:12px}.th-ph{font-size:10px;font-weight:700;margin-left:5px;padding:1px 5px;border-radius:5px;background:var(--green-light);color:var(--green)}.th-ph.up{background:var(--up-bg);color:var(--up)}.th-ph.down{background:var(--down-bg);color:var(--down)}.th-ph.warn{background:var(--yellow-light);color:var(--yellow)}
 .th-bar{height:4px;border-radius:2px;background:var(--input-bg);margin-top:4px;overflow:hidden}.th-bar i{display:block;height:100%;border-radius:2px}.th-bar i.p{background:var(--up)}.th-bar i.n{background:var(--down)}
+.pk-box{background:var(--input-bg);border-radius:12px;padding:12px;margin:4px 0 14px}.pk-h{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}.pk-h b{font-size:14px;color:var(--text)}.pk-h span{font-size:11px;color:var(--text3)}
+.pk-row{padding:8px 0;border-top:1px solid var(--border);font-size:13px;color:var(--text)}.pk-row .pos{color:var(--up)}.pk-row .dim{color:var(--text3);font-size:11px}
+.pk-st{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.pk-st a{font-size:12px;background:var(--card);border-radius:8px;padding:3px 8px;color:var(--text2);text-decoration:none}.pk-st i{font-style:normal}.pk-st .pos{color:var(--up)}.pk-st .neg{color:var(--down)}
+.pk-op{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6}.pk-op .pos{color:var(--up)}.pk-op .neg{color:var(--down)}
 .scr-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
 .scr-card h4{font-size:14px;color:var(--text);margin-bottom:8px}
 .scr-card p,.scr-card li{font-size:12.5px;color:var(--text2);line-height:1.75}
@@ -1586,7 +1590,7 @@ async function kisDaily(env, ctx, code, count) {
     const out = (js.output2 || []).filter((x) =&gt; x &amp;&amp; x.stck_bsop_date);
     for (const x of out) {
       const c = +x.stck_clpr;
-      if (!(c &gt; 0)) continue;
+      if (!(c &gt; 0) || !(+x.stck_oprc &gt; 0) || !(+x.stck_lwpr &gt; 0) || !(+x.stck_hgpr &gt; 0)) continue;
       rows.set(x.stck_bsop_date, { d: dash(x.stck_bsop_date), o: +x.stck_oprc, h: +x.stck_hgpr, l: +x.stck_lwpr, c, v: +x.acml_vol, a: +(x.acml_tr_pbmn || 0) });
     }
     if (rows.size &gt;= count || out.length &lt; 100) break;
@@ -1607,7 +1611,7 @@ async function naverDaily(code, count) {
   const re = /data=&quot;(\d{8})\|([\d.]+)\|([\d.]+)\|([\d.]+)\|([\d.]+)\|(\d+)&quot;/g;
   let m;
   while ((m = re.exec(text))) {
-    if (+m[5] &gt; 0) rows.push({ d: dash(m[1]), o: +m[2], h: +m[3], l: +m[4], c: +m[5], v: +m[6] });
+    if (+m[2] &gt; 0 &amp;&amp; +m[3] &gt; 0 &amp;&amp; +m[4] &gt; 0 &amp;&amp; +m[5] &gt; 0) rows.push({ d: dash(m[1]), o: +m[2], h: +m[3], l: +m[4], c: +m[5], v: +m[6] });
   }
   return rows;
 }
@@ -1719,6 +1723,9 @@ jobs:
       - name: 패키지 설치
         run: pip install requests pandas lxml
 
+      - name: 테마 구성 갱신 (월요일 또는 처음)
+        run: |
+          if [ ! -f scan/themes.json ] || [ &quot;$(date -u +%u)&quot; = &quot;1&quot; ]; then python scan/themes.py || echo &quot;테마 갱신 실패 — 기존 파일 사용&quot;; fi
       - name: 전 종목 스캔
         env:   # 저장소 Settings › Secrets and variables › Actions 에 등록 (없으면 네이버 시세로 자동 대체)
           KIS_APPKEY: ${{ secrets.KIS_APPKEY }}
@@ -1727,12 +1734,17 @@ jobs:
 
       - name: 결과 저장(커밋)
         run: |
-          git config user.name  &quot;volume-scan-bot&quot;
+          git config user.name  &quot;tracker-bot&quot;
           git config user.email &quot;actions@users.noreply.github.com&quot;
           git add scan/latest.json
+          if [ -f scan/themes.json ]; then git add scan/themes.json; fi
           git diff --cached --quiet &amp;&amp; echo &quot;변경 없음&quot; &amp;&amp; exit 0
           git commit -m &quot;scan: $(date -u +%F) 거래량 급증 스캔&quot;
-          git push
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main &amp;&amp; git push &amp;&amp; exit 0
+            echo &quot;push 재시도 $i&quot;; sleep 5
+          done
+          exit 1
 </pre></div>
         <p style="margin-top:8px">※ 한투 키가 있으면 실제 거래대금·수급(6번)·관리/경고/정지 종목까지 자동. 키가 없거나 한투 호출이 실패하면 네이버 시세로 자동 대체돼요(이때 거래대금은 추정치).</p>
       </div>
@@ -3980,6 +3992,20 @@ function statsHtml(){
 /* ── 테마 흐름 (매일 스캔 결과) ── */
 let thAll=false;
 window.vsThAll=function(){thAll=!thAll;renderScan();};
+function stockName(code){const l=(typeof KRX_STOCKS!=='undefined')?KRX_STOCKS:[];const x=l.find(s=>s.code===code);return x?x.name:code;}
+function picksHtml(tf){
+  const pk=tf&&tf.picks;if(!pk||!pk.today||!pk.today.length)return '';
+  const op=(pk.open||[])[0];
+  const sm=pk.summary;
+  let h='<div class="pk-box"><div class="pk-h"><b>오늘의 후보 · 모멘텀 3테마</b><span>'+esc(pk.rule)+'</span></div>';
+  h+=pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> (20일)</span></div>'
+     +'<div class="pk-st">'+x.top.map(m=>'<a href="https://finance.naver.com/item/main.naver?code='+esc(m.code)+'" target="_blank">'+esc(stockName(m.code))+' <i class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</i></a>').join('')+'</div></div>').join('');
+  if(op&&op.days>0)h+='<div class="pk-op">진행 중인 묶음 ('+esc(op.date)+' 선정 · '+op.days+'/10일): 테마 <b class="'+((op.ret||0)>=0?'pos':'neg')+'">'+pct(op.ret,2)+'</b> vs 전체 평균 '+pct(op.base,2)+(op.stocksRet!=null?' · 강한 종목 '+pct(op.stocksRet,2):'')+'</div>';
+  else if(op)h+='<div class="pk-op">새 묶음 '+esc(op.date)+' 선정 — 10거래일 뒤 결과가 기록돼요</div>';
+  h+='<div class="pk-op">'+(sm?'실전 검증 '+sm.n+'회: 묶음당 '+pct(sm.avg,2)+' · 평균 대비 '+pct(sm.excess,2)+' · 이긴 비율 '+sm.beat+'%':'실전 검증 기록이 아직 없어요 — 묶음이 끝날 때마다 쌓여요')+'</div>';
+  h+='<div class="vs-note">과거 3년 백테스트에서 이 규칙만 기준선을 넘었어요(10일 보유 기준 회당 +1.45%, 평균 대비 +0.97%p, 최대 낙폭 -36%). 실전 기록이 쌓일 때까지는 소액으로만, 손절 원칙은 그대로 지키세요.</div></div>';
+  return h;
+}
 function themeHtml(){
   const tf=jget('sv4_theme_flow',null);
   if(!tf||!tf.leaders)return '<div class="vs-stat-empty">자동 스캔에 테마 흐름이 아직 없어요. 저장소에 <b>scan/themes.py</b>를 올리면 다음 스캔부터 테마별 돈의 흐름이 표시돼요.</div>';
@@ -3987,7 +4013,7 @@ function themeHtml(){
   const grp=(t,arr,cls)=>arr&&arr.length?'<div class="th-grp"><div class="th-gt '+cls+'">'+t+'</div>'+arr.slice(0,6).map(chip).join('')+'</div>':'';
   const lead=tf.leaders.slice(0,thAll?40:10);
   const mx=Math.max(...lead.map(x=>Math.abs(x.ret20)),1);
-  return '<div class="vs-metaline">'+esc(tf.date)+' 기준 · '+tf.count+'개 테마 · 20일 수익률 순</div>'
+  return picksHtml(tf)+'<div class="vs-metaline">'+esc(tf.date)+' 기준 · '+tf.count+'개 테마 · 20일 수익률 순</div>'
    +grp('주도',tf.leaders.filter(x=>x.phase==='주도'),'')+grp('떠오름',tf.rising,'up')+grp('식는 중',tf.cooling,'down')+grp('과열 주의',tf.hot,'warn')
    +'<table class="vs-stat th-tbl"><thead><tr><th>테마</th><th>20일</th><th>5일</th><th>상승비율</th><th>거래대금</th></tr></thead><tbody>'
    +lead.map(x=>'<tr><td><b>'+esc(x.theme)+'</b>'+(x.phase?'<span class="th-ph '+({'주도':'','떠오름':'up','식는 중':'down','과열 주의':'warn'}[x.phase]||'')+'">'+x.phase+'</span>':'')
@@ -4253,6 +4279,9 @@ function renderToday(){
   if(near.length)items.push({n:near.length,t:'손절선 2% 이내',s:near.map(nm).join(', '),u:1,go:"switchTab('stocks');setFilter('active')"});
   items.push({n:sig,t:'점검할 급증 신호',s:'1~5번 자동 판정 · 수급·공시만 확인',go:"switchTab('signal')"});
   items.push({n:unrev.length,t:'복기 대기',s:unrev.length?unrev.slice(0,3).map(nm).join(', ')+' — 30초 복기':'청산한 거래가 생기면 여기에',go:unrev.length?'openReview('+unrev[0].id+')':"switchTab('review')"});
+  let tfw=null;try{tfw=JSON.parse(localStorage.getItem('sv4_theme_flow')||'null');}catch(e){}
+  const pkt=tfw&&tfw.picks&&tfw.picks.today||[];
+  if(pkt.length){const op=(tfw.picks.open||[])[0];items.push({n:pkt.length,t:'모멘텀 3테마 후보',s:pkt.map(x=>esc(x.theme)).join(' · ')+(op&&op.days>0?' — 진행 '+op.days+'/10일 '+(op.ret>=0?'+':'')+op.ret+'%':''),go:"switchTab('signal')"});}
   items.push({n:arrived,t:'신호 결과 도착',s:'D+5·D+10 결과를 내 판단과 비교',go:"switchTab('signal');vsFilter('all')"});
   const total=items.reduce((a,x)=>a+x.n,0);
   const todo=total?items.map(x=>'<li><button class="'+(x.u?'urgent ':'')+(x.n?'':'zero')+'" onclick="'+x.go+'"><span class="n num">'+x.n+'</span><span class="t"><b>'+x.t+'</b><span>'+x.s+'</span></span><span class="chev" aria-hidden="true">›</span></button></li>').join('')
