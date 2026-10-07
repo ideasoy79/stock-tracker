@@ -1,10 +1,15 @@
+# 생각콩 × AI 주식 트래커 — 매집 신호 백테스트
+# Actions 탭에서 [Run workflow]로 실행 (20~40분) · 매월 1일 자동 갱신
 name: backtest
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 9 1 * *"
+    - cron: "0 9 1 * *"   # 매월 1일 18:00 KST
+
 permissions:
   contents: write
+
 jobs:
   backtest:
     runs-on: ubuntu-latest
@@ -15,17 +20,20 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests pandas lxml
-      - name: 백테스트
+      - name: 테마 구성 갱신 (월요일 또는 처음)
+        run: |
+          if [ ! -f scan/themes.json ] || [ "$(date -u +%u)" = "1" ]; then python scan/themes.py || echo "테마 갱신 실패 — 기존 파일 사용"; fi
+      - name: 백테스트 (약 3년)
         env:
           KIS_APPKEY: ${{ secrets.KIS_APPKEY }}
           KIS_APPSECRET: ${{ secrets.KIS_APPSECRET }}
         run: python scan/backtest.py
-      - name: 결과 저장
+      - name: 결과 저장(커밋)
         run: |
-          git config user.name "backtest-bot"
+          git config user.name  "backtest-bot"
           git config user.email "actions@users.noreply.github.com"
           git pull --rebase || true
-          git add scan/backtest.json
+          git add scan/backtest.json scan/themes.json 2>/dev/null; git add scan/backtest.json
           git diff --cached --quiet && exit 0
           git commit -m "backtest: $(date -u +%F)"
           git push
