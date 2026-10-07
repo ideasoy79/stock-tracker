@@ -43,6 +43,7 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add scan/latest.json
           if [ -f scan/themes.json ]; then git add scan/themes.json; fi
+          if [ -f scan/theme_picks.json ]; then git add scan/theme_picks.json; fi
           git diff --cached --quiet && echo "변경 없음" && exit 0
           git commit -m "scan: $(date -u +%F) 거래량 급증 스캔"
           for i in 1 2 3; do
