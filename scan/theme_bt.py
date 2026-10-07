@@ -17,13 +17,23 @@ def _rank(vals):
     return {k: i / n for i, (k, _) in enumerate(order)}
 
 
-def strategies(dates, idx, cost_pct):
+def mcum(rr, a, b):
+    x = 1.0
+    for i in range(a + 1, b + 1):
+        v = rr[i]
+        if v is not None:
+            x *= 1 + v
+    return x - 1
+
+
+def strategies(dates, idx, cost_pct, dret=None):
     names = list(idx)
     T = len(dates)
     out = []
     for hold in (5, 10):
         recs = {k: [] for k in ["모멘텀: 20일 상위 3테마", "단기 모멘텀: 5일 상위 3테마", "반전: 20일 하위 3테마",
-                                "순위 급상승 3테마", "자금 유입 3테마", "과열 테마(5일 급등+자금 2배)", "기준선: 전체 테마 평균"]}
+                                "순위 급상승 3테마", "자금 유입 3테마", "과열 테마(5일 급등+자금 2배)", "기준선: 전체 테마 평균",
+                                "모멘텀 3테마(과열 제외)", "모멘텀 3테마 · 테마별 강한 3종목", "모멘텀 3테마 + 시장 필터"]}
         prev_pick = {k: set() for k in recs}
         t = 70
         while t + hold < T:
@@ -45,7 +55,26 @@ def strategies(dates, idx, cost_pct):
                 "자금 유입 3테마": sorted([n for n in names if r5[n] > 0], key=lambda n: -money[n])[:3],
                 "과열 테마(5일 급등+자금 2배)": [n for n in names if r5[n] >= hot5 and money[n] >= 2][:5],
             }
+            hot = {n for n in names if r5[n] >= hot5 and money[n] >= 2}
+            picks["모멘텀 3테마(과열 제외)"] = sorted([n for n in names if n not in hot], key=lambda n: -r20[n])[:3]
+            mkt60 = st.mean(tf.cum(idx[n]["ret"], t - 60, t) for n in names)
+            picks["모멘텀 3테마 + 시장 필터"] = picks["모멘텀: 20일 상위 3테마"] if mkt60 > 0 else []
             base = st.mean(fwd.values())
+            # 테마별 강한 3종목 (실제로 살 수 있는 형태)
+            if dret is not None:
+                k = "모멘텀 3테마 · 테마별 강한 3종목"
+                codes = []
+                for n in picks["모멘텀: 20일 상위 3테마"]:
+                    mem = sorted(idx[n]["members"], key=lambda c: -mcum(dret[c], t - 20, t))[:3]
+                    codes += [c for c in mem if c not in codes]
+                if codes:
+                    turn = 1 - len(set(codes) & prev_pick[k]) / len(codes)
+                    ret = st.mean(mcum(dret[c], t, t + hold) for c in codes) * 100 - cost_pct * turn
+                    recs[k].append({"date": dates[t], "ret": ret, "ex": ret - base * 100, "picks": codes})
+                    prev_pick[k] = set(codes)
+            if not picks["모멘텀 3테마 + 시장 필터"]:
+                recs["모멘텀 3테마 + 시장 필터"].append({"date": dates[t], "ret": 0.0, "ex": -base * 100, "picks": ["현금"]})
+                prev_pick["모멘텀 3테마 + 시장 필터"] = set()
             for k, ps in picks.items():
                 if not ps:
                     continue
@@ -137,7 +166,7 @@ def lead_lag(dates, idx, top_pairs=15):
 def run(keep, themes, cost_pct):
     if not themes:
         return None
-    dates, idx, _ = tf.build(keep, themes)
+    dates, idx, dret = tf.build(keep, themes)
     if len(dates) < 150 or len(idx) < 10:
         return None
-    return {"themes": len(idx), "strategies": strategies(dates, idx, cost_pct), "leadLag": lead_lag(dates, idx)}
+    return {"themes": len(idx), "strategies": strategies(dates, idx, cost_pct, dret), "leadLag": lead_lag(dates, idx)}

@@ -122,8 +122,77 @@ def daily_payload(rows_by_code, themes, top=40):
     items = [{"theme": x["theme"], "n": x["n"], "ret5": r(x["ret5"]), "ret20": r(x["ret20"]),
               "breadth5": round(x["breadth5"] * 100), "money": round(x["money"], 2),
               "rank": round(x["rank"] * 100), "rankPrev": round(x["rankPrev"] * 100), "phase": x["phase"]} for x in snap]
-    return {"date": dates[-1], "count": len(items),
+    picks = update_picks(dates, idx, dret, snap)
+    return {"date": dates[-1], "count": len(items), "picks": picks,
             "leaders": items[:top],
             "rising": sorted([x for x in items if x["phase"] == "떠오름"], key=lambda x: x["rank"] - x["rankPrev"])[:12],
             "cooling": [x for x in items if x["phase"] == "식는 중"][:12],
             "hot": [x for x in items if x["phase"] == "과열 주의"][:12]}
+
+
+# ───────── 모멘텀 3테마: 오늘의 후보 + 전진 검증(실전 성적) ─────────
+HOLD = 10
+PICKS_FILE = os.path.join(HERE, "theme_picks.json")
+
+
+def _mcum(rr, a, b):
+    x = 1.0
+    for i in range(a + 1, b + 1):
+        v = rr[i]
+        if v is not None:
+            x *= 1 + v
+    return x - 1
+
+
+def update_picks(dates, idx, dret, snap):
+    """백테스트에서 기준선을 이긴 규칙(20일 상위 3테마·과열 제외·10거래일 보유)을 매일 적용하고,
+    10거래일마다 새로 고른 묶음의 실제 결과를 theme_picks.json 에 쌓는다."""
+    try:
+        hist = json.load(open(PICKS_FILE, encoding="utf-8"))
+    except Exception:
+        hist = []
+    pos = {d: i for i, d in enumerate(dates)}
+    t = len(dates) - 1
+    names = list(idx)
+    base_all = lambda a, b: sum(cum(idx[n]["ret"], a, b) for n in names) / len(names)
+    # 열린 기록 평가
+    for h in hist:
+        if h.get("status") == "closed" or h["date"] not in pos:
+            continue
+        i0 = pos[h["date"]]
+        days = t - i0
+        end = min(t, i0 + HOLD)
+        th = [n for n in h["themes"] if n in idx]
+        if not th or days <= 0:
+            continue
+        h["ret"] = round(sum(cum(idx[n]["ret"], i0, end) for n in th) / len(th) * 100, 2)
+        h["base"] = round(base_all(i0, end) * 100, 2)
+        st_codes = [c for c in h.get("stocks", []) if c in dret]
+        if st_codes:
+            h["stocksRet"] = round(sum(_mcum(dret[c], i0, end) for c in st_codes) / len(st_codes) * 100, 2)
+        h["days"] = min(days, HOLD)
+        if days >= HOLD:
+            h["status"], h["closedAt"] = "closed", dates[end]
+    # 오늘의 후보 (과열 테마 제외)
+    hot = {x["theme"] for x in snap if x["phase"] == "과열 주의"}
+    cand = sorted([x for x in snap if x["theme"] not in hot], key=lambda x: -x["ret20"])[:3]
+    today = []
+    for x in cand:
+        mem = sorted(idx[x["theme"]]["members"], key=lambda c: -_mcum(dret[c], t - 20, t))[:3]
+        today.append({"theme": x["theme"], "ret20": round(x["ret20"] * 100, 2), "ret5": round(x["ret5"] * 100, 2),
+                      "top": [{"code": c, "ret20": round(_mcum(dret[c], t - 20, t) * 100, 1)} for c in mem]})
+    # 새 묶음 기록: 열린 기록이 없을 때만 (10거래일마다 교체)
+    if today and not any(h.get("status") == "open" for h in hist):
+        hist.append({"date": dates[t], "themes": [x["theme"] for x in today],
+                     "stocks": [m["code"] for x in today for m in x["top"]], "status": "open", "days": 0})
+    hist = hist[-60:]
+    with open(PICKS_FILE, "w", encoding="utf-8") as fp:
+        json.dump(hist, fp, ensure_ascii=False, indent=0)
+    closed = [h for h in hist if h.get("status") == "closed"]
+    summary = None
+    if closed:
+        ex = [h["ret"] - h["base"] for h in closed]
+        summary = {"n": len(closed), "avg": round(sum(h["ret"] for h in closed) / len(closed), 2),
+                   "excess": round(sum(ex) / len(ex), 2), "beat": round(sum(1 for e in ex if e > 0) / len(ex) * 100)}
+    return {"rule": "20일 수익률 상위 3테마 · 과열 제외 · 10거래일 보유", "today": today,
+            "open": [h for h in hist if h.get("status") == "open"], "closed": closed[-10:], "summary": summary}
