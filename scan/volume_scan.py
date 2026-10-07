@@ -406,7 +406,7 @@ def main():
                 fails += 1
                 continue
             base_dates[rows[-1]["d"]] = base_dates.get(rows[-1]["d"], 0) + 1
-            keep[s["code"]] = [{"d": x["d"], "c": x["c"], "a": x.get("a") or x["c"] * x["v"]} for x in rows]
+            keep[s["code"]] = [{"d": x["d"], "o": x["o"], "h": x["h"], "l": x["l"], "c": x["c"], "a": x.get("a") or x["c"] * x["v"]} for x in rows]
             res = analyze(s, rows)
             if res:
                 hits.append(res)

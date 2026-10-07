@@ -220,16 +220,30 @@ def chart_note(code, rows_by_code, dret, t):
     gap = (c / ma20 - 1) * 100
     rising = ma20 > ma20p
     stop = round(min(ma20, c * 0.93))
+    last, prev = rows[-1], rows[-2]
+    o, h, l = last.get("o") or c, last.get("h") or c, last.get("l") or c
+    chg = (c / prev["c"] - 1) * 100 if prev["c"] else 0
+    rng = h - l
+    wick = (h - max(o, c)) / rng if rng > 0 else 0                 # 윗꼬리 비율
+    off_high = (1 - c / h) * 100 if h else 0                        # 오늘 고가 대비 밀린 폭
+    hh20 = max((r.get("h") or r["c"]) for r in rows[-20:-1])
+    new_high = h >= hh20
     if c < ma20:
         state, note = "보류", "20일선 아래로 내려왔어요. 테마가 강해도 이 종목은 추세가 꺾인 상태라 보류."
     elif not rising:
         state, note = "보류", "20일선이 아직 내려가는 중이에요. 다시 올라서는지 확인한 뒤에."
+    elif new_high and (off_high >= 5 or (wick >= 0.5 and c < o)):
+        state, note = "고점 반락", (f"오늘 20일 최고가({round(h):,}원)를 찍고 {off_high:.0f}% 밀려 마감했어요(윗꼬리). 단기 고점 신호일 수 있어 바로 사지 말고, "
+                                 f"며칠 쉬다가 '양봉 + 전날 고가 위 마감'(재상승 신호)이 나올 때. 오늘 저가 {round(l):,}원이 깨지면 보류.")
+    elif chg <= -5:
+        state, note = "급락 관망", f"하루 {chg:.1f}% 빠졌어요. 5일선 근처라도 '쉬는' 게 아니라 매도가 쏟아진 날이라 1~2일 더 확인한 뒤에."
     elif gap > 15:
-        state, note = "눌림 대기", f"20일선보다 {gap:.0f}% 위라 많이 떠 있어요. 추격 대신 5일선({round(ma5):,}원) 근처로 눌릴 때 분할로."
-    elif c <= ma5 * 1.01:
-        state, note = "진입 검토", f"20일선 위 상승 추세에서 5일선 근처까지 쉬었어요. 분할 진입을 검토할 자리 · 손절 {stop:,}원."
+        state, note = "눌림 대기", f"20일선보다 {gap:.0f}% 위라 많이 떠 있어요. 추격 대신 5일선({round(ma5):,}원) 근처로 조용히 눌릴 때 분할로."
+    elif c <= ma5 * 1.01 and chg > -3 and wick < 0.5:
+        state, note = "진입 검토", f"20일선 위 상승 추세에서 5일선 근처까지 조용히 쉬었어요. 분할 진입을 검토할 자리 · 손절 {stop:,}원."
     else:
-        state, note = "추세 양호", f"20일선 위 상승 추세예요. 5일선({round(ma5):,}원)까지 눌릴 때 분할 진입이 유리 · 손절 {stop:,}원."
+        state, note = "추세 양호", f"20일선 위 상승 추세예요. 5일선({round(ma5):,}원)까지 조용히 눌릴 때 분할 진입이 유리 · 손절 {stop:,}원."
     out.update({"close": c, "ma5": round(ma5), "ma20": round(ma20), "gap": round(gap, 1),
-                "ret5": round((c / cl[-6] - 1) * 100, 1), "state": state, "note": note, "stop": stop})
+                "ret5": round((c / cl[-6] - 1) * 100, 1), "chg": round(chg, 1), "offHigh": round(off_high, 1),
+                "state": state, "note": note, "stop": stop})
     return out
