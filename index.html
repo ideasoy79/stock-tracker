@@ -957,6 +957,9 @@ body {
 .pk-row{padding:8px 0;border-top:1px solid var(--border);font-size:13px;color:var(--text)}.pk-row .pos{color:var(--up)}.pk-row .dim{color:var(--text3);font-size:11px}
 .pk-st{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.pk-st a{font-size:12px;background:var(--card);border-radius:8px;padding:3px 8px;color:var(--text2);text-decoration:none}.pk-st i{font-style:normal}.pk-st .pos{color:var(--up)}.pk-st .neg{color:var(--down)}
 .pk-op{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6}.pk-op .pos{color:var(--up)}.pk-op .neg{color:var(--down)}
+.pk-ml{margin-top:6px}.pk-m{padding:7px 0;border-top:1px dashed var(--border)}.pk-mh{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px}.pk-mh a{color:var(--text);font-weight:650;text-decoration:none}.pk-mh .pos{color:var(--up)}.pk-mh .neg{color:var(--down)}.pk-mh .dim{color:var(--text3);font-size:11px}
+.pk-s{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:5px}.pk-s.s-go{background:var(--green-light);color:var(--green)}.pk-s.s-ok{background:var(--input-bg);color:var(--text2)}.pk-s.s-wait{background:var(--yellow-light);color:var(--yellow)}.pk-s.s-no{background:var(--down-bg);color:var(--down)}
+.pk-n{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.55}
 .scr-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
 .scr-card h4{font-size:14px;color:var(--text);margin-bottom:8px}
 .scr-card p,.scr-card li{font-size:12.5px;color:var(--text2);line-height:1.75}
@@ -1142,6 +1145,13 @@ body{font-size:15px;letter-spacing:-0.01em;padding-bottom:calc(var(--nav-h) + en
 .ob-card,.onboarding-card{background:var(--card)!important;border:0!important;box-shadow:none!important}
 .ob-title{background:none!important;-webkit-text-fill-color:currentColor!important;color:var(--text)!important}.onboarding{background:var(--bg)!important}
 .rd-nav .bd[hidden]{display:none}
+
+/* 가로 넘침 방지: 그리드 칸이 긴 글자 때문에 늘어나지 않게 */
+.rd{grid-template-columns:minmax(0,1fr)}
+.rd>*,.rd-card,.rd-todo li,.rd-todo button{min-width:0;max-width:100%}
+@media (min-width:768px){.rd{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.main,.panel{max-width:100%;overflow-x:hidden}
+html,body{overflow-x:hidden}
 </style>
 </head>
 <body>
@@ -3993,17 +4003,33 @@ function statsHtml(){
 let thAll=false;
 window.vsThAll=function(){thAll=!thAll;renderScan();};
 function stockName(code){const l=(typeof KRX_STOCKS!=='undefined')?KRX_STOCKS:[];const x=l.find(s=>s.code===code);return x?x.name:code;}
+window.vsAskPicks=function(){
+  const tf=jget('sv4_theme_flow',null),pk=tf&&tf.picks;if(!pk||!pk.today||!pk.today.length){toast('오늘 후보가 없어요');return;}
+  let t='['+tf.date+' 기준 · 내 트래커의 규칙 기반 후보]\n규칙: 20일 수익률 상위 3테마 + 시장 필터, 10거래일 보유 (3년 백테스트 회당 +2.1%, 평균 대비 +1.6%p, 최대낙폭 -16%)\n\n';
+  pk.today.forEach(x=>{t+='■ '+x.theme+' (20일 '+pct(x.ret20)+', 5일 '+pct(x.ret5)+')\n';
+    x.top.forEach(m=>{t+='- '+stockName(m.code)+'('+m.code+') 종가 '+(m.close?Math.round(m.close).toLocaleString():'?')+' · 20일 '+pct(m.ret20,1)+' · 5일 '+pct(m.ret5,1)+' · 20일선 대비 '+pct(m.gap,1)+' · 5일선 '+(m.ma5||'?')+' · 20일선 '+(m.ma20||'?')+' · 상태 '+(m.state||'?')+'\n';});});
+  t+='\n요청: 위 데이터만 근거로, 테마별로 1~2종목을 골라 (1) 분할 진입 가격대 (2) 손절가 (3) 10거래일 안의 청산 기준을 표 하나로. 최근 3일 뉴스·공시 중 이 판단을 뒤집을 악재가 있으면 출처·날짜와 함께 한 줄. 추정은 ⚠️, 확인 못 한 건 ❓로 표시하고 결론은 짧게. 최종 결정은 내가 해.';
+  try{navigator.clipboard.writeText(t);}catch(e){}
+  window.open('https://claude.ai/new?q='+encodeURIComponent(t),'_blank');toast('🤖 후보 데이터를 담아 Claude를 열어요');
+};
 function picksHtml(tf){
-  const pk=tf&&tf.picks;if(!pk||!pk.today||!pk.today.length)return '';
-  const op=(pk.open||[])[0];
-  const sm=pk.summary;
-  let h='<div class="pk-box"><div class="pk-h"><b>오늘의 후보 · 모멘텀 3테마</b><span>'+esc(pk.rule)+'</span></div>';
-  h+=pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> (20일)</span></div>'
-     +'<div class="pk-st">'+x.top.map(m=>'<a href="https://finance.naver.com/item/main.naver?code='+esc(m.code)+'" target="_blank">'+esc(stockName(m.code))+' <i class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</i></a>').join('')+'</div></div>').join('');
-  if(op&&op.days>0)h+='<div class="pk-op">진행 중인 묶음 ('+esc(op.date)+' 선정 · '+op.days+'/10일): 테마 <b class="'+((op.ret||0)>=0?'pos':'neg')+'">'+pct(op.ret,2)+'</b> vs 전체 평균 '+pct(op.base,2)+(op.stocksRet!=null?' · 강한 종목 '+pct(op.stocksRet,2):'')+'</div>';
+  const pk=tf&&tf.picks;if(!pk)return '';
+  const op=(pk.open||[])[0],sm=pk.summary;
+  let h='<div class="pk-box"><div class="pk-h"><b>오늘의 후보 · 모멘텀 3테마</b><span>'+esc(pk.rule||'')+'</span></div>';
+  if(pk.rest){h+='<div class="pk-row"><b>오늘은 쉬는 구간이에요</b><div class="pk-op">시장 전체(테마 평균) 60일 수익률이 '+pct(pk.mkt60,1)+'라서 규칙상 새로 사지 않아요. 백테스트에서 이 필터가 최대 낙폭을 -36% → -16%로 줄였어요.</div></div>';}
+  else if(pk.today&&pk.today.length){
+    h+=pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> 20일 · '+(x.n||'')+'종목'+(x.phase==='과열 주의'?' · 과열 주의':'')+'</span></div>'
+      +'<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m"><div class="pk-mh"><a href="https://finance.naver.com/item/main.naver?code='+esc(m.code)+'" target="_blank">'+esc(stockName(m.code))+'</a>'
+        +(m.state?'<span class="pk-s s-'+({'진입 검토':'go','추세 양호':'ok','눌림 대기':'wait','보류':'no'}[m.state]||'ok')+'">'+m.state+'</span>':'')
+        +'<span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(m.gap!=null?'<span class="dim">20일선 '+pct(m.gap,0)+'</span>':'')+'</div>'
+        +(m.note?'<div class="pk-n">'+esc(m.note)+'</div>':'')+'</div>').join('')+'</div></div>').join('');
+    h+='<div class="pk-op dim">종목은 테마 안에서 거래대금 큰 순 5개 · 코멘트는 20일선·5일선 기준 규칙 설명이에요(진입 타이밍 규칙은 다음 백테스트에서 검증). 3테마에 고르게 나눠 담는 게 검증된 방식이에요.</div>'
+      +'<button class="vs-b" style="margin-top:8px" onclick="vsAskPicks()">🤖 이 후보로 Claude에게 매수 전략 묻기</button>';
+  }
+  if(op&&op.days>0)h+='<div class="pk-op">진행 중인 묶음 ('+esc(op.date)+' 선정 · '+op.days+'/10일): 테마 <b class="'+((op.ret||0)>=0?'pos':'neg')+'">'+pct(op.ret,2)+'</b> vs 전체 평균 '+pct(op.base,2)+'</div>';
   else if(op)h+='<div class="pk-op">새 묶음 '+esc(op.date)+' 선정 — 10거래일 뒤 결과가 기록돼요</div>';
-  h+='<div class="pk-op">'+(sm?'실전 검증 '+sm.n+'회: 묶음당 '+pct(sm.avg,2)+' · 평균 대비 '+pct(sm.excess,2)+' · 이긴 비율 '+sm.beat+'%':'실전 검증 기록이 아직 없어요 — 묶음이 끝날 때마다 쌓여요')+'</div>';
-  h+='<div class="vs-note">과거 3년 백테스트에서 이 규칙만 기준선을 넘었어요(10일 보유 기준 회당 +1.45%, 평균 대비 +0.97%p, 최대 낙폭 -36%). 실전 기록이 쌓일 때까지는 소액으로만, 손절 원칙은 그대로 지키세요.</div></div>';
+  h+='<div class="pk-op">'+(sm?'실전 기록 '+sm.n+'회: 묶음당 '+pct(sm.avg,2)+' · 평균 대비 '+pct(sm.excess,2)+' · 이긴 비율 '+sm.beat+'%':'실전 기록은 아직 없어요 — 10거래일마다 한 줄씩 쌓여요')+'</div>';
+  h+='<div class="vs-note">과거 3년 백테스트: 10일 보유 기준 회당 +2.10%, 전체 평균 대비 +1.62%p, 이긴 비율 59%, 최대 낙폭 -16%. 실전 기록이 쌓일 때까지는 소액으로만.</div></div>';
   return h;
 }
 function themeHtml(){
