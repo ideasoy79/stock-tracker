@@ -4,7 +4,7 @@ name: volume-scan
 
 on:
   schedule:
-    - cron: "10 7 * * 1-5"   # UTC 07:10 = KST 16:10, 월~금
+    - cron: "40 11 * * 1-5"   # UTC 11:40 = KST 20:40, 월~금 (애프터마켓 20:00 마감 뒤)
   workflow_dispatch:          # Actions 탭에서 [Run workflow] 로 수동 실행 가능
 
 permissions:
