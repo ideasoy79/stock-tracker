@@ -1,0 +1,36 @@
+# 생각콩 × AI 주식 트래커 — 장중 손절선 이탈 알림 + 바스켓 정리일 아침 알림
+# 평일 09:00~15:30(KST) 30분마다 + 19:30 한 번. 보유 종목(앱 기록)을 읽으려면 FIREBASE_SA 가 필요해요.
+name: stop-alert
+
+on:
+  schedule:
+    - cron: "5,35 0-6 * * 1-5"   # UTC 00:05~06:35 = KST 09:05~15:35
+    - cron: "30 10 * * 1-5"      # UTC 10:30 = KST 19:30 (애프터마켓)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "intraday(손절 점검) / test(연결 확인) / evening(저녁 요약 다시 보내기)"
+        default: "test"
+
+concurrency:
+  group: stop-alert
+  cancel-in-progress: true
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 알림
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then echo "봇 토큰 없음 → 건너뜀"; exit 0; fi
+          pip install -q requests firebase-admin
+          python scan/notify.py "${{ github.event.inputs.mode || 'intraday' }}"
