@@ -2,8 +2,8 @@
 """
 텔레그램 알림 — python scan/notify.py evening | intraday | test
 
-evening  : 저녁 스캔 직후 3~6줄 요약 (시장 상태 · 바스켓 · 할 일 · 손절 근접 · 새 개선 알림)
-intraday : 장중 30분마다 보유 종목 손절선 이탈 점검 + 바스켓 정리일 아침 알림 (같은 건 하루 1번만)
+evening  : 저녁 스캔 직후 3~6줄 요약 (시장 상태 · 테마 묶음 · 할 일 · 손절 근접 · 새 개선 알림)
+intraday : 장중 30분마다 보유 종목 손절선 이탈 점검 + 테마 묶음 정리일 아침 알림 (같은 건 하루 1번만)
 test     : 연결 확인 메시지
 
 필요한 GitHub Secrets
@@ -123,7 +123,7 @@ def active(records):
     return out
 
 
-# ───────── 바스켓 상태 ─────────
+# ───────── 테마 묶음 상태 ─────────
 def basket_lines(js):
     pk = ((js.get("themes") or {}).get("picks")) or {}
     as_of = pk.get("asOf") or js.get("baseDate") or ""
@@ -138,14 +138,14 @@ def basket_lines(js):
     if op:
         days = op.get("days", 0)
         ret = op.get("stocksRet", op.get("ret"))
-        lines.append(f"바스켓 {op['date'][5:].replace('-', '/')} 선정 · D+{days}/{hold}"
+        lines.append(f"테마 묶음 {op['date'][5:].replace('-', '/')} 선정 · D+{days}/{hold}"
                      + (f" · {ret:+.2f}% (평균 {op.get('base', 0):+.2f}%)" if ret is not None and days else ""))
         if op["date"] == as_of:
-            todo = "새 바스켓 — 다음 거래일에 3테마 고르게 매수 (앱에서 수량 계산)"
+            todo = "새 테마 묶음 — 다음 거래일에 3테마 고르게 매수 (앱에서 수량 계산)"
             if closed and closed[-1].get("closedAt") == as_of:
-                todo += " · 이전 바스켓은 오늘이 정리일이었어요"
+                todo += " · 이전 테마 묶음은 오늘이 정리일이었어요"
         elif days == hold - 1:
-            todo = f"내일이 {hold}거래일째 — 장 마감 전에 바스켓 정리"
+            todo = f"내일이 {hold}거래일째 — 장 마감 전에 테마 묶음 정리"
     elif pk.get("rest"):
         todo = "쉬는 구간 — 새로 사지 않아요"
     lines.append("할 일: " + todo)
@@ -191,7 +191,7 @@ def intraday(js):
         sent = {k: v for k, v in sent.items() if v == today}
         msgs = []
         if op and op.get("days") == hold - 1 and as_of < today and st.get("basketDay") != today and now.hour < 12:
-            msgs.append(f"[오늘 바스켓 정리일] {op['date'][5:].replace('-', '/')} 바스켓이 오늘 {hold}거래일째예요. 장 마감 전에 정리하세요.")
+            msgs.append(f"[오늘 테마 묶음 정리일] {op['date'][5:].replace('-', '/')} 테마 묶음이 오늘 {hold}거래일째예요. 장 마감 전에 정리하세요.")
             st["basketDay"] = today
         for r, code in active(u["records"])[:30]:
             stop = float(r.get("stoploss") or 0)

@@ -207,6 +207,16 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
                      "px0": {c: close_at(c, dates[t]) for c in codes}, "px": {c: close_at(c, dates[t]) for c in codes},
                      "sr": {c: 0.0 for c in codes}})
     hist = hist[-60:]
+    # 진행 중 묶음 종목의 차트 상태(진입 검토·관망 등) — 앱에서 종목별로 보여 줌
+    notes = {}
+    for h in hist:
+        if h.get("status") == "open":
+            for c in h.get("stocks", []):
+                if c in dret and c not in notes:
+                    try:
+                        notes[c] = chart_note(c, rows_by_code, dret, t)
+                    except Exception:
+                        pass
     with open(PICKS_FILE, "w", encoding="utf-8") as fp:
         json.dump(hist, fp, ensure_ascii=False, indent=0)
     closed = [h for h in hist if h.get("status") == "closed"]
@@ -216,7 +226,7 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         summary = {"n": len(closed), "avg": round(sum(h["ret"] for h in closed) / len(closed), 2),
                    "excess": round(sum(ex) / len(ex), 2), "beat": round(sum(1 for e in ex if e > 0) / len(ex) * 100)}
     return {"rule": "20일 수익률 상위 3테마 · 시장 필터 · 10거래일 보유", "rest": rest, "restPrev": rest_prev, "hold": HOLD,
-            "asOf": dates[t], "mkt60": round(mkt60 * 100, 2), "today": today,
+            "asOf": dates[t], "mkt60": round(mkt60 * 100, 2), "today": today, "notes": notes,
             "open": [h for h in hist if h.get("status") == "open"], "closed": closed[-10:], "summary": summary}
 
 
