@@ -1189,6 +1189,111 @@ a.st-link:active{opacity:.6}
 .pb-num b{color:var(--text);font-weight:700}
 .pb-num em{font-style:normal;font-weight:700;margin-left:2px}
 .pb-mini{font-size:13px;padding:7px 0;border-top:1px solid var(--border,rgba(127,127,127,.12));line-height:1.6}
+
+/* ══ 바스켓 중심 화면 (U1·U3·U9·S3·U6) ══ */
+.bk .bk-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.bk-mk{font-size:12.5px;font-weight:650;padding:4px 10px;border-radius:999px}
+.bk-mk.on{background:var(--purple-light);color:var(--purple)}
+.bk-mk.off{background:var(--input-bg);color:var(--text2)}
+.bk-asof{font-size:12.5px;color:var(--text3)}
+.bk-warn,.rd-warn{font-size:13px;line-height:1.5;color:var(--red);background:var(--red-light);border-radius:10px;padding:8px 10px;margin:0 0 10px}
+.rd-warn{margin:0}
+.bk-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.bk-l{min-width:0;flex:1}
+.bk-lab{font-size:13px;color:var(--text3);font-weight:600}
+.bk-d{font-size:16px;font-weight:700;color:var(--text);margin-top:2px;letter-spacing:-0.01em}
+.bk-th{font-size:13.5px;color:var(--text2);margin-top:4px;line-height:1.45;word-break:keep-all}
+.bk-r{text-align:right;flex-shrink:0}
+.bk-ret{font-size:26px;font-weight:750;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;color:var(--text)}
+.bk-ret.up{color:var(--up)} .bk-ret.down{color:var(--down)}
+.bk-sub{font-size:12px;color:var(--text3)}
+.bk-act{display:flex;flex-direction:column;gap:2px;margin-top:14px;padding:12px;border-radius:12px;background:var(--input-bg)}
+.bk-act.urgent{background:var(--purple-light)}
+.bk-act-l{font-size:12px;font-weight:650;color:var(--text3)}
+.bk-act.urgent .bk-act-l{color:var(--purple)}
+.bk-act-t{font-size:15px;font-weight:600;color:var(--text);line-height:1.45;word-break:keep-all}
+.bk-btn{display:block;width:100%;margin-top:10px;min-height:46px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:15px;font-weight:650;cursor:pointer;font-family:var(--sans)}
+.bk-btn.quiet{background:var(--input-bg);color:var(--text)}
+.bk-mine{font-size:13.5px;color:var(--text2);margin-top:10px}
+.bk-mine .up{color:var(--up)} .bk-mine .down{color:var(--down)}
+.bk-more{border:0;background:none;color:var(--text3);font-size:13px;padding:10px 0 0;cursor:pointer;font-family:var(--sans)}
+.bk-empty{font-size:14px;color:var(--text2);line-height:1.5;margin-top:4px}
+.rd-tag{font-size:11px;font-weight:650;color:var(--purple);background:var(--purple-light);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.rd-hs{font-size:12.5px;color:var(--text3)}
+
+/* 시트 */
+.bk-sheet{position:fixed;inset:0;z-index:4600;display:none}
+.bk-sheet.open{display:block}
+.bk-sheet .bg{position:absolute;inset:0;background:rgba(10,10,12,.45)}
+.bk-sheet .pn{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow-y:auto;background:var(--card);border-radius:18px 18px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+.bk-sheet .grab{width:36px;height:4px;border-radius:2px;background:var(--border-hover);margin:2px auto 12px}
+.bk-sheet h3{font-size:17px;font-weight:700;color:var(--text);margin:0 0 12px}
+.bk-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bk-form label,.bk-pm{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--text3);font-weight:600}
+.bk-pm{margin-top:12px}
+.bk-form input,.bk-pm input,.bk-px{width:100%;min-width:0;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);font-size:15px;padding:0 10px;font-family:var(--sans)}
+.bk-sum{font-size:13.5px;line-height:1.6;color:var(--text2);margin:12px 0 4px}
+.bk-sum .down{color:var(--down)}
+.bk-list{margin-top:8px;border-top:1px solid var(--border)}
+.bk-it{display:flex;align-items:center;gap:10px;min-height:48px;border-bottom:1px solid var(--border);font-size:14.5px;color:var(--text)}
+.bk-it input[type=checkbox]{width:20px;height:20px;accent-color:var(--purple);flex-shrink:0}
+.bk-nm{flex:1;min-width:0;font-weight:600}
+.bk-nm em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--text3);margin-left:6px}
+.bk-nm em.w{color:var(--red)}
+.bk-q{text-align:right;font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--text)}
+.bk-q small{display:block;font-size:11.5px;color:var(--text3)}
+.bk-px{max-width:130px;text-align:right}
+.bk-note{font-size:12.5px;line-height:1.6;color:var(--text3);margin-top:12px}
+.bk-acts{display:flex;gap:8px;margin-top:6px}
+.bk-acts .bk-btn{flex:1}
+.set-gt{font-size:12.5px;font-weight:650;color:var(--text3);margin:18px 0 0}
+.set-ck{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--text);margin-top:10px}
+.fr{padding-left:20px;font-size:14.5px;line-height:1.65;color:var(--text)}
+.fr li{margin-bottom:8px}
+.gl-it{padding:10px 0;border-bottom:1px solid var(--border)} .gl-it b{font-size:14.5px;color:var(--text)} .gl-it p{font-size:13.5px;color:var(--text2);line-height:1.55;margin:2px 0 0}
+
+/* 개선 알림 */
+.rv-it{padding:12px 0;border-top:1px solid var(--border)}
+.rv-h{font-size:15px;font-weight:650;color:var(--text);display:flex;gap:8px;align-items:baseline;word-break:keep-all}
+.rv-c{font-size:12px;font-weight:750;color:var(--purple);background:var(--purple-light);border-radius:6px;padding:1px 6px;flex-shrink:0}
+.rv-w{font-size:13.5px;line-height:1.55;color:var(--text2);margin-top:4px}
+.rv-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.rv-a button{border:0;border-radius:999px;background:var(--input-bg);color:var(--text);font-size:12.5px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:var(--sans)}
+
+/* 용어 풀이 */
+button.tm{border:0;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline dotted;text-decoration-color:var(--text3);text-underline-offset:3px;cursor:help}
+#rd-term{position:fixed;inset:0;z-index:4700;display:none;background:rgba(10,10,12,.25)}
+#rd-term.open{display:block}
+#rd-term .pn{position:absolute;left:12px;right:12px;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow-md)}
+#rd-term b{font-size:15px;color:var(--text)} #rd-term p{font-size:14px;line-height:1.6;color:var(--text2);margin:4px 0 6px} #rd-term small{font-size:11.5px;color:var(--text3)}
+
+/* 신호 탭: 관찰 접기 */
+details.obs>summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+details.obs>summary::-webkit-details-marker{display:none}
+.obs-t{font-size:16px;font-weight:700;color:var(--text)}
+.obs-t::before{content:"▸ ";color:var(--text3)}
+details.obs[open] .obs-t::before{content:"▾ "}
+.obs-s{font-size:12.5px;color:var(--text3);line-height:1.45}
+.obs-tools{margin-top:12px}
+.pk-sub{font-size:13px;font-weight:650;color:var(--text2);margin:14px 0 2px}
+.pk-prev{margin-top:10px}
+
+/* I3: + 버튼이 내용 가리지 않게 */
+.main .panel{padding-bottom:96px}
+.fab{transition:transform .2s ease,opacity .2s ease}
+.fab.rd-hide{transform:translateY(140%);opacity:0;pointer-events:none}
+/* I2: 깨진 요소 정리 */
+#sub-list>div:first-child .t-btn{display:none}
+#sub-pattern .empty{background:var(--card);border-radius:16px;padding:28px 16px;text-align:center;color:var(--text3);font-size:14px;line-height:1.6}
+#sub-pattern .empty .ei{font-size:26px;margin-bottom:6px}
+@media (max-width:380px){.bk-form{grid-template-columns:1fr 1fr}}
+.bk-form label span,.bk-pm span{display:block;min-height:18px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk-pm span{white-space:normal}
+.bk-l .bk-sub{margin-top:4px}
+details.rd-qb{margin:14px 0 0}
+details.rd-qb>summary{cursor:pointer;list-style:none;font-size:14px;font-weight:650;color:var(--text2);padding:12px 4px}
+details.rd-qb>summary::before{content:"▸ ";color:var(--text3)}
+details.rd-qb[open]>summary::before{content:"▾ "}
 </style>
 </head>
 <body>
@@ -1977,6 +2082,7 @@ auth.onAuthStateChanged(async (user) => {
     localStorage.setItem('sv4_user_name', name);
     const isNew = user.metadata && user.metadata.creationTime === user.metadata.lastSignInTime;
     await loadFromCloud(user.uid);
+    if (window._needsPush) { window._needsPush = false; await window.saveToCloud(); }
     subscribeToCloud(user.uid);
     if (typeof window.showApp === 'function') window.showApp();
     if(isNew) setTimeout(() => checkFirstLogin(user), 1000);
@@ -2000,21 +2106,39 @@ async function loadFromCloud(uid) {
   try {
     setSyncState('syncing');
     const snap = await db.collection('users').doc(uid).get();
+    const loc = k => { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e) { return []; } };
     if (snap.exists) {
       const data = snap.data();
-      if (data.records) { window._records = data.records; localStorage.setItem('sv4_records', JSON.stringify(data.records)); }
-      if (data.todayLogs) { window._todayLogs = data.todayLogs; localStorage.setItem('sv4_logs', JSON.stringify(data.todayLogs)); }
-      if (data.insights) { window._insights = data.insights; localStorage.setItem('sv4_insights', JSON.stringify(data.insights)); }
-      if (data.scans) { window._scans = data.scans; localStorage.setItem('sv4_scans', JSON.stringify(data.scans)); }
+      const stamp = localStorage.getItem('sv4_local_saved_at') || '';
+      const cloudAt = data.updatedAt || '';
+      // cloud: 클라우드가 최신 · local: 이 기기에 저장 못 한 변경이 있음 · merge: 이번 업데이트 후 처음(기기 기록과 합치기)
+      const mode = !stamp ? 'merge' : (stamp > cloudAt ? 'local' : 'cloud');
+      const preferLocal = mode === 'local' || cloudAt < '2026-07-23';
+      const merge = (c, l) => { const m = new Map(); (c || []).forEach(x => m.set(String(x.id), x)); (l || []).forEach(x => { const k = String(x.id); if (!m.has(k) || preferLocal) m.set(k, x); }); return [...m.values()]; };
+      const pick = (key, field) => mode === 'cloud' ? (data[field] || []) : merge(data[field], loc(key));
+      const R = pick('sv4_records', 'records'), L = pick('sv4_logs', 'todayLogs'), I = pick('sv4_insights', 'insights');
+      R.sort((a, b) => (b.id || 0) - (a.id || 0));
+      window._records = R; localStorage.setItem('sv4_records', JSON.stringify(R));
+      window._todayLogs = L; localStorage.setItem('sv4_logs', JSON.stringify(L));
+      window._insights = I; localStorage.setItem('sv4_insights', JSON.stringify(I));
+      const S = pick('sv4_scans', 'scans'); window._scans = S; localStorage.setItem('sv4_scans', JSON.stringify(S));
       if (data.userName) localStorage.setItem('sv4_user_name', data.userName);
-    }
+      if (data.app) { if (window.rdApplyCloudApp) window.rdApplyCloudApp(data.app); else localStorage.setItem('sv4_app_cloud', JSON.stringify(data.app)); }
+      if (mode !== 'cloud') window._needsPush = true;
+    } else if (loc('sv4_records').length) { window._needsPush = true; }
+    window._syncDenied = false;
     setSyncState('synced');
-  } catch(e) { console.error('로드 오류:', e); setSyncState('error'); }
+  } catch(e) {
+    console.error('로드 오류:', e);
+    window._syncDenied = /permission|insufficient/i.test(String((e && (e.code || e.message)) || ''));
+    setSyncState(window._syncDenied ? 'denied' : 'error');
+  }
 }
 
 function subscribeToCloud(uid) {
   if (unsubscribeSnapshot) unsubscribeSnapshot();
   unsubscribeSnapshot = db.collection('users').doc(uid).onSnapshot((snap) => {
+    if (snap.metadata && snap.metadata.hasPendingWrites) return;
     if (!snap.exists) return;
     const data = snap.data();
     const cloudStr = JSON.stringify(data.records||[]);
@@ -2030,23 +2154,33 @@ function subscribeToCloud(uid) {
       if (typeof window.renderScan === 'function') window.renderScan();
     }
     setSyncState('synced');
-  });
+  }, (err) => { console.error('동기화 구독 오류:', err); window._syncDenied = true; setSyncState('denied'); });
 }
 
 window.saveToCloud = async function() {
+  const at = new Date().toISOString();
+  try { localStorage.setItem('sv4_local_saved_at', at); } catch(e) {}
   if (!currentUser) return;
   try {
     setSyncState('syncing');
+    let appData = {};
+    try { appData = window.rdCloudApp ? window.rdCloudApp() : JSON.parse(localStorage.getItem('sv4_app') || '{}'); } catch(e) {}
     await db.collection('users').doc(currentUser.uid).set({
       records: window._records || [],
       todayLogs: window._todayLogs || [],
       insights: window._insights || [],
       scans: window._scans || JSON.parse(localStorage.getItem('sv4_scans')||'[]'),
       userName: localStorage.getItem('sv4_user_name') || '',
-      updatedAt: new Date().toISOString()
+      app: appData,
+      updatedAt: at
     });
+    window._syncDenied = false;
     setSyncState('synced');
-  } catch(e) { console.error('저장 오류:', e); setSyncState('error'); }
+  } catch(e) {
+    console.error('저장 오류:', e);
+    window._syncDenied = /permission|insufficient/i.test(String((e && (e.code || e.message)) || ''));
+    setSyncState(window._syncDenied ? 'denied' : 'error');
+  }
 };
 
 function setSyncState(state) {
@@ -2055,6 +2189,7 @@ function setSyncState(state) {
   if (!dot || !text) return;
   if (state === 'syncing') { dot.className = 'sync-dot syncing'; text.textContent = '동기화 중...'; }
   else if (state === 'synced') { dot.className = 'sync-dot'; dot.style.background = ''; text.textContent = '동기화됨'; }
+  else if (state === 'denied') { dot.className = 'sync-dot'; dot.style.background = 'var(--red)'; text.textContent = '이 기기에만 저장 중'; }
   else { dot.className = 'sync-dot'; dot.style.background = 'var(--red)'; text.textContent = '오프라인'; }
 }
 
@@ -2185,7 +2320,7 @@ function showApp() {
   loadSimData();
   document.getElementById('app-body').style.display = 'block';
   document.getElementById('fab').style.display = 'flex';
-  const name = localStorage.getItem('sv4_user_name') || '트래커';
+  const name = localStorage.getItem('sv4_user_name') || '생각콩';
   document.getElementById('user-greeting').textContent = name + '의 트래커';
   const ld = document.getElementById('log-date-filter');
   if (ld) ld.value = new Date().toISOString().split('T')[0];
@@ -3893,7 +4028,9 @@ function ingestScan(js,source){
   prune();
   if(js.themes)jset('sv4_theme_flow',js.themes);
   if(js.pullbacks)jset('sv4_pullbacks',Object.assign({date:js.baseDate},js.pullbacks));
-  jset(META_KEY,{baseDate:js.baseDate,generatedAt:js.generatedAt,total:js.hits.length,inRange:hits.length,loadedAt:new Date().toISOString(),source});
+  if(js.names)jset('sv4_names',Object.assign(jget('sv4_names',{}),js.names));
+  jset('sv4_reviews',js.reviews||[]);
+  jset(META_KEY,{baseDate:js.baseDate,generatedAt:js.generatedAt,intraday:!!js.intraday,total:js.hits.length,inRange:hits.length,loadedAt:new Date().toISOString(),source});
   saveScans();return {added,total:js.hits.length,inRange:hits.length};
 }
 function prune(){ // 손대지 않은 '점검중' 카드는 신호 후 20일이 지나면 정리 (클라우드 용량 보호)
@@ -4097,24 +4234,35 @@ window.vsAskPicks=async function(){
   try{navigator.clipboard.writeText(t);}catch(e){}
   window.open('https://claude.ai/new?q='+encodeURIComponent(t),'_blank');toast('🤖 후보 데이터를 담아 Claude를 열어요');
 };
+const md=d=>d?String(d).slice(5).replace('-','/'):'';
+function stockName2(code){const n=jget('sv4_names',{});return n[code]||stockName(code);}
+const TM=t=>typeof window.rdTmify==='function'?window.rdTmify(t):t;
+function noteList(x){return '<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m"><div class="pk-mh">'+stLink(m.code,esc(stockName2(m.code)))
+  +(m.state?'<span class="pk-s s-'+({'진입 검토':'go','추세 양호':'ok','눌림 대기':'wait','고점 반락':'wait','급락 관망':'wait','보류':'no'}[m.state]||'ok')+'">'+m.state+'</span>':'')
+  +'<span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(m.gap!=null?'<span class="dim">20일선 '+pct(m.gap,0)+'</span>':'')+'</div>'
+  +(m.note?'<div class="pk-n">'+TM(esc(m.note))+'</div>':'')+'</div>').join('')+'</div>';}
 function picksHtml(tf){
   const pk=tf&&tf.picks;if(!pk)return '';
-  const op=(pk.open||[])[0],sm=pk.summary;
-  let h='<div class="pk-box"><div class="pk-h"><b>오늘의 후보 · 모멘텀 3테마</b><span>'+esc(pk.rule||'')+'</span></div>';
-  if(pk.rest){h+='<div class="pk-row"><b>오늘은 쉬는 구간이에요</b><div class="pk-op">시장 전체(테마 평균) 60일 수익률이 '+pct(pk.mkt60,1)+'라서 규칙상 새로 사지 않아요. 백테스트에서 이 필터가 최대 낙폭을 -36% → -16%로 줄였어요.</div></div>';}
-  else if(pk.today&&pk.today.length){
-    h+=pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> 20일 · '+(x.n||'')+'종목'+(x.phase==='과열 주의'?' · 과열 주의':'')+'</span></div>'
-      +'<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m"><div class="pk-mh">'+stLink(m.code,esc(stockName(m.code)))
-        +(m.state?'<span class="pk-s s-'+({'진입 검토':'go','추세 양호':'ok','눌림 대기':'wait','고점 반락':'wait','급락 관망':'wait','보류':'no'}[m.state]||'ok')+'">'+m.state+'</span>':'')
-        +'<span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(m.gap!=null?'<span class="dim">20일선 '+pct(m.gap,0)+'</span>':'')+'</div>'
-        +(m.note?'<div class="pk-n">'+esc(m.note)+'</div>':'')+'</div>').join('')+'</div></div>').join('');
-    h+='<div class="pk-op dim">종목은 테마 안에서 거래대금 큰 순 5개 · 코멘트는 20일선·5일선 기준 규칙 설명이에요(진입 타이밍 규칙은 다음 백테스트에서 검증). 3테마에 고르게 나눠 담는 게 검증된 방식이에요.</div>'
-      +'<button class="vs-b" style="margin-top:8px" onclick="vsAskPicks()">🤖 이 후보로 Claude에게 매수 전략 묻기</button>';
+  const op=(pk.open||[])[0],sm=pk.summary,asOf=pk.asOf||tf.date,hold=pk.hold||10,isNew=op&&op.date===asOf;
+  const nt=typeof window.rdNextTD==='function'?window.rdNextTD:null;
+  let h='<div class="pk-box">';
+  if(op){
+    h+='<div class="pk-h"><b>진행 중 바스켓 · '+md(op.date)+' 선정</b><span>D+'+(op.days||0)+'/'+hold+(nt?' · 정리 예정 '+md(nt(op.date,hold))+' 무렵':'')+'</span></div>';
+    h+='<div class="pk-row"><div>'+op.themes.map(t=>'<b>'+esc(t)+'</b>').join(' · ')+'</div>'
+      +(op.days?'<div class="pk-op">테마 <b class="'+((op.ret||0)>=0?'pos':'neg')+'">'+pct(op.ret,2)+'</b> · 종목 평균 <b class="'+((op.stocksRet||0)>=0?'pos':'neg')+'">'+pct(op.stocksRet,2)+'</b> · 전체 평균 '+pct(op.base,2)+'</div>':'')
+      +(!isNew?'<div class="pk-ml">'+(op.stocks||[]).map(c=>'<div class="pk-m"><div class="pk-mh">'+stLink(c,esc(stockName2(c)))+(op.sr&&op.sr[c]!=null?'<span class="'+(op.sr[c]>=0?'pos':'neg')+'">'+pct(op.sr[c],1)+'</span>':'')+'</div></div>').join('')+'</div>':'')
+      +'</div>';
   }
-  if(op&&op.days>0)h+='<div class="pk-op">진행 중인 묶음 ('+esc(op.date)+' 선정 · '+op.days+'/10일): 테마 <b class="'+((op.ret||0)>=0?'pos':'neg')+'">'+pct(op.ret,2)+'</b> vs 전체 평균 '+pct(op.base,2)+'</div>';
-  else if(op)h+='<div class="pk-op">새 묶음 '+esc(op.date)+' 선정 — 10거래일 뒤 결과가 기록돼요</div>';
-  h+='<div class="pk-op">'+(sm?'실전 기록 '+sm.n+'회: 묶음당 '+pct(sm.avg,2)+' · 평균 대비 '+pct(sm.excess,2)+' · 이긴 비율 '+sm.beat+'%':'실전 기록은 아직 없어요 — 10거래일마다 한 줄씩 쌓여요')+'</div>';
-  h+='<div class="vs-note">과거 3년 백테스트: 10일 보유 기준 회당 +2.10%, 전체 평균 대비 +1.62%p, 이긴 비율 59%, 최대 낙폭 -16%. 실전 기록이 쌓일 때까지는 소액으로만.</div></div>';
+  if(pk.rest){h+='<div class="pk-row"><b>쉬는 구간</b><div class="pk-op">'+TM('시장 필터')+': 테마 평균 60일 수익률 '+pct(pk.mkt60,1)+' → 새로 사지 않아요. 이 필터가 최대 낙폭을 -36% → -16%로 줄였어요.</div></div>';}
+  else if(pk.today&&pk.today.length){
+    const body=pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> 20일 · '+(x.n||'')+'종목'+(x.phase==='과열 주의'?' · 과열 주의':'')+'</span></div>'+noteList(x)+'</div>').join('')
+      +'<div class="pk-op dim">종목은 테마 안에서 거래대금 큰 순 5개. 코멘트는 \'사지 말 것\'(고점 반락·급락·20일선 아래) 경고로만 보세요 — 종목 타이밍 조건을 더하면 과거 성과가 오히려 줄었어요. 3테마에 고르게 담는 게 검증된 방식이에요.</div>'
+      +'<button class="vs-b" style="margin-top:8px" onclick="vsAskPicks()">🤖 이 종목들로 Claude에게 묻기</button>';
+    h+=isNew?'<div class="pk-sub">이번 바스켓 종목 (오늘 선정)</div>'+body
+      :'<details class="bt-det pk-prev"><summary>다음 교체일 후보 미리보기 · 오늘 기준 (지금 사는 건 아니에요)</summary>'+body+'</details>';
+  }
+  h+='<div class="pk-op">'+(sm?'실전 기록 '+sm.n+'회: 바스켓당 '+pct(sm.avg,2)+' · '+TM('평균 대비')+' '+pct(sm.excess,2)+' · 이긴 비율 '+sm.beat+'%':'실전 기록은 아직 없어요 — 10거래일마다 한 줄씩 쌓여요')+'</div>';
+  h+='<div class="vs-note">과거 3년 백테스트: 10일 보유 회당 +2.10%, 평균 대비 +1.62%p, 이긴 비율 59%, '+TM('최대 낙폭')+' -16%. 실전 기록이 쌓일 때까지는 소액으로.</div></div>';
   return h;
 }
 function themeHtml(){
@@ -4124,14 +4272,14 @@ function themeHtml(){
   const grp=(t,arr,cls)=>arr&&arr.length?'<div class="th-grp"><div class="th-gt '+cls+'">'+t+'</div>'+arr.slice(0,6).map(chip).join('')+'</div>':'';
   const lead=tf.leaders.slice(0,thAll?40:10);
   const mx=Math.max(...lead.map(x=>Math.abs(x.ret20)),1);
-  return picksHtml(tf)+'<div class="vs-metaline">'+esc(tf.date)+' 기준 · '+tf.count+'개 테마 · 20일 수익률 순</div>'
+  return picksHtml(tf)+'<details class="bt-det"><summary>테마 순위 보기 · '+tf.count+'개 중 상위 '+lead.length+'</summary><div class="vs-metaline">'+esc(tf.date)+' 기준 · 20일 수익률 순</div>'
    +grp('주도',tf.leaders.filter(x=>x.phase==='주도'),'')+grp('떠오름',tf.rising,'up')+grp('식는 중',tf.cooling,'down')+grp('과열 주의',tf.hot,'warn')
    +'<table class="vs-stat th-tbl"><thead><tr><th>테마</th><th>20일</th><th>5일</th><th>상승비율</th><th>거래대금</th></tr></thead><tbody>'
    +lead.map(x=>'<tr><td><b>'+esc(x.theme)+'</b>'+(x.phase?'<span class="th-ph '+({'주도':'','떠오름':'up','식는 중':'down','과열 주의':'warn'}[x.phase]||'')+'">'+x.phase+'</span>':'')
      +'<div class="th-bar"><i class="'+(x.ret20>=0?'p':'n')+'" style="width:'+Math.round(Math.abs(x.ret20)/mx*100)+'%"></i></div></td>'
      +'<td class="'+(x.ret20>=0?'pos':'neg')+'">'+pct(x.ret20)+'</td><td class="'+(x.ret5>=0?'pos':'neg')+'">'+pct(x.ret5)+'</td><td>'+x.breadth5+'%</td><td>'+x.money.toFixed(1)+'배</td></tr>').join('')
    +'</tbody></table><button class="vs-b" style="margin-top:8px" onclick="vsThAll()">'+(thAll?'상위 10개만':'상위 40개 보기')+'</button>'
-   +'<div class="vs-note">거래대금 = 최근 5일 ÷ 평소(60일) · 상승비율 = 5일간 오른 소속 종목 비율 · 국면은 규칙으로 계산한 설명일 뿐 예측이 아니에요. 과거 검증의 테마 전략 결과와 함께 보세요.</div>';
+   +'<div class="vs-note">거래대금 = 최근 5일 ÷ 평소(60일) · 상승비율 = 5일간 오른 소속 종목 비율 · 국면은 규칙으로 계산한 설명일 뿐 예측이 아니에요.</div></details>';
 }
 function themeBtHtml(){
   const th=btData&&btData.theme;if(!th)return '';
@@ -4181,7 +4329,7 @@ function pbHtml(){
   const tr=d.trigger||[],su=d.setup||[];
   h+='<div class="pb-h">오늘 재상승 신호 <b>'+tr.length+'</b></div>';
   h+=tr.length?tr.slice(0,10).map(x=>{const rr=x.risk>0?(x.up/x.risk):0;
-      return '<div class="pb-row"><div class="pk-mh">'+stLink(x.code,esc(x.name))+(x.themes&&x.themes[0]&&x.themes[0].r<=10?'<span class="vs-pr p0">💰 강한 테마</span>':'')+'</div>'
+      return '<div class="pb-row"><div class="pk-mh">'+stLink(x.code,esc(x.name))+'</div>'
         +'<div class="vs-tags">'+tags(x)+'</div>'
         +'<div class="pb-num"><span>이전 고점 <b>'+x.H.toLocaleString()+'</b> <em class="pos">+'+x.up+'%</em></span><span>손절 <b>'+x.stop.toLocaleString()+'</b> <em class="neg">-'+x.risk+'%</em></span><span>손익비 <b>'+rr.toFixed(1)+'</b></span></div>'
         +'<div class="pk-n">급등 +'+x.rise+'% → 오른 폭의 '+x.depth+'% 되돌림 · 고점 후 '+x.days+'일 · 쉬는 동안 거래량 '+x.dry+'%로 감소. '+(rr>=1.5?'고점까지 거리가 손절폭보다 충분히 커요.':'고점까지 남은 폭이 손절폭에 비해 작아 매력이 떨어져요.')+'</div></div>';}).join('')
@@ -4220,11 +4368,14 @@ function btSummary(){
   let alert=false;
   if(ad){alert=ad.excess<=0||(ad.split&&ad.split.after!=null&&ad.split.after<=0);
     L.push({c:alert?'neg':'pos',t:'📌 <b>지금 쓰는 규칙</b>(강한 테마 3개 + 시장 필터, 10일 보유): 회당 '+pct(ad.avg,2)+', 아무 테마보다 '+pct(ad.excess,2)+'p'+(ad.split?', 최근 기간 '+pct(ad.split.after,2):'')+' → '+(alert?'<b>약해졌어요. 비중을 줄이고 다음 결과까지 지켜보세요</b>':'유지')});}
+  const real=ss.find(x=>x.strategy==='실제 매수형: 시장 필터 + 테마별 거래대금 상위 5종목'&&x.hold===10),realS=ss.find(x=>x.strategy==='실제 매수형 + 종목별 -15% 비상 손절'&&x.hold===10);
+  if(real&&ad){const ok=real.excess>0&&real.split&&real.split.after>0;
+    L.push({c:ok?'pos':'neg',t:'🧺 <b>실제로 사는 방식</b>(테마별 거래대금 상위 5종목): 회당 '+pct(real.avg,2)+' · 평균 대비 '+pct(real.excess,2)+'p · 최대 낙폭 '+pct(real.mdd,1)+(realS?' → 비상 손절 -15%를 더하면 회당 '+pct(realS.avg,2)+' · 최대 낙폭 '+pct(realS.mdd,1):'')+(ok?'':' · <b>테마 전체를 사는 것보다 약해요. 종목 수를 늘리는 쪽 검토</b>')});}
   const solid=(btData.results||[]).filter(r=>r.n>=50),b=btData.baseline||{};
   if(solid.length){const r=solid[0],good=r.avg>0&&r.avg-(b.avg||0)>=0.5;
     L.push({c:good?'pos':'dim',t:'🔥 <b>거래량 급증만 보고 사기</b>: 가장 나은 방법도 거래당 '+pct(r.avg,2)+' (아무 종목 '+pct(b.avg,2)+') → '+(good?'쓸 만한 규칙이 생겼어요: '+esc(r.filter):'급증은 사는 신호가 아니라 <b>살펴볼 목록</b>이에요')});}
   const sv=surgeVerdict();
-  if(sv)L.push({c:sv.ok?'pos':'dim',t:'🎯 <b>급증 + 강한 테마 + 상승 추세</b>(💰 우선 조건): 회당 '+pct(sv.pr.avg,2)+' ('+sv.pr.n+'회, 최근 '+pct(sv.pr.split&&sv.pr.split.after,2)+') → '+(sv.ok?'급증 전체보다 확실히 나아요':'아직 확실한 우위는 없어요')});
+  if(sv)L.push({c:sv.ok?'pos':'dim',t:'🎯 <b>급증 + 강한 테마 + 상승 추세</b>(예전 💰 우선 조건): 회당 '+pct(sv.pr.avg,2)+' ('+sv.pr.n+'회, 최근 '+pct(sv.pr.split&&sv.pr.split.after,2)+') → '+(sv.ok?'급증 전체보다 확실히 나아요':'아직 확실한 우위는 없어요')});
   const pv=pbVerdict();
   if(pv&&pv.best)L.push({c:pv.ok?'pos':'dim',t:'↩️ <b>눌림 후 재상승</b>: 가장 나은 방식 회당 '+pct(pv.best.avg,2)+' ('+pv.best.n+'회, 최근 '+pct(pv.best.split&&pv.best.split.after,2)+') → '+(pv.ok?'쓸 만해요':'아직 관찰용')});
   const ll=th.leadLag;
@@ -4285,9 +4436,7 @@ function prioSort(a,b){
 function themeTagHtml(it){
   const ts=it.themes||[],tr=it.trend;
   if(!ts.length&&!tr)return '';
-  const p=prio(it);
-  const lab=p===0?'<span class="vs-pr p0">💰 우선</span>':p===1?'<span class="vs-pr p1">테마 강함 · 차트 대기</span>':'';
-  return '<div class="vs-tags">'+lab
+  return '<div class="vs-tags">'
     +ts.map(x=>'<span class="vs-th'+(x.r<=10?' hot':'')+'">'+(x.pick?'★ ':'')+esc(x.t)+' <b>상위 '+Math.max(1,x.r)+'%</b></span>').join('')
     +(tr?'<span class="vs-th">20일선 '+(tr.up?'위·상승':'아래/하락')+' '+(tr.gap>0?'+':'')+tr.gap+'%</span>':'')+'</div>';
 }
@@ -4331,26 +4480,29 @@ function cardHtml(it){
      +'<button class="vs-b vs-b-x" onclick="vsDel('+it.id+')">삭제</button>'
    +'</div></div>';
 }
+let obsOpen=false;
+window.vsObsToggle=function(el){obsOpen=el.open;};
+function scanStamp(){
+  const m=jget(META_KEY,null);if(!m||!m.generatedAt)return '';
+  const hh=String(m.generatedAt).slice(11,16);
+  return '<div class="vs-metaline">'+md(m.baseDate)+' 종가 기준 · '+md(m.generatedAt.slice(0,10))+' '+hh+' 생성'+(m.intraday?' · <b class="neg">장중에 돌린 결과라 오늘 봉은 빼고 계산했어요</b>':'')+'</div>';
+}
 function renderScan(){
   const root=$('sub-scan');if(!root)return;
   const c=cfg(),meta=jget(META_KEY,null),list=scans();
   const isEx=x=>x.status==='check'&&excludeReasons(x).length>0;
-  const isTop=x=>x.status==='check'&&prio(x)===0;
-  const cnt={top:list.filter(isTop).length,check:list.filter(x=>x.status==='check'&&!isEx(x)).length,watch:list.filter(x=>x.status==='watch').length,
+  const cnt={check:list.filter(x=>x.status==='check'&&!isEx(x)).length,watch:list.filter(x=>x.status==='watch').length,
     pass:list.filter(x=>x.status==='pass').length,ex:list.filter(isEx).length,all:list.length};
-  const hasTheme=list.some(x=>x.themes);
-  const F=vsFilter||(cnt.top?'top':'check');
-  const shown=list.filter(x=>F==='top'?isTop(x):F==='all'?true:F==='ex'?isEx(x):F==='check'?(x.status==='check'&&!isEx(x)):x.status===F)
-    .sort(hasTheme?prioSort:(a,b)=>(b.sigDate||'').localeCompare(a.sigDate||'')||score(b).ok-score(a).ok||(b.ratio||0)-(a.ratio||0));
-  const sv=surgeVerdict();
-  const topNote=F==='top'?'<div class="vs-topnote"><b>💰 우선</b> = 지금 상위 10% 테마에 속함 + 20일선 위에서 상승 + 20일선과 15% 이내 + 제외 사유 없음. 백테스트에서 돈이 된 건 개별 급증이 아니라 <b>강한 테마를 따라가는 것</b>이라, 그와 겹치는 신호만 추렸어요.'
-    +(sv?'<br>'+(sv.ok?'✅ 과거 검증: 이 조건의 급증은 10일 보유 회당 '+pct(sv.pr.avg,2)+' ('+sv.pr.n+'회) — 급증 전체 '+pct(sv.all.avg,2)+'보다 나았고 최근 기간도 플러스예요.':'⚠️ 과거 검증: 이 조건도 회당 '+pct(sv.pr.avg,2)+' (급증 전체 '+pct(sv.all.avg,2)+') — 아직 확실한 우위는 없어요. 후보 압축용으로만.'):'<br><span class="dim">이 조건의 과거 성과는 다음 backtest 실행 때 계산돼요.</span>')+'</div>':'';
+  const F=vsFilter||'check';
+  const shown=list.filter(x=>F==='all'?true:F==='ex'?isEx(x):F==='check'?(x.status==='check'&&!isEx(x)):x.status===F)
+    .sort((a,b)=>(b.sigDate||'').localeCompare(a.sigDate||'')||score(b).ok-score(a).ok||(b.ratio||0)-(a.ratio||0));
   const setupNeeded=!c.worker;
+  const pbd=jget('sv4_pullbacks',null),pbN=pbd&&pbd.trigger?pbd.trigger.length:0;
   root.innerHTML=
-   '<div class="card vs-top">'
-   +'<div class="vs-title">거래량 급증 점검 <span>20일 평균 x3 · 거래대금 50억↑</span></div>'
-   +'<div class="vs-metaline" id="vs-sync">'+(meta?'자동 스캔 기준일 <b>'+esc(meta.baseDate||'—')+'</b> · 전체 '+meta.total+'종목 중 '+meta.inRange+'개가 가져오기 범위':'아직 스캔 결과를 불러오지 않았어요')+'</div>'
-   +(setupNeeded?'<div class="vs-setup">⚙ 시세 서버 주소를 넣으면 가격·1~5번 자동 판정·사후 추적이 켜져요 → <a href="#" onclick="vsToggle(\'vs-cfg\');return false;">설정</a> · 방법은 가이드 탭 &gt; 🔍 스크리닝</div>':'')
+   '<div class="card vs-top"><div class="vs-title">테마 바스켓 <span>검증된 규칙 하나 · 10거래일 보유</span></div>'+scanStamp()+themeHtml()+'</div>'
+   +btCardHtml()
+   +'<details class="card vs-top obs"'+(obsOpen?' open':'')+' ontoggle="vsObsToggle(this)"><summary><span class="obs-t">관찰</span><span class="obs-s">급증 '+cnt.check+' · 재상승 '+pbN+' — 과거 검증에서 손해였던 신호라 사는 용도가 아니에요</span></summary>'
+   +'<div class="obs-tools">'
    +'<div class="vs-tools">'
      +'<button class="vs-b vs-b-p" onclick="vsLoadAuto()">🔄 자동 스캔 불러오기</button>'
      +'<label class="vs-b">📂 파일 가져오기<input type="file" accept=".json" style="display:none" onchange="vsImportFile(event)"></label>'
@@ -4370,16 +4522,21 @@ function renderScan(){
      +'<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;color:var(--text2)"><input type="checkbox" id="vs-cfg-auto"'+(c.autoLoad?' checked':'')+'> 이 화면을 열 때 자동으로 불러오기·가격 추적</label>'
      +'<button class="vs-b vs-b-p" style="margin-top:10px" onclick="vsSaveCfg()">저장</button></div>'
    +'</div>'
-   +'<div class="card vs-top"><div class="vs-title">테마 흐름 <span>돈이 어디로 움직이나</span></div>'+themeHtml()+'</div>'
-   +pbHtml()+btCardHtml()
-   +'<div class="card vs-top"><div class="vs-title">신호 성적표 <span>내 판단이 맞았는지 숫자로</span></div>'+statsHtml()+'</div>'
-   +'<div class="filter-row">'+(hasTheme?[['top','💰 우선']]:[]).concat([['check','점검중'],['watch','관심'],['pass','패스'],['ex','제외'],['all','전체']]).map(f=>'<button class="f-btn'+(F===f[0]?' active':'')+'" onclick="vsFilter(\''+f[0]+'\')">'+f[1]+' '+cnt[f[0]]+'</button>').join('')+'</div>'
-   +topNote+(shown.length?shown.map(cardHtml).join(''):'<div class="vs-empty">'+(list.length?(F==='top'?'오늘은 우선 조건에 맞는 신호가 없어요 — 쉬어가도 되는 날이에요':'이 필터에는 카드가 없어요'):'🔄 자동 스캔을 불러오거나 ＋ 종목 추가로 시작하세요')+'</div>')
-   +'<div class="vs-note" style="margin:14px 2px 0">앱은 매수·매도를 판정하지 않아요. 충족 개수와 근거만 보여주고, 결정은 직접 하세요. 거래대금은 종가×거래량 추정치예요.</div>';
+   +'<div class="vs-title" style="margin-top:6px">거래량 급증 <span>20일 평균 x3 · 거래대금 50억↑</span></div>'
+   +'<div class="vs-metaline" id="vs-sync">'+(meta?'자동 스캔 기준일 <b>'+esc(meta.baseDate||'—')+'</b> · 전체 '+meta.total+'종목 중 '+meta.inRange+'개가 가져오기 범위':'아직 스캔 결과를 불러오지 않았어요')+'</div>'
+   +(setupNeeded?'<div class="vs-setup">⚙ 시세 서버 주소를 넣으면 가격·1~5번 자동 판정·사후 추적이 켜져요 → <a href="#" onclick="vsToggle(\'vs-cfg\');return false;">설정</a></div>':'')
+   +'<div class="filter-row">'+[['check','점검중'],['watch','관심'],['pass','패스'],['ex','제외'],['all','전체']].map(f=>'<button class="f-btn'+(F===f[0]?' active':'')+'" onclick="vsFilter(\''+f[0]+'\')">'+f[1]+' '+cnt[f[0]]+'</button>').join('')+'</div>'
+   +(shown.length?shown.map(cardHtml).join(''):'<div class="vs-empty">'+(list.length?'이 필터에는 카드가 없어요':'🔄 자동 스캔을 불러오거나 ＋ 종목 추가로 시작하세요')+'</div>')
+   +pbHtml()
+   +'<div class="vs-title" style="margin-top:14px">신호 성적표 <span>내 판단이 맞았는지 숫자로</span></div>'+statsHtml()
+   +'<div class="vs-note" style="margin:14px 2px 0">앱은 매수·매도를 판정하지 않아요. 충족 개수와 근거만 보여주고, 결정은 직접 하세요. 거래대금은 종가×거래량 추정치예요.</div>'
+   +'</details>';
   if(typeof window.renderToday==='function')try{window.renderToday();}catch(e){}
 }
 window.renderScan=renderScan;
-window.vsOpenCount=()=>{const l=scans();return l.some(x=>x.themes)?l.filter(x=>x.status==='check'&&prio(x)===0).length:l.filter(x=>x.status==='check'&&!excludeReasons(x).length).length;};
+window.vsOpenCount=()=>0;   // 급증 신호는 관찰용이라 배지·할 일에서 뺐어요
+let prefetched=false;
+window.vsPrefetch=async function(){if(prefetched)return;prefetched=true;const c=cfg();try{if(c.scanUrl)await vsLoadAuto(true);}catch(e){}try{loadBacktest();}catch(e){}};
 window.scrCopy=function(id){const el=$(id);if(!el)return;const t=el.textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('📋 복사 완료')).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 복사 완료');});};
 setTimeout(()=>{try{loadBacktest();}catch(e){}},2500);   // 오늘 탭 알림용으로 미리 한 번 확인
 window.vsOnOpen=function(){
@@ -4441,7 +4598,9 @@ function build(){
   // 오늘: 할 일·보유 카드
   const home=$('panel-home');
   if(home){const rd=document.createElement('div');rd.className='rd';rd.id='rd-today';
-    const anchor=home.querySelector('.quick-bar');home.insertBefore(rd,anchor||home.firstChild);}
+    const anchor=home.querySelector('.quick-bar');home.insertBefore(rd,anchor||home.firstChild);
+    // 예전 '오늘의 투자 판단 기록' 폼은 접어 두기 (기능은 그대로)
+    if(anchor&&!anchor.closest('details')){const dt=document.createElement('details');dt.className='rd-qb';dt.innerHTML='<summary>빠른 판단 메모 · 관망·패스 기록</summary>';anchor.parentNode.insertBefore(dt,anchor);dt.appendChild(anchor);}}
   // 하단 탭
   const nav=document.createElement('div');nav.className='rd-nav';nav.id='rd-nav';
   nav.innerHTML='<nav aria-label="주요 화면">'+TABS.map(t=>'<button data-t="'+t+'" onclick="switchTab(\''+t+'\')">'+ICON[t]+LABEL[t]+(t==='signal'?'<span class="bd" id="rd-sigbd" hidden></span>':'')+'</button>').join('')+'</nav>';
@@ -4463,6 +4622,7 @@ window.switchTab=function(n){
   if(curTab==='review'&&typeof renderPattern==='function')renderPattern();
   if(curTab==='stocks'&&typeof renderStocks==='function')renderStocks();
   if(curTab==='home')renderToday();
+  if(typeof lucide!=='undefined')try{lucide.createIcons();}catch(e){}
 };
 function markTab(){document.querySelectorAll('#rd-nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===curTab));}
 
@@ -4477,6 +4637,8 @@ function renderSheet(){
    +it('스윙 후보 받기','triggerSwingRecommend()','')
    +it('Claude 브리핑 열기','aiDailyBriefing()','')
    +'<div class="gt">도구</div>'
+   +it('설정 · 알림','rdSettings()','계좌 · 텔레그램 · 공유')
+   +it('용어 풀이','rdGlossary()','')
    +it('오늘의 루틴 · 사용 가이드','switchTab(\'guide\')','')
    +it('백업 내보내기','exportData()','')
    +it('백업 불러오기','document.getElementById(\'imp\').click()','')
@@ -4494,49 +4656,43 @@ function codeOf(stock){const m=String(stock||'').match(/[0-9A-Z]{6}/);if(m)retur
   const nm=String(stock||'').split(' ')[0];const s=(typeof KRX_STOCKS!=='undefined')?KRX_STOCKS.find(x=>x.name===nm):null;return s?s.code:null;}
 function renderToday(){
   const box=$('rd-today');if(!box||typeof records==='undefined')return;
+  try{if(window.rdSyncBasketPrices)rdSyncBasketPrices();}catch(e){}
   const now=new Date(),wd='일월화수목금토'[now.getDay()];
   const m=now.getHours()*60+now.getMinutes(),wk=now.getDay()%6!==0;
   const ph=!wk?'휴장':m<480?'장 시작 전':m<540?'프리마켓':m<930?'정규장':m<1200?'애프터마켓':'장 종료';
   const active=records.filter(r=>r.status==='buy'||r.status==='hold');
   const broken=active.filter(r=>r.stoploss&&r.current&&r.current<r.stoploss);
   const near=active.filter(r=>r.stoploss&&r.current&&r.current>=r.stoploss&&(r.current-r.stoploss)/r.current<0.02);
-  const scans=Array.isArray(window._scans)?window._scans:[];
-  const sig=typeof vsOpenCount==='function'?vsOpenCount():scans.filter(s=>s.status==='check'&&!(s.chg<0)).length;
   const unrev=records.filter(r=>(r.status==='profit'||r.status==='loss')&&!r.review);
-  const d3=new Date(Date.now()-3*864e5).toISOString().slice(0,10);
-  const arrived=scans.filter(s=>s.track&&((s.track.d5&&s.track.d5.date>=d3)||(s.track.d10&&s.track.d10.date>=d3))).length;
   const nm=r=>esc(String(r.stock).split(' ')[0]);
   const items=[];
   if(broken.length)items.push({n:broken.length,t:'손절선 이탈',s:broken.map(nm).join(', '),u:1,go:"switchTab('stocks');setFilter('active')"});
   if(near.length)items.push({n:near.length,t:'손절선 2% 이내',s:near.map(nm).join(', '),u:1,go:"switchTab('stocks');setFilter('active')"});
-  items.push({n:sig,t:'우선 점검 신호',s:'강한 테마 + 상승 추세와 겹친 급증만',go:"switchTab('signal')"});
-  items.push({n:unrev.length,t:'복기 대기',s:unrev.length?unrev.slice(0,3).map(nm).join(', ')+' — 30초 복기':'청산한 거래가 생기면 여기에',go:unrev.length?'openReview('+unrev[0].id+')':"switchTab('review')"});
-  let tfw=null;try{tfw=JSON.parse(localStorage.getItem('sv4_theme_flow')||'null');}catch(e){}
-  const pkt=tfw&&tfw.picks&&tfw.picks.today||[];
-  if(pkt.length){const op=(tfw.picks.open||[])[0];items.push({n:pkt.length,t:'모멘텀 3테마 후보',s:pkt.map(x=>esc(x.theme)).join(' · ')+(op&&op.days>0?' — 진행 '+op.days+'/10일 '+(op.ret>=0?'+':'')+op.ret+'%':''),go:"switchTab('signal')"});}
-  let pbd=null;try{pbd=JSON.parse(localStorage.getItem('sv4_pullbacks')||'null');}catch(e){}
-  if(pbd&&pbd.trigger&&pbd.trigger.length)items.push({n:pbd.trigger.length,t:'눌림 후 재상승 신호',s:pbd.trigger.slice(0,3).map(x=>esc(x.name)).join(', ')+' — 손절·고점 가격 확인',go:"switchTab('signal');vsOpenPb()"});
+  if(unrev.length)items.push({n:unrev.length,t:'복기 대기',s:unrev.slice(0,3).map(nm).join(', ')+' — 30초 복기',go:'openReview('+unrev[0].id+')'});
   let btf=null,bts='';try{btf=JSON.parse(localStorage.getItem('sv4_bt_flag')||'null');bts=JSON.parse(localStorage.getItem('sv4_bt_seen')||'""');}catch(e){}
-  if(btf&&(btf.alert||btf.gen!==bts))items.push({n:1,u:btf.alert?1:0,t:btf.alert?'지금 쓰는 규칙 점검':'과거 검증 새 결과',s:btf.alert?'최근 성과가 약해졌어요 — 요약 확인':'월간 검증이 갱신됐어요 — 요약 4줄',go:"switchTab('signal');vsOpenBt()"});
-  items.push({n:arrived,t:'신호 결과 도착',s:'D+5·D+10 결과를 내 판단과 비교',go:"switchTab('signal');vsFilter('all')"});
-  const total=items.reduce((a,x)=>a+x.n,0);
-  const todo=total?items.map(x=>'<li><button class="'+(x.u?'urgent ':'')+(x.n?'':'zero')+'" onclick="'+x.go+'"><span class="n num">'+x.n+'</span><span class="t"><b>'+x.t+'</b><span>'+x.s+'</span></span><span class="chev" aria-hidden="true">›</span></button></li>').join('')
-    :'<li class="rd-done">✓ 오늘 할 일은 끝났어요</li>';
+  if(btf&&(btf.alert||btf.gen!==bts))items.push({n:1,u:btf.alert?1:0,t:btf.alert?'지금 쓰는 규칙 점검':'과거 검증 새 결과',s:btf.alert?'최근 성과가 약해졌어요 — 요약 확인':'월간 검증이 갱신됐어요 — 요약 확인',go:"switchTab('signal');vsOpenBt()"});
+  const rv=window.rdReviewItems?rdReviewItems():[];
+  if(rv.length)items.push({n:rv.length,t:'개선 알림',s:rv.map(x=>x.code).join(' · ')+' — 때가 된 개선 항목',go:"document.getElementById('rd-reviews').scrollIntoView({behavior:'smooth'})"});
+  const todo=items.length?items.map(x=>'<li><button class="'+(x.u?'urgent':'')+'" onclick="'+x.go+'"><span class="n num">'+x.n+'</span><span class="t"><b>'+x.t+'</b><span>'+x.s+'</span></span><span class="chev" aria-hidden="true">›</span></button></li>').join('')
+    :'<li class="rd-done">✓ 그 밖에 챙길 일은 없어요</li>';
   const pos=active.length?active.map(r=>{
     const p=r.entry&&r.current?(r.current/r.entry-1)*100:null;
     const room=r.stoploss&&r.current?(r.current-r.stoploss)/r.current*100:null;
     const span=r.entry&&r.stoploss?Math.max((r.entry-r.stoploss)/r.entry*100,1):8;
     const w=room==null?0:Math.max(0,Math.min(100,room/(span*2)*100));
-    return '<li><div class="l1"><span class="nm">'+(typeof stLink==='function'?stLink(codeOf(r.stock),nm(r)):nm(r))+(room!=null&&room<0?'<span class="rd-pill">손절 이탈</span>':'')+'</span>'
+    return '<li><div class="l1"><span class="nm">'+(typeof stLink==='function'?stLink(codeOf(r.stock),nm(r)):nm(r))+(r.basket?'<span class="rd-tag">바스켓</span>':'')+(room!=null&&room<0?'<span class="rd-pill">손절 이탈</span>':'')+'</span>'
       +'<span class="pc num '+(p==null?'':p>=0?'up':'down')+'">'+(p==null?'—':(p>=0?'+':'')+p.toFixed(1)+'%')+'</span></div>'
       +'<div class="l2 num"><span>현재 '+(r.current?fmt(r.current):'—')+' · 진입 '+(r.entry?fmt(r.entry):'—')+'</span><span>'+(room==null?'손절선 미입력':'손절까지 '+room.toFixed(1)+'%')+'</span></div>'
       +(room==null?'':'<div class="rd-bar'+(room<2?' risk':'')+'"><i style="width:'+w+'%"></i></div>')+'</li>';}).join('')
     :'<li class="rd-empty">보유 중인 종목이 없어요</li>';
-  const upd=window._rdPriceAt?'<div class="rd-note">현재가 자동 갱신 '+window._rdPriceAt+'</div>':'';
+  const upd=window._rdPriceAt?'<div class="rd-note">현재가 자동 갱신 '+window._rdPriceAt+'</div>':'<div class="rd-note">바스켓 종목은 저녁 스캔 종가로 갱신돼요</div>';
+  const deny=window._syncDenied?'<div class="rd-warn">클라우드 저장이 막혀 있어요(Firestore 규칙 만료). 지금은 이 기기에만 저장돼요 — 메뉴 › 백업 내보내기를 먼저 해 두세요.</div>':'';
   box.innerHTML='<div class="rd-head"><div class="rd-date">'+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+wd+')</div><div class="rd-phase"><i class="'+(ph==='정규장'?'live':'')+'"></i>'+ph+'</div></div>'
-    +'<section class="rd-card"><div class="rd-h"><h2>지금 할 일</h2></div><ul class="rd-todo">'+todo+'</ul></section>'
-    +'<section class="rd-card"><div class="rd-h"><h2>보유 종목</h2><button onclick="switchTab(\'stocks\')">전체</button></div><ul class="rd-pos">'+pos+'</ul>'+upd+'</section>';
-  const bd=$('rd-sigbd');if(bd){bd.hidden=!sig;bd.textContent=sig;}
+    +deny+(window.rdBasketCard?rdBasketCard():'')
+    +'<section class="rd-card"><div class="rd-h"><h2>챙길 일</h2></div><ul class="rd-todo">'+todo+'</ul></section>'
+    +'<section class="rd-card"><div class="rd-h"><h2>보유 종목</h2><button onclick="switchTab(\'stocks\')">전체</button></div><ul class="rd-pos">'+pos+'</ul>'+upd+'</section>'
+    +(window.rdReviewCard?rdReviewCard():'');
+  const bd=$('rd-sigbd');if(bd)bd.hidden=true;
 }
 window.renderToday=renderToday;
 
@@ -4567,9 +4723,11 @@ if(typeof _ra==='function'){
 }
 const _sa=window.showApp;
 if(typeof _sa==='function'){
-  showApp=function(){_sa.apply(this,arguments);build();switchTab('home');setTimeout(refreshHoldings,300);};
+  showApp=function(){_sa.apply(this,arguments);build();switchTab('home');setTimeout(refreshHoldings,300);
+    setTimeout(()=>{try{if(window.vsPrefetch)vsPrefetch();}catch(e){}},200);setTimeout(()=>{try{if(window.rdFirstRun)rdFirstRun();}catch(e){}},900);};
   window.showApp=showApp;
 }
+let lastY=0;window.addEventListener('scroll',()=>{const f=document.getElementById('fab');if(!f)return;const y=window.scrollY;f.classList.toggle('rd-hide',y>lastY+4&&y>120);if(y<lastY-4)f.classList.remove('rd-hide');lastY=y;},{passive:true});
 if(document.getElementById('app-body')&&document.getElementById('app-body').style.display==='block'){build();renderToday();}
 })();
 </script>
@@ -4662,6 +4820,290 @@ function renderPremortem(){
 window.renderPremortem=renderPremortem;
 const _st=window.switchTab;
 if(typeof _st==='function'){window.switchTab=function(n){_st.apply(this,arguments);if(n==='review')renderPremortem();};switchTab=window.switchTab;}
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════
+   바스켓 중심 운영 (U1·U3·U9·S3·U6) + 개선 알림 + 용어 풀이(U7) + 처음 안내 + 설정(U5·U4)
+   ══════════════════════════════════════════════════════ */
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const jget=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>iso(new Date());
+const addDays=(d,n)=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return iso(x);};
+const daysBetween=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const won=n=>Math.round(n||0).toLocaleString()+'원';
+const pct=(n,d=1)=>n==null||isNaN(n)?'—':(n>0?'+':'')+Number(n).toFixed(d)+'%';
+const md=d=>d?String(d).slice(5).replace('-','/'):'';
+const toast=m=>{if(typeof showToast==='function')showToast(m);};
+const recs=()=>typeof records!=='undefined'?records:[];
+const isAct=r=>r.status==='buy'||r.status==='hold';
+const codeIn=s=>{const m=String(s||'').match(/[0-9A-Z]{6}/);return m?m[0]:null;};
+function nameOf(code){const n=jget('sv4_names',{});if(n[code])return n[code];const l=typeof KRX_STOCKS!=='undefined'?KRX_STOCKS:[];const x=l.find(s=>s.code===code);return x?x.name:code;}
+
+/* ── 앱 설정: 기기 + 클라우드(Firestore users/{uid}.app) ── */
+const APP_KEY='sv4_app';
+function app(){
+  const a=jget(APP_KEY,{})||{};
+  a.prefs=Object.assign({acct:0,pct:30,stop:15},a.prefs);
+  a.notify=Object.assign({chatId:'',on:true},a.notify);
+  a.usage=Object.assign({claude:0,chart:0,since:'',shared:''},a.usage);
+  a.reviews=Object.assign({done:{},snooze:{}},a.reviews);
+  return a;
+}
+function saveApp(a,push){jset(APP_KEY,a);if(push!==false&&typeof persist==='function')persist();}
+window.rdCloudApp=function(){const a=app();a.cfg=jget('sv4_scan_cfg',{})||{};return JSON.parse(JSON.stringify(a));};
+window.rdApplyCloudApp=function(c){
+  if(!c||typeof c!=='object')return;const a=app();
+  a.prefs=Object.assign(a.prefs,c.prefs||{});
+  if(c.notify)a.notify=Object.assign(a.notify,c.notify);
+  const u=c.usage||{};a.usage.claude=Math.max(a.usage.claude||0,u.claude||0);a.usage.chart=Math.max(a.usage.chart||0,u.chart||0);
+  a.usage.since=[a.usage.since,u.since].filter(Boolean).sort()[0]||'';a.usage.shared=a.usage.shared||u.shared||'';
+  a.reviews.done=Object.assign({},(c.reviews||{}).done,a.reviews.done);a.reviews.snooze=Object.assign({},(c.reviews||{}).snooze,a.reviews.snooze);
+  a.firstRun=a.firstRun||!!c.firstRun;
+  jset(APP_KEY,a);
+  // U5: 시세 서버 주소 등 설정을 계정에서 불러오기 (이 기기에 값이 없을 때만)
+  const cur=jget('sv4_scan_cfg',{})||{};
+  if(c.cfg&&c.cfg.worker&&!cur.worker)jset('sv4_scan_cfg',Object.assign({},c.cfg,cur,{worker:c.cfg.worker}));
+};
+(function(){const pend=jget('sv4_app_cloud',null);if(pend){window.rdApplyCloudApp(pend);localStorage.removeItem('sv4_app_cloud');}
+  const a=app();if(!a.usage.since){a.usage.since=today();jset(APP_KEY,a);}})();
+
+/* ── 거래일 계산 (주말 제외, 공휴일은 반영 안 됨) ── */
+window.rdNextTD=function(d,n){const x=new Date(d+'T00:00:00');let k=0;while(k<n){x.setDate(x.getDate()+1);const w=x.getDay();if(w!==0&&w!==6)k++;}return iso(x);};
+
+/* ── 바스켓 상태와 오늘 할 일 ── */
+function bstate(){
+  const tf=jget('sv4_theme_flow',null),pk=tf&&tf.picks;if(!pk)return null;
+  const hold=pk.hold||10,asOf=pk.asOf||tf.date,op=(pk.open||[])[0]||null,closed=pk.closed||[];
+  const R=recs(),mine=op?R.filter(r=>r.basket===op.date&&isAct(r)):[];
+  const stale=closed.filter(c=>R.some(r=>r.basket===c.date&&isAct(r)));
+  let kind='hold',text='유지 — 할 일 없음',btn=null,urgent=false;
+  if(stale.length){kind='clear';urgent=true;text=md(stale[0].date)+' 바스켓의 정리일이 지났어요. 팔았다면 정리 기록을, 아직이면 다음 거래일에 매도하세요';btn={label:'정리 기록하기',fn:"rdClearSheet('"+stale[0].date+"')"};}
+  else if(op&&op.date===asOf&&!mine.length&&!pk.rest){kind='buy';urgent=true;text='새 바스켓이 나왔어요. 다음 거래일에 3테마에 고르게 매수하세요';btn={label:'수량 계산 · 기록',fn:'rdBasketSheet()'};}
+  else if(op&&(op.days||0)>=hold-1&&mine.length){kind='soon';urgent=true;text='내일이 '+hold+'거래일째예요. 장 마감 전에 바스켓을 정리하세요 (예약 매도 추천)';}
+  else if(op&&(op.days||0)>=hold-1){kind='soon';text='내일이 이 바스켓의 '+hold+'거래일째예요. 다음 바스켓은 내일 저녁에 나와요';}
+  else if(op&&!mine.length){kind='skip';text='이번 바스켓은 안 사셨어요. 중간에 들어가지 말고 다음 교체일('+md(rdNextTD(op.date,hold))+' 무렵)을 기다리는 게 규칙이에요';btn={label:'그래도 기록',fn:'rdBasketSheet()',quiet:true};}
+  else if(!op&&pk.rest){kind='rest';text='쉬는 구간이에요. 새로 사지 않아요';}
+  return {tf,pk,op,hold,asOf,closed,mine,stale,kind,text,btn,urgent};
+}
+window.rdBasketState=bstate;
+
+/* 시세 서버 없이도: 바스켓 종목 현재가를 저녁 스캔 종가로 맞춰 둠 */
+function syncBasketPrices(){
+  const tf=jget('sv4_theme_flow',null),pk=tf&&tf.picks;if(!pk)return;
+  const all=(pk.open||[]).concat(pk.closed||[]);let ch=0;
+  recs().forEach(r=>{if(!r.basket||!isAct(r))return;const b=all.find(x=>x.date===r.basket);const c=codeIn(r.stock);
+    const px=b&&b.px&&c?b.px[c]:null;if(px&&px!==r.current&&!window._rdPriceAt){r.current=px;if(r.entry)r.pct=parseFloat(((px-r.entry)/r.entry*100).toFixed(2));ch++;}});
+  if(ch&&typeof persist==='function')persist();
+}
+
+window.rdBasketCard=function(){
+  const s=bstate();
+  if(!s)return '<section class="rd-card bk"><div class="bk-lab">테마 바스켓</div><div class="bk-empty">저녁 스캔 결과를 불러오는 중이에요. 계속 비어 있으면 신호 탭 › 관찰 › ⚙에서 스캔 결과 주소를 확인하세요.</div></section>';
+  const {pk,op,hold,asOf,mine}=s,meta=jget('sv4_scan_meta',{})||{};
+  const mk=pk.mkt60!=null?'<span class="bk-mk '+(pk.rest?'off':'on')+'">'+(pk.rest?'쉬는 구간':'공격 구간')+' · '+rdTmify('시장 필터')+' '+pct(pk.mkt60,1)+'</span>':'';
+  let main='';
+  if(op){
+    const ret=op.days?(op.stocksRet!=null?op.stocksRet:op.ret):null;
+    const short=t=>esc(String(t).replace(/\s*\(.*\)\s*$/,''));
+    main='<div class="bk-main"><div class="bk-l"><div class="bk-lab">진행 중 '+rdTmify('바스켓')+'</div><div class="bk-d">'+md(op.date)+' 선정 · D+'+(op.days||0)+'/'+hold+'</div>'
+      +'<div class="bk-th">'+op.themes.map(short).join(' · ')+'</div><div class="bk-sub">정리 예정 '+md(rdNextTD(op.date,hold))+' 무렵 (공휴일 미반영)</div></div>'
+      +'<div class="bk-r">'+(ret!=null?'<div class="bk-ret '+(ret>=0?'up':'down')+'">'+pct(ret,2)+'</div><div class="bk-sub">종목 평균 · 전체 '+pct(op.base,2)+'</div>':'<div class="bk-ret">오늘 선정</div>')+'</div></div>';
+  }else main='<div class="bk-main"><div class="bk-l"><div class="bk-lab">'+rdTmify('바스켓')+'</div><div class="bk-d">진행 중인 바스켓이 없어요</div></div></div>';
+  let mineH='';
+  if(mine.length){const inv=mine.reduce((a,r)=>a+(r.entry||0)*(r.qty||0),0),val=mine.reduce((a,r)=>a+(r.current||r.entry||0)*(r.qty||0),0);
+    mineH='<div class="bk-mine">내 바스켓 '+mine.length+'종목 · '+won(inv)+' → <b class="'+(val>=inv?'up':'down')+'">'+(inv?pct((val/inv-1)*100,2):'—')+'</b></div>';}
+  const btn=s.btn?'<button class="bk-btn'+(s.btn.quiet?' quiet':'')+'" onclick="'+s.btn.fn+'">'+s.btn.label+'</button>':'';
+  return '<section class="rd-card bk">'
+    +'<div class="bk-top">'+mk+'<span class="bk-asof">'+md(asOf)+' 종가 기준</span></div>'
+    +(meta.intraday?'<div class="bk-warn">장중에 돌린 스캔이라 오늘 봉은 빼고 계산했어요</div>':'')
+    +main
+    +'<div class="bk-act'+(s.urgent?' urgent':'')+'"><span class="bk-act-l">오늘 할 일</span><span class="bk-act-t">'+esc(s.text)+'</span></div>'+btn
+    +mineH
+    +'<button class="bk-more" onclick="switchTab(\'signal\')">종목·코멘트 자세히 ›</button></section>';
+};
+
+/* ── S3+U6: 수량 계산 + 바스켓 한 번에 기록 ── */
+function sheet(id,html){let el=$(id);if(!el){el=document.createElement('div');el.id=id;el.className='bk-sheet';document.body.appendChild(el);}
+  el.innerHTML='<div class="bg" onclick="rdCloseBk(\''+id+'\')"></div><div class="pn" role="dialog">'+html+'</div>';el.classList.add('open');return el;}
+window.rdCloseBk=id=>{const el=$(id);if(el)el.classList.remove('open');};
+function basketStocks(s){
+  const {pk,op,asOf}=s;
+  if(op&&op.date===asOf&&pk.today&&pk.today.length){const out=[];pk.today.forEach(x=>x.top.forEach(m=>{if(!out.find(o=>o.code===m.code))out.push({code:m.code,theme:x.theme,px:m.close||(op.px||{})[m.code],state:m.state});}));return out;}
+  if(op)return (op.stocks||[]).map(c=>({code:c,theme:(op.themes||[]).join('·'),px:(op.px||{})[c]||(op.px0||{})[c],state:''}));
+  return [];
+}
+window.rdBasketSheet=function(){
+  const s=bstate();if(!s||!s.op){toast('진행 중인 바스켓이 없어요');return;}
+  const a=app(),list=basketStocks(s).filter(x=>x.px);
+  window._bkList=list;
+  const warn=x=>['고점 반락','급락 관망','보류'].includes(x.state);
+  sheet('bk-buy','<div class="grab"></div><h3>바스켓 수량 계산 · '+md(s.op.date)+' 선정</h3>'
+    +'<div class="bk-form"><label><span>계좌 총액</span><input id="bk-acct" inputmode="numeric" value="'+(a.prefs.acct||'')+'" placeholder="예: 20000000" oninput="rdBkCalc()"></label>'
+    +'<label><span>바스켓 비중 %</span><input id="bk-pct" inputmode="decimal" value="'+a.prefs.pct+'" oninput="rdBkCalc()"></label>'
+    +'<label><span>'+rdTmify('비상 손절')+' %</span><input id="bk-stop" inputmode="decimal" value="'+a.prefs.stop+'" oninput="rdBkCalc()"></label></div>'
+    +'<div id="bk-sum" class="bk-sum"></div>'
+    +'<div class="bk-list">'+list.map((x,i)=>'<label class="bk-it"><input type="checkbox" id="bk-c'+i+'" '+(warn(x)?'':'checked')+' onchange="rdBkCalc()"><span class="bk-nm">'+esc(nameOf(x.code))+(x.state?'<em class="'+(warn(x)?'w':'')+'">'+esc(x.state)+'</em>':'')+'</span><span class="bk-q" id="bk-q'+i+'"></span></label>').join('')+'</div>'
+    +'<label class="bk-pm"><span>'+rdTmify('실패 가정')+': 3주 뒤 -10%라면 이유는?</span><input id="bk-pm" maxlength="100" placeholder="예: 테마 과열이 식으면서 한꺼번에 빠질 수 있음"></label>'
+    +'<div class="bk-note">기준가는 '+md(s.asOf)+' 종가예요. 다음 날 실제 체결가로 고치면 손익이 정확해져요. 검증된 규칙에는 종목 손절이 없어요 — 비상 손절은 큰 사고를 막는 안전장치예요(효과는 다음 backtest에서 확인). '+(list.some(warn)?'고점 반락·급락·보류 종목은 기본으로 뺐어요.':'')+'</div>'
+    +'<div class="bk-acts"><button class="bk-btn quiet" onclick="rdCloseBk(\'bk-buy\')">닫기</button><button class="bk-btn" onclick="rdBkSave()">이대로 기록하기</button></div>');
+  rdBkCalc();
+};
+function bkCalc(){
+  const list=window._bkList||[],acct=parseFloat(($('bk-acct')||{}).value)||0,p=parseFloat(($('bk-pct')||{}).value)||0,st=parseFloat(($('bk-stop')||{}).value)||0;
+  const sel=list.map((x,i)=>$('bk-c'+i)&&$('bk-c'+i).checked);const n=sel.filter(Boolean).length;
+  const inv=acct*p/100,per=n?inv/n:0;let used=0;
+  const rows=list.map((x,i)=>{if(!sel[i]){const q=$('bk-q'+i);if(q)q.textContent='제외';return null;}
+    const qty=Math.floor(per/x.px),amt=qty*x.px,stop=Math.round(x.px*(1-st/100));used+=amt;
+    const q=$('bk-q'+i);if(q)q.innerHTML=qty?qty+'주 · '+won(amt)+'<small>손절 '+stop.toLocaleString()+'</small>':'<small>금액이 1주보다 작아요</small>';
+    return {code:x.code,theme:x.theme,px:x.px,qty,amt,stop};});
+  const sm=$('bk-sum');
+  if(sm)sm.innerHTML=acct?('투자금 <b>'+won(inv)+'</b> · 종목당 '+won(per)+' · '+n+'종목<br>과거 '+rdTmify('최대 낙폭')+' -16%만큼 빠지면 계좌 기준 <b class="down">-'+won(used*0.16)+'</b> ('+(acct?(used*0.16/acct*100).toFixed(1):0)+'%)'
+    +(st?'<br>모든 종목이 비상 손절되면 <b class="down">-'+won(used*st/100)+'</b> (계좌의 '+(used*st/acct).toFixed(1)+'%)':'')):'계좌 총액을 넣으면 종목별 수량을 계산해요';
+  return rows.filter(Boolean);
+}
+window.rdBkCalc=bkCalc;
+window.rdBkSave=function(){
+  const s=bstate();if(!s||!s.op)return;const rows=bkCalc().filter(r=>r.qty>0);
+  if(!rows.length){toast('계좌 총액과 비중을 넣어주세요');return;}
+  const a=app();a.prefs.acct=parseFloat($('bk-acct').value)||0;a.prefs.pct=parseFloat($('bk-pct').value)||30;a.prefs.stop=parseFloat($('bk-stop').value)||0;jset(APP_KEY,a);
+  const pm=($('bk-pm').value||'').trim(),d=today(),base=Date.now();
+  rows.forEach((r,i)=>{recs().unshift({id:base+i,date:d,stock:nameOf(r.code)+' '+r.code,status:'buy',entry:r.px,qty:r.qty,current:r.px,amount:r.amt,
+    stoploss:r.stop||0,target:0,exit:0,pnl:0,pct:0,exitPct:null,issue:md(s.op.date)+' 바스켓 · '+r.theme,memo:'체결가가 다르면 진입가를 고쳐 주세요',
+    claude:'',tags:['바스켓'],chartUrl:typeof stUrl==='function'?stUrl(r.code):'',phase_logs:[{date:d,status:'buy',note:md(s.op.date)+' 바스켓 매수'}],
+    basket:s.op.date,premortem:pm,premortemAt:pm?d:''});});
+  if(typeof persist==='function')persist();
+  rdCloseBk('bk-buy');toast('바스켓 '+rows.length+'종목을 기록했어요');
+  if(typeof renderAll==='function')renderAll();
+};
+
+/* ── U9: 바스켓 정리 기록 ── */
+window.rdClearSheet=function(date){
+  const s=bstate();if(!s)return;const b=(s.closed||[]).concat(s.op?[s.op]:[]).find(x=>x.date===date)||{};
+  const list=recs().filter(r=>r.basket===date&&isAct(r));if(!list.length){toast('정리할 종목이 없어요');return;}
+  window._bkClr=list.map(r=>r.id);
+  sheet('bk-clr','<div class="grab"></div><h3>'+md(date)+' 바스켓 정리 기록</h3><div class="bk-note">매도가를 실제 체결가로 고쳐 주세요. 기본값은 정리일 종가'+(b.closedAt?'('+md(b.closedAt)+')':'')+'예요.</div>'
+    +'<div class="bk-list">'+list.map(r=>{const c=codeIn(r.stock),px=(b.px||{})[c]||r.current||r.entry;
+      return '<label class="bk-it"><span class="bk-nm">'+esc(String(r.stock).split(' ')[0])+'<em>진입 '+(r.entry||0).toLocaleString()+'</em></span><input class="bk-px" id="bk-x'+r.id+'" inputmode="numeric" value="'+Math.round(px)+'"></label>';}).join('')+'</div>'
+    +'<div class="bk-acts"><button class="bk-btn quiet" onclick="rdCloseBk(\'bk-clr\')">닫기</button><button class="bk-btn" onclick="rdClearSave()">정리 기록하기</button></div>');
+};
+window.rdClearSave=function(){
+  const d=today();let n=0;
+  (window._bkClr||[]).forEach(id=>{const r=recs().find(x=>x.id===id);const v=parseFloat(($('bk-x'+id)||{}).value);if(!r||!v)return;
+    r.exit=v;r.exitPct=r.entry?parseFloat(((v-r.entry)/r.entry*100).toFixed(2)):null;r.pnl=Math.round((v-(r.entry||0))*(r.qty||0));
+    r.status=r.pnl>=0?'profit':'loss';r.current=v;(r.phase_logs=r.phase_logs||[]).push({date:d,status:r.status,note:'바스켓 10거래일 정리'});n++;});
+  if(typeof persist==='function')persist();rdCloseBk('bk-clr');toast(n+'종목 정리 — 복기 대기에 올라갔어요');
+  if(typeof renderAll==='function')renderAll();
+};
+
+/* ── 미뤄 둔 개선: 때가 되면 알림 ── */
+function reviewItems(){
+  const a=app(),u=a.usage,out=[],t=today();
+  (jget('sv4_reviews',[])||[]).forEach(x=>out.push({key:'s:'+x.key,code:x.code,title:x.title,why:x.why}));
+  const since=u.since||t,d=daysBetween(since,t);
+  if(d>=14)out.push({key:'c:U2',code:'U2',title:'신호 탭 3칸 분리가 필요한지 볼 때',why:'정리한 지 '+d+'일째예요. 신호 탭을 내리다 지친다면 U2를 요청하세요'});
+  if(u.claude>=10)out.push({key:'c:U10',code:'U10',title:'Claude 질문 흐름 줄이기',why:'Claude 버튼을 '+u.claude+'번 쓰셨어요. 복사·붙여넣기가 번거롭다면 U10'});
+  if(u.chart>=20)out.push({key:'c:I7',code:'I7',title:'미니 차트 넣을 때',why:'차트 링크를 '+u.chart+'번 여셨어요. 종목 옆에 작은 차트가 있으면 덜 오가도 돼요'});
+  const cl=recs().filter(r=>r.status==='profit'||r.status==='loss').length;
+  if(cl>=10)out.push({key:'c:S8',code:'S8',title:'복기 지표 만들 표본이 생겼어요',why:'청산 기록 '+cl+'건. R배수·규칙 준수율로 내 실전을 볼 수 있어요'});
+  if(u.shared&&daysBetween(u.shared,t)>=7)out.push({key:'c:U7',code:'U7',title:'친구 피드백 들을 때',why:'공유한 지 '+daysBetween(u.shared,t)+'일. "앱을 열었을 때 오늘 뭘 할지 바로 알았어?"를 물어보고, 어려워하면 쉬운 말 모드(U7)'});
+  if(d>=30)out.push({key:'c:I1',code:'I1·I5·I6',title:'디자인 정리 시점',why:'한 달 쓰셨어요. 아이콘·카드 구조·숫자 크기를 정리할 때'});
+  return out.filter(x=>!a.reviews.done[x.key]&&!(a.reviews.snooze[x.key]&&a.reviews.snooze[x.key]>t));
+}
+window.rdReviewItems=reviewItems;
+window.rdReviewCard=function(){
+  const it=reviewItems();if(!it.length)return '';
+  return '<section class="rd-card" id="rd-reviews"><div class="rd-h"><h2>개선 알림</h2><span class="rd-hs">때가 된 항목만 떠요</span></div>'
+    +it.map(x=>'<div class="rv-it"><div class="rv-h"><b class="rv-c">'+esc(x.code)+'</b>'+esc(x.title)+'</div><div class="rv-w">'+esc(x.why)+'</div>'
+      +'<div class="rv-a"><button onclick="rdReviewCopy(\''+x.key+'\')">로드에게 보낼 문장 복사</button><button onclick="rdReviewSnooze(\''+x.key+'\')">2주 뒤에</button><button onclick="rdReviewDone(\''+x.key+'\')">완료</button></div></div>').join('')
+    +'</section>';
+};
+window.rdReviewCopy=function(k){const x=reviewItems().find(i=>i.key===k);if(!x)return;const t='트래커 개선 '+x.code+' 진행해줘 — '+x.title+': '+x.why;
+  try{navigator.clipboard.writeText(t);toast('복사했어요. Claude 대화에 붙여넣으세요');}catch(e){toast(t);}};
+window.rdReviewSnooze=function(k){const a=app();a.reviews.snooze[k]=addDays(today(),14);saveApp(a);if(window.renderToday)renderToday();};
+window.rdReviewDone=function(k){const a=app();a.reviews.done[k]=today();saveApp(a);if(window.renderToday)renderToday();};
+
+/* 사용량 세기 (Claude 버튼 · 차트 링크) */
+function bump(k){const a=app();a.usage[k]=(a.usage[k]||0)+1;saveApp(a,false);}
+['vsAskPicks','vsAskClaude','vsPbAsk','triggerSwingRecommend','aiDailyBriefing','triggerGeminiBriefing'].forEach(fn=>{
+  const f=window[fn];if(typeof f!=='function'||f._rd)return;const w=function(){bump('claude');return f.apply(this,arguments);};w._rd=1;window[fn]=w;});
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(a&&/stock\.naver\.com|finance\.naver\.com/.test(a.href))bump('chart');},true);
+
+/* ── U7: 용어 풀이 ── */
+const TERMS={
+ '20일선':'최근 20거래일 종가의 평균선이에요. 주가가 이 위에 있고 선이 올라가면 상승 추세로 봐요.',
+ '5일선':'최근 5거래일 종가 평균이에요. 짧게 쉬어갈 때의 기준선이에요.',
+ '이격':'현재가가 20일선보다 몇 % 위(아래)에 있는지예요. 15% 넘게 떠 있으면 추격 위험이 커요.',
+ '비상 손절':'검증된 규칙엔 없는, 큰 사고를 막기 위한 안전장치 손절이에요.',
+ '손절선':'이 가격 아래로 내려가면 판다고 미리 정해 둔 가격이에요.',
+ '바스켓':'강한 테마 3개에서 고른 종목 묶음이에요. 고르게 나눠 사서 10거래일 들고 있다가 함께 정리해요.',
+ '시장 필터':'전체 테마 평균의 60일 수익률이 마이너스면 새로 사지 않는 규칙이에요. 과거 최대 낙폭을 -36%에서 -16%로 줄였어요.',
+ '평균 대비':'같은 기간 아무 테마나 샀을 때보다 몇 %p 나았는지예요. 플러스여야 의미가 있어요.',
+ '최대 낙폭':'가장 높았던 때에서 가장 많이 떨어졌던 폭이에요. 이만큼 빠지는 시기를 버틸 수 있어야 해요.',
+ '거래일':'주식시장이 열리는 날이에요(주말·공휴일 제외).',
+ '손익비':'목표까지 남은 폭 ÷ 손절까지의 폭이에요. 1.5 이상이면 해볼 만한 자리예요.',
+ '실패 가정':'사기 전에 "3주 뒤 -10%라면 이유는?"을 적어 두는 거예요. 복기 때 맞았는지 봐요.',
+ '고점 반락':'오늘 최근 고점을 찍고 크게 밀린 날이에요. 단기 고점일 수 있어 바로 사지 않아요.',
+ '급락 관망':'하루에 -5% 넘게 빠진 날이에요. 1~2일 더 지켜봐요.',
+ '눌림 대기':'20일선보다 15% 넘게 떠 있어서 쉬어갈 때를 기다리는 상태예요.'
+};
+const TKEYS=Object.keys(TERMS).sort((a,b)=>b.length-a.length);
+window.rdTmify=function(text){
+  let out=String(text||'');const used={};
+  TKEYS.forEach(k=>{if(used[k])return;const i=out.indexOf(k);if(i<0)return;
+    // 이미 만든 버튼 안이나 태그 안이면 건너뜀
+    const before=out.slice(0,i);if(before.lastIndexOf('<')>before.lastIndexOf('>')||/<button class="tm"[^>]*>[^<]*$/.test(before))return;
+    out=before+'<button class="tm" onclick="rdTerm(\''+k+'\');event.stopPropagation()">'+k+'</button>'+out.slice(i+k.length);used[k]=1;});
+  return out;
+};
+window.rdTerm=function(k){let el=$('rd-term');if(!el){el=document.createElement('div');el.id='rd-term';el.onclick=()=>el.classList.remove('open');document.body.appendChild(el);}
+  el.innerHTML='<div class="pn"><b>'+esc(k)+'</b><p>'+esc(TERMS[k]||'')+'</p><small>눌러서 닫기</small></div>';el.classList.add('open');};
+window.rdGlossary=function(){sheet('bk-gl','<div class="grab"></div><h3>용어 풀이</h3>'+Object.keys(TERMS).map(k=>'<div class="gl-it"><b>'+esc(k)+'</b><p>'+esc(TERMS[k])+'</p></div>').join('')+'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'bk-gl\')">닫기</button></div>');};
+
+/* ── 처음 안내 (친구용 포함) ── */
+window.rdFirstRun=function(force){
+  const a=app();if(a.firstRun&&!force)return;
+  sheet('bk-first','<div class="grab"></div><h3>생각콩 트래커 1분 사용법</h3><ol class="fr">'
+    +'<li><b>오늘 탭 맨 위 바스켓 카드만 보면 돼요.</b> 오늘 할 일이 한 줄로 나와요.</li>'
+    +'<li><b>새 바스켓이 뜨면</b> \'수량 계산 · 기록\'으로 3테마에 고르게 사고, 10거래일 뒤 함께 정리해요.</li>'
+    +'<li><b>점선 밑줄 단어</b>는 누르면 뜻이 나와요.</li></ol>'
+    +'<div class="bk-note">이 앱은 정보 정리·기록 도구예요. 매수·매도 판단과 책임은 본인에게 있어요. 과거 검증 결과는 미래 수익을 보장하지 않아요.</div>'
+    +'<div class="bk-acts"><button class="bk-btn" onclick="rdFirstDone()">시작하기</button></div>');
+};
+window.rdFirstDone=function(){const a=app();a.firstRun=true;saveApp(a);rdCloseBk('bk-first');};
+
+/* ── 설정 · 알림 (U5 · U4) ── */
+window.rdSettings=function(){
+  const a=app(),c=jget('sv4_scan_cfg',{})||{};
+  sheet('bk-set','<div class="grab"></div><h3>설정 · 알림</h3>'
+    +(window._syncDenied?'<div class="bk-warn">클라우드 저장이 막혀 있어요(Firestore 규칙). 지금은 이 기기에만 저장돼요.</div>':'')
+    +'<div class="bk-form"><label>계좌 총액<input id="st-acct" inputmode="numeric" value="'+(a.prefs.acct||'')+'"></label>'
+    +'<label>기본 바스켓 비중 %<input id="st-pct" inputmode="decimal" value="'+a.prefs.pct+'"></label>'
+    +'<label>비상 손절 %<input id="st-stop" inputmode="decimal" value="'+a.prefs.stop+'"></label></div>'
+    +'<div class="set-gt">텔레그램 알림</div>'
+    +'<label class="bk-pm">내 텔레그램 숫자 ID<input id="st-chat" inputmode="numeric" value="'+esc(a.notify.chatId)+'" placeholder="예: 123456789"></label>'
+    +'<label class="set-ck"><input type="checkbox" id="st-on" '+(a.notify.on?'checked':'')+'> 저녁 요약 · 장중 손절선 이탈 알림 받기</label>'
+    +'<div class="bk-note">텔레그램에서 @userinfobot에게 아무 말이나 보내면 숫자 ID를 알려줘요. 그다음 트래커 봇에게 /start를 한 번 보내 두세요.</div>'
+    +'<div class="set-gt">시세 서버 (선택)</div>'
+    +'<label class="bk-pm">Cloudflare Worker 주소<input id="st-worker" value="'+esc(c.worker||'')+'" placeholder="없어도 바스켓·스캔은 다 보여요"></label>'
+    +'<div class="set-gt">공유</div>'
+    +'<button class="bk-btn quiet" onclick="rdShared()">'+(a.usage.shared?md(a.usage.shared)+'에 친구에게 공유함 · 다시 기록':'친구에게 주소를 공유했어요')+'</button>'
+    +'<button class="bk-btn quiet" onclick="rdFirstRun(true)">처음 안내 다시 보기</button>'
+    +'<div class="bk-acts"><button class="bk-btn quiet" onclick="rdCloseBk(\'bk-set\')">닫기</button><button class="bk-btn" onclick="rdSettingsSave()">저장</button></div>');
+};
+window.rdShared=function(){const a=app();a.usage.shared=today();saveApp(a);toast('기록했어요. 1주 뒤에 피드백 알림이 떠요');rdSettings();};
+window.rdSettingsSave=function(){
+  const a=app();a.prefs.acct=parseFloat($('st-acct').value)||0;a.prefs.pct=parseFloat($('st-pct').value)||30;a.prefs.stop=parseFloat($('st-stop').value)||0;
+  a.notify.chatId=($('st-chat').value||'').replace(/[^0-9-]/g,'');a.notify.on=$('st-on').checked;
+  const c=jget('sv4_scan_cfg',{})||{};c.worker=($('st-worker').value||'').trim().replace(/\/+$/,'');jset('sv4_scan_cfg',c);
+  saveApp(a);rdCloseBk('bk-set');toast(window._syncDenied?'이 기기에 저장했어요 (클라우드는 규칙을 고친 뒤 반영)':'저장했어요');
+};
+
+window.rdSyncBasketPrices=syncBasketPrices;
 })();
 </script>
 </body></html>
