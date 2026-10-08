@@ -26,7 +26,7 @@ def mcum(rr, a, b):
     return x - 1
 
 
-def strategies(dates, idx, cost_pct, dret=None):
+def strategies(dates, idx, cost_pct, dret=None, damt=None):
     names = list(idx)
     T = len(dates)
     out = []
@@ -45,7 +45,9 @@ def strategies(dates, idx, cost_pct, dret=None):
         recs = {k: [] for k in ["모멘텀: 20일 상위 3테마", "단기 모멘텀: 5일 상위 3테마", "반전: 20일 하위 3테마",
                                 "순위 급상승 3테마", "자금 유입 3테마", "과열 테마(5일 급등+자금 2배)", "기준선: 전체 테마 평균",
                                 "모멘텀 3테마(과열 제외)", "모멘텀 3테마 · 테마별 강한 3종목", "모멘텀 3테마 + 시장 필터",
-                                "시장 필터 + 20일선 위·이격 15% 이내 종목"]}
+                                "시장 필터 + 20일선 위·이격 15% 이내 종목",
+                                "실제 매수형: 시장 필터 + 테마별 거래대금 상위 5종목",
+                                "실제 매수형 + 종목별 -15% 비상 손절"]}
         prev_pick = {k: set() for k in recs}
         t = 70
         while t + hold < T:
@@ -108,6 +110,36 @@ def strategies(dates, idx, cost_pct, dret=None):
                 else:
                     recs[k].append({"date": dates[t], "ret": 0.0, "ex": -base * 100, "picks": ["현금"]})
                     prev_pick[k] = set()
+            # 트래커가 실제로 보여주는 형태: 테마별 최근 20일 거래대금 상위 5종목을 고르게
+            if dret is not None and damt is not None:
+                k1, k2 = "실제 매수형: 시장 필터 + 테마별 거래대금 상위 5종목", "실제 매수형 + 종목별 -15% 비상 손절"
+                if mkt60 > 0:
+                    codes = []
+                    for n in picks["모멘텀: 20일 상위 3테마"]:
+                        liq = lambda c: sum(damt[c][t - 19:t + 1])
+                        for c in sorted(idx[n]["members"], key=lambda c: -liq(c))[:5]:
+                            if c not in codes:
+                                codes.append(c)
+                    turn = 1 - len(set(codes) & prev_pick[k1]) / len(codes)
+
+                    def stopped(c):
+                        x = 1.0
+                        for i in range(t + 1, t + hold + 1):
+                            v = dret[c][i]
+                            if v is not None:
+                                x *= 1 + v
+                            if x <= 0.85:          # 종가 기준 -15% 닿은 날 정리 (갭 하락이면 그보다 더 빠질 수 있음)
+                                break
+                        return x - 1
+                    r1 = st.mean(mcum(dret[c], t, t + hold) for c in codes) * 100 - cost_pct * turn
+                    r2 = st.mean(stopped(c) for c in codes) * 100 - cost_pct * turn
+                    recs[k1].append({"date": dates[t], "ret": r1, "ex": r1 - base * 100, "picks": codes[:15]})
+                    recs[k2].append({"date": dates[t], "ret": r2, "ex": r2 - base * 100, "picks": codes[:15]})
+                    prev_pick[k1] = prev_pick[k2] = set(codes)
+                else:
+                    for k in (k1, k2):
+                        recs[k].append({"date": dates[t], "ret": 0.0, "ex": -base * 100, "picks": ["현금"]})
+                        prev_pick[k] = set()
             if not picks["모멘텀 3테마 + 시장 필터"]:
                 recs["모멘텀 3테마 + 시장 필터"].append({"date": dates[t], "ret": 0.0, "ex": -base * 100, "picks": ["현금"]})
                 prev_pick["모멘텀 3테마 + 시장 필터"] = set()
@@ -388,7 +420,15 @@ def run(keep, themes, cost_pct, ratio_min=3.0, amount_min=5e9):
     dates, idx, dret = tf.build(keep, themes)
     if len(dates) < 150 or len(idx) < 10:
         return None
-    res = {"themes": len(idx), "strategies": strategies(dates, idx, cost_pct, dret), "leadLag": lead_lag(dates, idx)}
+    pos = {d: i for i, d in enumerate(dates)}
+    damt = {}
+    for c, rows in keep.items():
+        arr = [0.0] * len(dates)
+        for r in rows:
+            if r["d"] in pos:
+                arr[pos[r["d"]]] = float(r.get("a") or 0)
+        damt[c] = arr
+    res = {"themes": len(idx), "strategies": strategies(dates, idx, cost_pct, dret, damt), "leadLag": lead_lag(dates, idx)}
     try:
         res["surge"] = surge_test(keep, dates, idx, cost_pct, ratio_min, amount_min)
     except Exception as e:

@@ -394,6 +394,13 @@ def main():
     print(f"[대상] 보통주 {len(universe)}개", flush=True)
 
     hits, base_dates, fails, srcs = [], {}, 0, {}
+    # 장중(평일 09:00~20:10)에 수동 실행하면 오늘 봉은 아직 미확정 → 어제까지만으로 계산
+    now = datetime.now(KST)
+    today_s = now.strftime("%Y-%m-%d")
+    intraday = now.weekday() < 5 and (9, 0) <= (now.hour, now.minute) < (20, 10)
+    if intraday:
+        print(f"[주의] 장중 실행({now:%H:%M}) → 오늘({today_s}) 봉은 빼고 어제 종가 기준으로 계산", flush=True)
+    names = {s["code"]: s["name"] for s in universe}
     keep = {}                                   # 테마 흐름 계산용 (종목별 최근 일봉)
     pbs = {"trigger": [], "setup": []}          # 급등 → 되돌림 → 재상승
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
@@ -401,6 +408,8 @@ def main():
         for k, f in enumerate(as_completed(futs), 1):
             s = futs[f]
             rows, src = f.result()
+            if intraday and rows and rows[-1]["d"] == today_s:
+                rows = rows[:-1]
             srcs[src] = srcs.get(src, 0) + 1
             if not rows:
                 fails += 1
@@ -443,6 +452,13 @@ def main():
     hits.sort(key=lambda x: (x["sigDate"], x["ratio"]), reverse=True)
     tp = theme_payload(keep)
     tag_themes(hits, tp)
+    try:
+        import reviews
+        rv = reviews.check(tp, names, base or today_s)
+        print(f"[개선 알림] {len(rv)}개 (새로 {sum(1 for x in rv if x['new'])})", flush=True)
+    except Exception as e:
+        rv = []
+        print(f"[개선 알림] 계산 실패: {e}", flush=True)
     for k in pbs:
         tag_themes(pbs[k], tp)
         pbs[k].sort(key=lambda x: (x["themes"][0]["r"] if x.get("themes") else 999, -x["up"]))
@@ -453,6 +469,7 @@ def main():
         "version": 1,
         "generatedAt": datetime.now(KST).isoformat(timespec="seconds"),
         "baseDate": base,
+        "intraday": intraday,
         "params": {"ratioMin": RATIO_MIN, "amountMin": AMOUNT_MIN, "lookback": LOOKBACK, "avgWin": AVG_WIN},
         "universe": len(universe),
         "fetchFailed": fails,
@@ -461,6 +478,9 @@ def main():
         "hits": hits,
         "themes": tp,
         "pullbacks": pbs,
+        "reviews": rv,
+        "names": {c: names[c] for c in {m for h in ((tp or {}).get("picks") or {}).get("open", []) + ((tp or {}).get("picks") or {}).get("closed", [])
+                                            for m in h.get("stocks", [])} if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)

@@ -155,6 +155,13 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
     pos = {d: i for i, d in enumerate(dates)}
     t = len(dates) - 1
     names = list(idx)
+    cmap = {}
+
+    def close_at(c, d):
+        if c not in cmap:
+            cmap[c] = {r["d"]: r["c"] for r in (rows_by_code or {}).get(c) or []}
+        v = cmap[c].get(d)
+        return round(v) if v else None
     base_all = lambda a, b: sum(cum(idx[n]["ret"], a, b) for n in names) / len(names)
     # 열린 기록 평가
     for h in hist:
@@ -171,12 +178,16 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         st_codes = [c for c in h.get("stocks", []) if c in dret]
         if st_codes:
             h["stocksRet"] = round(sum(_mcum(dret[c], i0, end) for c in st_codes) / len(st_codes) * 100, 2)
+            h["sr"] = {c: round(_mcum(dret[c], i0, end) * 100, 1) for c in st_codes}          # 종목별 수익률(%)
+            h["px0"] = h.get("px0") or {c: close_at(c, h["date"]) for c in st_codes}        # 선정일 종가
+            h["px"] = {c: close_at(c, dates[end]) for c in st_codes}                       # 최근(또는 청산일) 종가
         h["days"] = min(days, HOLD)
         if days >= HOLD:
             h["status"], h["closedAt"] = "closed", dates[end]
     # 시장 필터: 전체 테마 평균 60일 수익률이 플러스일 때만 산다 (마이너스면 쉬기)
     mkt60 = base_all(t - 60, t) if t >= 60 else 0
     rest = mkt60 <= 0
+    rest_prev = (base_all(t - 61, t - 1) <= 0) if t >= 61 else rest
     # 오늘의 후보: 20일 수익률 상위 3테마. 종목은 '가장 많이 오른 것'이 아니라 거래대금이 큰 순 5개
     # (백테스트에서 테마별 급등 3종목만 사면 최대 낙폭이 -54%로 커져서, 테마 전체를 고르게 담는 쪽이 낫다)
     def liq(c):
@@ -191,8 +202,10 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
                       "top": [chart_note(c, rows_by_code, dret, t) for c in mem]})
     # 새 묶음 기록: 열린 기록이 없을 때만 (10거래일마다 교체)
     if today and not any(h.get("status") == "open" for h in hist):
-        hist.append({"date": dates[t], "themes": [x["theme"] for x in today],
-                     "stocks": [m["code"] for x in today for m in x["top"]], "status": "open", "days": 0})
+        codes = list(dict.fromkeys(m["code"] for x in today for m in x["top"]))
+        hist.append({"date": dates[t], "themes": [x["theme"] for x in today], "stocks": codes, "status": "open", "days": 0,
+                     "px0": {c: close_at(c, dates[t]) for c in codes}, "px": {c: close_at(c, dates[t]) for c in codes},
+                     "sr": {c: 0.0 for c in codes}})
     hist = hist[-60:]
     with open(PICKS_FILE, "w", encoding="utf-8") as fp:
         json.dump(hist, fp, ensure_ascii=False, indent=0)
@@ -202,7 +215,8 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         ex = [h["ret"] - h["base"] for h in closed]
         summary = {"n": len(closed), "avg": round(sum(h["ret"] for h in closed) / len(closed), 2),
                    "excess": round(sum(ex) / len(ex), 2), "beat": round(sum(1 for e in ex if e > 0) / len(ex) * 100)}
-    return {"rule": "20일 수익률 상위 3테마 · 시장 필터 · 10거래일 보유", "rest": rest, "mkt60": round(mkt60 * 100, 2), "today": today,
+    return {"rule": "20일 수익률 상위 3테마 · 시장 필터 · 10거래일 보유", "rest": rest, "restPrev": rest_prev, "hold": HOLD,
+            "asOf": dates[t], "mkt60": round(mkt60 * 100, 2), "today": today,
             "open": [h for h in hist if h.get("status") == "open"], "closed": closed[-10:], "summary": summary}
 
 
