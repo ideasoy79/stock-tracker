@@ -203,7 +203,11 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
     # 새 묶음 기록: 열린 기록이 없을 때만 (10거래일마다 교체)
     if today and not any(h.get("status") == "open" for h in hist):
         codes = list(dict.fromkeys(m["code"] for x in today for m in x["top"]))
-        hist.append({"date": dates[t], "themes": [x["theme"] for x in today], "stocks": codes, "status": "open", "days": 0,
+        tmap = {}                                   # 종목 → [테마, 테마 안 거래대금 순위] (앱: 소액이면 테마별 상위 2·3종목만)
+        for x in today:
+            for j, m in enumerate(x["top"]):
+                tmap.setdefault(m["code"], [x["theme"], j])
+        hist.append({"date": dates[t], "themes": [x["theme"] for x in today], "stocks": codes, "status": "open", "days": 0, "tmap": tmap,
                      "px0": {c: close_at(c, dates[t]) for c in codes}, "px": {c: close_at(c, dates[t]) for c in codes},
                      "sr": {c: 0.0 for c in codes}})
     hist = hist[-60:]

@@ -414,6 +414,146 @@ def pullback_test(keep, dates, idx, cost_pct):
             "params": {"rise": pb.RISE_MIN, "depth": [pb.DEPTH_MIN, pb.DEPTH_MAX], "volX": pb.VOL_X}}
 
 
+def practical_test(dates, idx, dret, damt, cost_pct, hold=10):
+    """실제 운용 질문 세 가지 (트래커 묶음 규칙: 시장 필터 + 20일 상위 3테마 · 테마별 거래대금 상위 N종목)
+    1) late   : 선정일에 못 사고 1~3거래일 늦게 사면? (정리일은 그대로 / 늦은 만큼 더 보유)
+                + 늦게 살 때 '그사이 이미 오른 종목'과 '내린 종목'은 어땠나
+    2) offset : 시작일 운 — 같은 규칙을 0~9일 어긋나게 시작했을 때 성적 차이, 5일 간격 2개 묶음 겹치기(자금 반반)
+    3) size   : 소액용 — 테마별 2·3·5종목만 살 때
+    """
+    names = list(idx)
+    T = len(dates)
+    P = {}
+    for n in names:
+        x, arr = 1.0, []
+        for v in idx[n]["ret"]:
+            x *= 1 + v
+            arr.append(x)
+        P[n] = arr
+    mk, tops = {}, {}
+
+    def mkt(t):
+        if t not in mk:
+            mk[t] = st.mean(P[n][t] / P[n][t - 60] - 1 for n in names)
+        return mk[t]
+
+    def pick(t, topn=5):
+        key = (t, topn)
+        if key not in tops:
+            if mkt(t) <= 0:
+                tops[key] = []
+            else:
+                th = sorted(names, key=lambda n: -(P[n][t] / P[n][t - 20]))[:3]
+                codes = []
+                for n in th:
+                    liq = lambda c: sum(damt[c][t - 19:t + 1])
+                    for c in sorted(idx[n]["members"], key=lambda c: -liq(c))[:topn]:
+                        if c not in codes:
+                            codes.append(c)
+                tops[key] = codes
+        return tops[key]
+
+    base = lambda a, b: st.mean(tf.cum(idx[n]["ret"], a, b) for n in names)
+
+    def summ(rr):
+        if not rr:
+            return None
+        rets = [x[0] for x in rr]
+        eq, peak, mdd = 1.0, 1.0, 0.0
+        for x in rets:
+            eq *= 1 + x / 100
+            peak = max(peak, eq)
+            mdd = min(mdd, eq / peak - 1)
+        return {"n": len(rr), "avg": round(st.mean(rets), 2), "excess": round(st.mean(x[1] for x in rr), 2),
+                "win": round(sum(1 for x in rets if x > 0) / len(rets) * 100, 1),
+                "total": round((eq - 1) * 100, 1), "mdd": round(mdd * 100, 1)}
+
+    out = {"hold": hold}
+    # 1) 늦게 사기
+    late = []
+    for k in (0, 1, 2, 3):
+        same, full = [], []
+        t = 70
+        while t + hold + k < T:
+            cs = pick(t)
+            if cs:
+                r1 = st.mean(mcum(dret[c], t + k, t + hold) for c in cs) * 100 - cost_pct
+                r2 = st.mean(mcum(dret[c], t + k, t + k + hold) for c in cs) * 100 - cost_pct
+                same.append((r1, r1 - base(t + k, t + hold) * 100))
+                full.append((r2, r2 - base(t + k, t + k + hold) * 100))
+            t += hold
+        late.append({"k": k, "sameExit": summ(same), "fullHold": summ(full)})
+    out["late"] = late
+    # 늦게 살 때: 선정 후 그사이 얼마나 움직였는지로 나눠 본 종목별 남은 기간 수익
+    bins = {"+5% 넘게 오름": [], "-5~+5%": [], "-5% 넘게 내림": []}
+    for k in (1, 2, 3):
+        t = 70
+        while t + hold < T:
+            for c in pick(t):
+                moved = mcum(dret[c], t, t + k)
+                rest = mcum(dret[c], t + k, t + hold) * 100 - cost_pct
+                b = "+5% 넘게 오름" if moved > 0.05 else "-5% 넘게 내림" if moved < -0.05 else "-5~+5%"
+                bins[b].append(rest)
+            t += hold
+    out["lateByMove"] = [{"bin": b, "n": len(v), "avg": round(st.mean(v), 2) if v else None,
+                          "win": round(sum(1 for x in v if x > 0) / len(v) * 100, 1) if v else None} for b, v in bins.items()]
+    # 2) 시작일 운 + 2개 묶음 겹치기
+    series = {}
+    for o in range(hold):
+        rr, t = [], 70 + o
+        while t + hold < T:
+            cs = pick(t)
+            if cs:
+                r = st.mean(mcum(dret[c], t, t + hold) for c in cs) * 100 - cost_pct
+                rr.append((r, r - base(t, t + hold) * 100, t))
+            else:
+                rr.append((0.0, -base(t, t + hold) * 100, t))
+            t += hold
+        series[o] = rr
+    offs = [dict(summ(v), o=o) for o, v in series.items() if v]
+    out["offset"] = offs
+    if hold % 2 == 0 and len(series) == hold:
+        half = hold // 2
+        best = None
+        stag = []
+        for o in range(half):
+            A, B = series[o], series[o + half]
+            ea, eb, path = 1.0, 1.0, []
+            ia = ib = 0
+            ends = sorted([(x[2] + hold, "A", x[0]) for x in A] + [(x[2] + hold, "B", x[0]) for x in B])
+            for _, w, r in ends:
+                if w == "A":
+                    ea *= 1 + r / 100
+                else:
+                    eb *= 1 + r / 100
+                path.append((ea + eb) / 2)
+            peak, mdd = 1.0, 0.0
+            for v in path:
+                peak = max(peak, v)
+                mdd = min(mdd, v / peak - 1)
+            stag.append({"o": o, "total": round((path[-1] - 1) * 100, 1) if path else None, "mdd": round(mdd * 100, 1)})
+        out["stagger"] = stag
+    # 3) 소액용: 테마별 종목 수
+    size = []
+    for topn in (2, 3, 5):
+        rr, cnt, t = [], [], 70
+        while t + hold < T:
+            cs = pick(t, topn)
+            if cs:
+                r = st.mean(mcum(dret[c], t, t + hold) for c in cs) * 100 - cost_pct
+                rr.append((r, r - base(t, t + hold) * 100))
+                cnt.append(len(cs))
+            else:
+                rr.append((0.0, -base(t, t + hold) * 100))
+            t += hold
+        sm = summ(rr)
+        if sm:
+            sm["topn"], sm["stocks"] = topn, round(st.mean(cnt), 1) if cnt else 0
+            size.append(sm)
+    out["size"] = size
+    return out
+
+
 def run(keep, themes, cost_pct, ratio_min=3.0, amount_min=5e9):
     if not themes:
         return None
@@ -433,6 +573,10 @@ def run(keep, themes, cost_pct, ratio_min=3.0, amount_min=5e9):
         res["surge"] = surge_test(keep, dates, idx, cost_pct, ratio_min, amount_min)
     except Exception as e:
         print(f"[테마] 급증×테마 검증 실패: {e}", flush=True)
+    try:
+        res["practical"] = practical_test(dates, idx, dret, damt, cost_pct)
+    except Exception as e:
+        print(f"[테마] 실전 운용 검증 실패: {e}", flush=True)
     try:
         res["pullback"] = pullback_test(keep, dates, idx, cost_pct)
     except Exception as e:
