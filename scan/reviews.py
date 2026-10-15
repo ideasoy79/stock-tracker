@@ -31,18 +31,20 @@ def check(tp, names, today):
 
     # S5·S4: 실전 기록이 6회 쌓이면 백테스트와 비교할 때
     if sm.get("n", 0) >= 6:
-        found.append(("live6", "S5", "실전 기록 6회: 백테스트와 비교할 때",
-                      f"실전 {sm['n']}회 회당 {sm['avg']:+.2f}% · 평균 대비 {sm['excess']:+.2f}%p (백테스트 +2.10% · +1.62%p). "
+        found.append(("live6", "S5", "제안 실전 기록 6회: 시뮬레이션과 비교할 때",
+                      f"실전 {sm['n']}회 회당 {sm['avg']:+.2f}% · 평균 대비 {sm['excess']:+.2f}%p (3년 시뮬레이션: 제안 1회당 약 +0.8~1.2%). "
                       "차이가 크면 S5(편향 보정)·S4(시장 국면)를 먼저"))
     # S5: 실전이 백테스트보다 뚜렷이 약할 때 (4회 이상)
     if sm.get("n", 0) >= 4 and sm.get("excess", 0) < 0:
         found.append((f"weak-{sm['n']}", "S5", "실전 성적이 평균보다 약해요",
                       f"실전 {sm['n']}회 평균 대비 {sm['excess']:+.2f}%p · 비중을 줄이고 S5(백테스트 편향 보정) 검토"))
     # S6: 묶음 안에서 -15% 이상 빠진 종목이 나오면 공시 위험 필터 검토
+    seen = set()
     for h in hist:
         for c, r in (h.get("sr") or {}).items():
-            if r is not None and r <= -15:
-                found.append((f"loser-{h['date']}-{c}", "S6", "묶음 종목 급락: 공시 위험 필터 검토",
+            if r is not None and r <= -15 and c not in seen:
+                seen.add(c)
+                found.append((f"loser-{c}", "S6", "묶음 종목 급락: 공시 위험 필터 검토",
                               f"{names.get(c, c)} {r:+.1f}% ({h['date']} 묶음). 유상증자·CB·보호예수 해제 같은 공시가 있었는지 보고 S6(공시 위험 자동 제외)"))
     # S4: 시장 필터가 공격 ↔ 쉬기로 바뀐 날
     if "restPrev" in pk and pk.get("rest") != pk.get("restPrev"):

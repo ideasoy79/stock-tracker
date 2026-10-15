@@ -387,6 +387,29 @@ def theme_payload(keep):
         return None
 
 
+US_SYMS = [("나스닥", "^IXIC"), ("S&P500", "^GSPC"), ("필라델피아 반도체", "^SOX"), ("다우", "^DJI")]
+
+
+def us_market():
+    """어젯밤 미국 지수 등락 (참고용 · 검증 전). 실패하면 빈 목록"""
+    out = []
+    for nm, sym in US_SYMS:
+        for host in ("query1", "query2"):
+            try:
+                r = requests.get(f"https://{host}.finance.yahoo.com/v8/finance/chart/{sym}?range=5d&interval=1d", timeout=10,
+                                 headers={"User-Agent": "Mozilla/5.0"})
+                res = r.json()["chart"]["result"][0]
+                cl = [c for c in res["indicators"]["quote"][0]["close"] if c]
+                ts = res["timestamp"]
+                if len(cl) >= 2:
+                    d = datetime.fromtimestamp(ts[-1], timezone(timedelta(hours=-5))).strftime("%m/%d")
+                    out.append({"name": nm, "chg": round((cl[-1] / cl[-2] - 1) * 100, 2), "date": d})
+                    break
+            except Exception:
+                continue
+    return out
+
+
 def main():
     t0 = time.time()
     init_kis()
@@ -479,8 +502,9 @@ def main():
         "themes": tp,
         "pullbacks": pbs,
         "reviews": rv,
-        "names": {c: names[c] for c in {m for h in ((tp or {}).get("picks") or {}).get("open", []) + ((tp or {}).get("picks") or {}).get("closed", [])
-                                            for m in h.get("stocks", [])} if c in names},
+        "us": us_market(),
+        "names": {c: names[c] for c in ({m for h in ((tp or {}).get("picks") or {}).get("open", []) + ((tp or {}).get("picks") or {}).get("closed", [])
+                                            for m in h.get("stocks", [])} | {m["code"] for x in ((tp or {}).get("picks") or {}).get("today", []) for m in x.get("top", [])}) if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)

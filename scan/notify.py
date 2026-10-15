@@ -123,41 +123,67 @@ def active(records):
     return out
 
 
-# ───────── 테마 묶음 상태 ─────────
-def basket_lines(js):
+# ───────── 테마 묶음: 매일 제안 + 각자 산 묶음(산 날부터 10거래일) ─────────
+KRX_HOLI = {"2026-10-09", "2026-12-25", "2026-12-31", "2027-01-01", "2027-02-08", "2027-02-09", "2027-03-01", "2027-05-05",
+            "2027-05-13", "2027-08-16", "2027-09-14", "2027-09-15", "2027-09-16", "2027-10-04", "2027-10-11", "2027-12-27", "2027-12-31"}
+
+
+def td_between(a, b):
+    """a 다음 날부터 b까지 거래일 수"""
+    from datetime import date as _d
+    if not a or not b or b <= a:
+        return 0
+    x = _d.fromisoformat(a)
+    end = _d.fromisoformat(b)
+    k = 0
+    while x < end:
+        x += timedelta(days=1)
+        if x.weekday() < 5 and x.isoformat() not in KRX_HOLI:
+            k += 1
+    return k
+
+
+def proposal_lines(js):
     pk = ((js.get("themes") or {}).get("picks")) or {}
     as_of = pk.get("asOf") or js.get("baseDate") or ""
     hold = pk.get("hold", 10)
-    op = (pk.get("open") or [None])[0]
-    closed = pk.get("closed") or []
     lines = []
-    mk = pk.get("mkt60")
-    if mk is not None:
-        lines.append(("쉬는 구간" if pk.get("rest") else "공격 구간") + f" · 테마 평균 60일 {mk:+.1f}%")
-    todo = "유지 — 할 일 없음"
-    if op:
-        days = op.get("days", 0)
-        ret = op.get("stocksRet", op.get("ret"))
-        lines.append(f"테마 묶음 {op['date'][5:].replace('-', '/')} 선정 · D+{days}/{hold}"
-                     + (f" · {ret:+.2f}% (평균 {op.get('base', 0):+.2f}%)" if ret is not None and days else ""))
-        if op["date"] == as_of:
-            todo = "새 테마 묶음 — 다음 거래일에 3테마 고르게 매수 (앱에서 수량 계산)"
-            if closed and closed[-1].get("closedAt") == as_of:
-                todo += " · 이전 테마 묶음은 오늘이 정리일이었어요"
-        elif days == hold - 1:
-            todo = f"내일이 {hold}거래일째 — 장 마감 전에 테마 묶음 정리"
+    if pk.get("mkt60") is not None:
+        lines.append(("쉬는 구간" if pk.get("rest") else "공격 구간") + f" · 테마 평균 60일 {pk['mkt60']:+.1f}%"
+                     + (f" · 20일 {pk['mkt20']:+.1f}%" if pk.get("mkt20") is not None else ""))
+    if not pk.get("rest") and pk.get("today"):
+        th = " · ".join(re.sub(r"\s*\(.*\)\s*$", "", x["theme"]) for x in pk["today"])
+        n = len({m["code"] for x in pk["today"] for m in x.get("top", [])})
+        lines.append(f"오늘의 묶음 제안: {th} ({n}종목) → 앱에서 [묶음 사기] 또는 [패스]")
     elif pk.get("rest"):
-        todo = "쉬는 구간 — 새로 사지 않아요"
-    lines.append("할 일: " + todo)
-    return lines, op, as_of, hold
+        lines.append(f"오늘은 제안 없음 ({pk.get('restWhy') or '시장 약세'})")
+    us = js.get("us") or []
+    if us:
+        lines.append("어젯밤 미국: " + " · ".join(f"{u['name']} {u['chg']:+.1f}%" for u in us[:3]) + " (참고)")
+    return lines, as_of, hold
+
+
+def my_baskets(records, as_of, hold):
+    out = {}
+    for r, code in active(records):
+        b = r.get("basket")
+        if b:
+            out.setdefault(b, 0)
+            out[b] += 1
+    return [(b, n, td_between(b, as_of)) for b, n in sorted(out.items())]
 
 
 def evening(js):
     head = f"[생각콩 트래커] {js.get('baseDate', '')} 종가 기준" + (" (장중 실행)" if js.get("intraday") else "")
-    bl, op, as_of, hold = basket_lines(js)
+    pl, as_of, hold = proposal_lines(js)
     news = [x for x in js.get("reviews") or [] if x.get("new")]
     for u in users():
-        lines = [head] + bl
+        lines = [head] + pl
+        for b, n, d in my_baskets(u["records"], as_of, hold):
+            if d >= hold:
+                lines.append(f"정리일 지남: {b[5:].replace('-', '/')} 묶음 {n}종목 → 다음 거래일 매도")
+            elif d == hold - 1:
+                lines.append(f"내일 정리: {b[5:].replace('-', '/')} 묶음 {n}종목 (장 마감 전 예약 매도)")
         near, broke = [], []
         for r, code in active(u["records"])[:30]:
             stop = float(r.get("stoploss") or 0)
@@ -184,15 +210,18 @@ def evening(js):
 def intraday(js):
     now = datetime.now(KST)
     today = now.strftime("%Y-%m-%d")
-    _, op, as_of, hold = basket_lines(js)
+    pk = ((js.get("themes") or {}).get("picks")) or {}
+    hold = pk.get("hold", 10)
     for u in users():
         st = state_get(u["uid"])
         sent = st.get("stop") or {}
         sent = {k: v for k, v in sent.items() if v == today}
         msgs = []
-        if op and op.get("days") == hold - 1 and as_of < today and st.get("basketDay") != today and now.hour < 12:
-            msgs.append(f"[오늘 테마 묶음 정리일] {op['date'][5:].replace('-', '/')} 테마 묶음이 오늘 {hold}거래일째예요. 장 마감 전에 정리하세요.")
-            st["basketDay"] = today
+        if st.get("basketDay") != today and now.hour < 12 and now.weekday() < 5 and today not in KRX_HOLI:
+            due = [b for b, n, d in my_baskets(u["records"], today, hold) if d >= hold]
+            if due:
+                msgs.append("[오늘 묶음 정리일] " + ", ".join(b[5:].replace("-", "/") + " 묶음" for b in due) + " — 장 마감 전에 정리하세요.")
+                st["basketDay"] = today
         for r, code in active(u["records"])[:30]:
             stop = float(r.get("stoploss") or 0)
             rid = str(r.get("id"))

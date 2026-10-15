@@ -554,6 +554,92 @@ def practical_test(dates, idx, dret, damt, cost_pct, hold=10):
     return out
 
 
+def daily_sim(keep, dates, idx, dret, damt, cost_pct, K=2, topn=5, filt="60&20", hold=10):
+    """트래커 실전형: 매일 제안 → 빈 자리(동시 K개)가 있으면 다음날 시가에 묶음 매수 → 10거래일째 종가 정리.
+    포트폴리오를 매일 평가(일별 최대 낙폭). 반환: 연환산·누적·최대 낙폭·묶음 수, 앞/뒤 절반"""
+    names = list(idx)
+    T = len(dates)
+    pos = {d: i for i, d in enumerate(dates)}
+    gap = {}
+    for c, rows in keep.items():
+        g = [None] * T
+        prev = None
+        for r in rows:
+            i = pos.get(r["d"])
+            if i is not None and prev and prev > 0 and r.get("o"):
+                x = r["o"] / prev - 1
+                if abs(x) < 0.35:
+                    g[i] = x
+            prev = r["c"]
+        gap[c] = g
+    P = {}
+    for n in names:
+        x, arr = 1.0, []
+        for v in idx[n]["ret"]:
+            x *= 1 + v
+            arr.append(x)
+        P[n] = arr
+    m = lambda t, k: st.mean(P[n][t] / P[n][t - k] - 1 for n in names)
+
+    def ok(t):
+        if filt == "60":
+            return m(t, 60) > 0
+        return m(t, 60) > 0 and m(t, 20) > 0
+
+    def pick(t):
+        th = sorted(names, key=lambda n: -(P[n][t] / P[n][t - 20]))[:3]
+        out = []
+        for n in th:
+            mem = [c for c in idx[n]["members"] if dret[c][t] is not None]
+            for c in sorted(mem, key=lambda c: -sum(damt[c][t - 19:t + 1]))[:topn]:
+                if c not in out:
+                    out.append(c)
+        return out
+
+    def run(a, b):
+        cash, coh, eq, n = 1.0, [], [], 0
+        for t in range(a, b):
+            for co in coh:
+                for p_ in co["pos"]:
+                    r = dret[p_["c"]][t]
+                    if t == co["buy"]:
+                        g = gap[p_["c"]][t]
+                        if g is not None and r is not None:
+                            p_["v"] *= (1 + r) / (1 + g)
+                    elif r is not None:
+                        p_["v"] *= 1 + r
+            keep_ = []
+            for co in coh:
+                if t >= co["sell"]:
+                    cash += sum(p_["v"] for p_ in co["pos"]) * (1 - cost_pct / 100)
+                else:
+                    keep_.append(co)
+            coh = keep_
+            tot = cash + sum(p_["v"] for co in coh for p_ in co["pos"])
+            eq.append(tot)
+            if t + hold >= b or len(coh) >= K or t < 70 or not ok(t):
+                continue
+            cs = pick(t)
+            if not cs:
+                continue
+            money = min(cash, tot / K)
+            cash -= money
+            n += 1
+            coh.append({"buy": t + 1, "sell": t + hold, "pos": [{"c": c, "v": money / len(cs)} for c in cs]})
+        if not eq:
+            return None
+        pk_, mdd = eq[0], 0.0
+        for v in eq:
+            pk_ = max(pk_, v)
+            mdd = min(mdd, v / pk_ - 1)
+        yrs = len(eq) / 245
+        return {"cagr": round((eq[-1] ** (1 / yrs) - 1) * 100, 1) if eq[-1] > 0 else -100, "total": round((eq[-1] - 1) * 100, 1),
+                "mdd": round(mdd * 100, 1), "n": n}
+    mid = 70 + (T - 70) // 2
+    return {"K": K, "topn": topn, "filt": filt, "hold": hold, "all": run(70, T), "first": run(70, mid), "second": run(mid, T),
+            "cut": dates[mid]}
+
+
 def run(keep, themes, cost_pct, ratio_min=3.0, amount_min=5e9):
     if not themes:
         return None
@@ -573,6 +659,11 @@ def run(keep, themes, cost_pct, ratio_min=3.0, amount_min=5e9):
         res["surge"] = surge_test(keep, dates, idx, cost_pct, ratio_min, amount_min)
     except Exception as e:
         print(f"[테마] 급증×테마 검증 실패: {e}", flush=True)
+    try:
+        res["daily"] = [daily_sim(keep, dates, idx, dret, damt, cost_pct, K=k, topn=tn, filt=f)
+                        for k, tn, f in ((2, 5, "60&20"), (1, 8, "60&20"), (2, 5, "60"))]
+    except Exception as e:
+        print(f"[테마] 매일 제안 시뮬레이션 실패: {e}", flush=True)
     try:
         res["practical"] = practical_test(dates, idx, dret, damt, cost_pct)
     except Exception as e:
