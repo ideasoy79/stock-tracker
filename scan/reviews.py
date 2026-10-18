@@ -38,14 +38,25 @@ def check(tp, names, today):
     if sm.get("n", 0) >= 4 and sm.get("excess", 0) < 0:
         found.append((f"weak-{sm['n']}", "S5", "실전 성적이 평균보다 약해요",
                       f"실전 {sm['n']}회 평균 대비 {sm['excess']:+.2f}%p · 비중을 줄이고 S5(백테스트 편향 보정) 검토"))
-    # S6: 묶음 안에서 -15% 이상 빠진 종목이 나오면 공시 위험 필터 검토
+    # S6: 묶음 안에서 -15% 이상 빠진 종목 — 공시 위험 필터(OpenDART)가 켜져 있으면 그 종목의 공시 조회 결과를 같이 보여 줌
     seen = set()
+    risk_on = bool(pk.get("riskOn"))
+    risk_hits = pk.get("riskHits") or {}
     for h in hist:
         for c, r in (h.get("sr") or {}).items():
             if r is not None and r <= -15 and c not in seen:
                 seen.add(c)
-                found.append((f"loser-{c}", "S6", "묶음 종목 급락: 공시 위험 필터 검토",
-                              f"{names.get(c, c)} {r:+.1f}% ({h['date']} 묶음). 유상증자·CB·보호예수 해제 같은 공시가 있었는지 보고 S6(공시 위험 자동 제외)"))
+                head = f"{names.get(c, c)} {r:+.1f}% ({h['date']} 묶음). "
+                if not risk_on:
+                    why = head + "공시 필터(S6)는 만들어졌지만 OpenDART 키(OPENDART_API_KEY)가 없어 꺼져 있어요 → 키를 넣으면 유상증자·CB·BW·중대 공시 종목이 묶음에서 자동으로 빠져요"
+                elif c in risk_hits and risk_hits[c]:
+                    k = risk_hits[c]
+                    why = head + f"공시 확인: {k['label']} ({k['date']}, {k['title']}) → 이 종목은 이후 묶음에서 자동 제외돼요"
+                elif c in risk_hits:
+                    why = head + "최근 위험 공시(유상증자·CB·BW·중대 사건) 없음 → 개별 악재보다 테마 동반 하락일 가능성이 커요. 테마 쏠림(S4)을 볼 차례"
+                else:
+                    why = head + "이 종목은 공시 조회가 안 됐어요(다음 스캔에서 재시도)"
+                found.append((f"loser-{c}", "S6", "묶음 종목 급락: 공시 위험 확인", why))
     # S4: 시장 필터가 공격 ↔ 쉬기로 바뀐 날
     if "restPrev" in pk and pk.get("rest") != pk.get("restPrev"):
         now = "쉬는 구간" if pk.get("rest") else "공격 구간"

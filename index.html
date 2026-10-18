@@ -4312,7 +4312,8 @@ const TM=t=>typeof window.rdTmify==='function'?window.rdTmify(t):t;
 function noteList(x){return '<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m"><div class="pk-mh">'+stLink(m.code,esc(stockName2(m.code)))
   +(m.state?(typeof window.rdStateBadge==='function'?window.rdStateBadge(m.state):'<span class="pk-s">'+m.state+'</span>'):'')
   +'<span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(m.gap!=null?'<span class="dim">20일선 '+pct(m.gap,0)+'</span>':'')+'</div>'
-  +(m.note?'<div class="pk-n">'+TM(esc(m.note))+'</div>':'')+'</div>').join('')+'</div>';}
+  +(m.note?'<div class="pk-n">'+TM(esc(m.note))+'</div>':'')+'</div>').join('')+skipHtml(x)+'</div>';}
+function skipHtml(x){return (x.skipped&&x.skipped.length)?'<div class="pk-n dim">⛔ 공시 위험으로 뺌: '+x.skipped.map(k=>esc(stockName2(k.code))+' ('+esc(k.label)+' '+md(k.date)+')').join(' · ')+'</div>':'';}
 function picksHtml(tf){
   const pk=tf&&tf.picks;if(!pk)return '';
   const asOf=pk.asOf||tf.date,hold=pk.hold||10,sm=pk.summary;
@@ -5056,7 +5057,7 @@ window.rdBasketCard=function(){
     +(live.length?live.map(b=>'<button class="bk-mine" onclick="rdWeights()"><span><b>'+md(b.date)+' 묶음</b> D+'+b.days+'/'+hold+' · 정리 '+md(b.end)+'</span><b class="'+(b.val>=b.inv?'up':'down')+'">'+(b.inv?pct((b.val/b.inv-1)*100,1):'—')+'</b></button>').join(''):'<div class="bk-sub">아직 산 묶음이 없어요</div>')+'</div>';
   const list=prop?'<details class="bk-st"><summary>제안 종목 · 차트 상태 보기</summary>'
     +pk.today.map(x=>'<div class="bk-sr-t">'+esc(shortT(x.theme))+' <span class="up">'+pct(x.ret20,0)+'</span></div>'+x.top.map(m=>'<div class="bk-sr"><div class="bk-sr-h">'+(typeof stLink==='function'?stLink(m.code,esc(nameOf(m.code))):esc(nameOf(m.code)))
-      +(m.state?rdStateBadge(m.state):'')+(heldMap()[m.code]?'<em class="bk-held">보유 중</em>':'')+'</div></div>').join('')).join('')
+      +(m.state?rdStateBadge(m.state):'')+(heldMap()[m.code]?'<em class="bk-held">보유 중</em>':'')+'</div></div>').join('')+skipHtml(x)).join('')
     +rdStateLegend+'</details>':'';
   return '<section class="rd-card bk">'
     +'<div class="bk-top">'+mk+'<span class="bk-asof">'+md(asOf)+' 종가 기준</span></div>'

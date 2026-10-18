@@ -379,7 +379,8 @@ def theme_payload(keep):
         if not th:
             print("[테마] themes.json 없음 → 테마 흐름 생략", flush=True)
             return None
-        p = theme_flow.daily_payload(keep, th)
+        import disclosure
+        p = theme_flow.daily_payload(keep, th, risk_fn=disclosure.make_checker())   # S6: 위험 공시 종목은 묶음 후보에서 제외
         print(f"[테마] {p['count'] if p else 0}개 테마 흐름 계산", flush=True)
         return p
     except Exception as e:
@@ -504,7 +505,7 @@ def main():
         "reviews": rv,
         "us": us_market(),
         "names": {c: names[c] for c in ({m for h in ((tp or {}).get("picks") or {}).get("open", []) + ((tp or {}).get("picks") or {}).get("closed", [])
-                                            for m in h.get("stocks", [])} | {m["code"] for x in ((tp or {}).get("picks") or {}).get("today", []) for m in x.get("top", [])}) if c in names},
+                                            for m in h.get("stocks", [])} | {m["code"] for x in ((tp or {}).get("picks") or {}).get("today", []) for m in x.get("top", []) + x.get("skipped", [])}) if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)
