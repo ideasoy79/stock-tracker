@@ -109,8 +109,8 @@ def snapshot(dates, idx, dret, at=None):
     return rows
 
 
-def daily_payload(rows_by_code, themes, top=40):
-    """latest.json 에 넣을 테마 흐름 요약"""
+def daily_payload(rows_by_code, themes, top=40, risk_fn=None):
+    """latest.json 에 넣을 테마 흐름 요약 (risk_fn: S6 공시 위험 조회 함수, 없으면 필터 꺼짐)"""
     if not themes:
         return None
     dates, idx, dret = build(rows_by_code, themes)
@@ -122,7 +122,7 @@ def daily_payload(rows_by_code, themes, top=40):
     items = [{"theme": x["theme"], "n": x["n"], "ret5": r(x["ret5"]), "ret20": r(x["ret20"]),
               "breadth5": round(x["breadth5"] * 100), "money": round(x["money"], 2),
               "rank": round(x["rank"] * 100), "rankPrev": round(x["rankPrev"] * 100), "phase": x["phase"]} for x in snap]
-    picks = update_picks(dates, idx, dret, snap, rows_by_code)
+    picks = update_picks(dates, idx, dret, snap, rows_by_code, risk_fn)
     return {"date": dates[-1], "count": len(items), "picks": picks,
             "ranks": {x["theme"]: x["rank"] for x in items},
             "leaders": items[:top],
@@ -145,7 +145,7 @@ def _mcum(rr, a, b):
     return x - 1
 
 
-def update_picks(dates, idx, dret, snap, rows_by_code=None):
+def update_picks(dates, idx, dret, snap, rows_by_code=None, risk_fn=None):
     """매일 저녁 '오늘의 묶음 제안'(20일 상위 3테마 · 테마별 거래대금 상위 5종목)을 내고,
     제안마다 10거래일 실제 결과를 theme_picks.json 에 쌓는다 (사든 안 사든 기록 → 앱에서 '산 제안 vs 패스한 제안' 비교).
     시장 필터: 테마 평균 60일 수익률 > 0 그리고 20일 수익률 > 0 일 때만 제안 (KRX 전 종목 3년 시뮬레이션에서
@@ -198,12 +198,30 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         return sum(r.get("a", 0) for r in rows[-20:]) / max(len(rows[-20:]), 1)
     # 오늘의 테마 후보는 쉬는 구간에도 계산해서 보여 줌(참고) — 제안 기록은 공격 구간에만
     cand = sorted(snap, key=lambda x: -x["ret20"])[:3]
+    # S6 공시 위험 필터: 후보(거래대금 상위 8) + 열린 묶음에서 -15% 이상 빠진 종목의 공시를 한 번에 조회
+    ordered = {x["theme"]: sorted(idx[x["theme"]]["members"], key=lambda c: -liq(c)) for x in cand}
+    losers = [c for h in hist if h.get("status") != "closed" for c, r in (h.get("sr") or {}).items() if r is not None and r <= -15]
+    risk = {"on": False, "hits": {}, "checked": [], "failed": []}
+    if risk_fn is not None:
+        try:
+            pool = [c for o in ordered.values() for c in o[:8]] + losers
+            res = risk_fn(pool)
+            risk = {"on": True, "hits": res.get("hits") or {}, "checked": res.get("checked") or [], "failed": res.get("failed") or []}
+            print(f"[S6] 공시 조회 {len(risk['checked'])}종목 · 위험 {len(risk['hits'])} · 실패 {len(risk['failed'])}", flush=True)
+        except Exception as e:                      # 전체 실패 → 필터 끄고 기존 방식 (fail-open)
+            print(f"[S6] 공시 필터 건너뜀: {e}", flush=True)
     today = []
+    skipped_all = {}
     for x in cand:
-        mem = sorted(idx[x["theme"]]["members"], key=lambda c: -liq(c))[:5]
+        top5 = ordered[x["theme"]][:5]
+        skipped = [c for c in top5 if c in risk["hits"]]
+        mem = [c for c in ordered[x["theme"]] if c not in risk["hits"]][:5]           # 위험 공시 종목은 빼고 다음 순위로 채움
+        for c in skipped:
+            skipped_all[c] = risk["hits"][c]
         today.append({"theme": x["theme"], "ret20": round(x["ret20"] * 100, 2), "ret5": round(x["ret5"] * 100, 2),
                       "phase": x["phase"], "n": len(idx[x["theme"]]["members"]),
-                      "top": [chart_note(c, rows_by_code, dret, t) for c in mem]})
+                      "top": [chart_note(c, rows_by_code, dret, t) for c in mem],
+                      "skipped": [dict(risk["hits"][c], code=c) for c in skipped]})
     if today and not rest and not any(h["date"] == dates[t] for h in hist):
         codes = list(dict.fromkeys(m["code"] for x in today for m in x["top"]))
         tmap = {}                                   # 종목 → [테마, 테마 안 거래대금 순위]
@@ -212,7 +230,8 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
                 tmap.setdefault(m["code"], [x["theme"], j])
         hist.append({"date": dates[t], "themes": [x["theme"] for x in today], "stocks": codes, "status": "open", "days": 0, "tmap": tmap,
                      "px0": {c: close_at(c, dates[t]) for c in codes}, "px": {c: close_at(c, dates[t]) for c in codes},
-                     "sr": {c: 0.0 for c in codes}})
+                     "sr": {c: 0.0 for c in codes},
+                     "skip": [dict(v, code=c) for c, v in skipped_all.items()]})          # S6로 뺀 종목 기록
     hist = hist[-90:]
     # 열린 제안 종목 + 오늘 후보 종목의 차트 상태
     notes = {}
@@ -234,8 +253,9 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         summary = {"n": len(closed), "avg": round(sum(rr) / len(rr), 2),
                    "excess": round(sum(ex) / len(ex), 2), "beat": round(sum(1 for e in ex if e > 0) / len(ex) * 100)}
     slim = lambda h: {k: v for k, v in h.items() if k not in ("px0",)}
-    return {"rule": "매일 제안 · 20일 상위 3테마 · 테마별 거래대금 상위 5종목 · 시장 필터(60일·20일) · 산 날부터 10거래일", "mode": "daily",
+    return {"rule": "매일 제안 · 20일 상위 3테마 · 테마별 거래대금 상위 5종목(최근 위험 공시 종목 제외) · 시장 필터(60일·20일) · 산 날부터 10거래일", "mode": "daily",
             "rest": rest, "restPrev": rest_prev, "restWhy": rest_why, "hold": HOLD,
+            "riskOn": risk["on"], "riskHits": {c: risk["hits"].get(c) for c in losers if c in risk["checked"]},
             "asOf": dates[t], "mkt60": round(mkt60 * 100, 2), "mkt20": round(mkt20 * 100, 2), "today": today, "notes": notes,
             "open": [h for h in hist if h.get("status") == "open"], "closed": [slim(h) for h in closed[-40:]], "summary": summary}
 
