@@ -486,6 +486,16 @@ def main():
         tag_themes(pbs[k], tp)
         pbs[k].sort(key=lambda x: (x["themes"][0]["r"] if x.get("themes") else 999, -x["up"]))
     pbs["setup"] = pbs["setup"][:40]
+    pk_ = (tp or {}).get("picks") or {}
+    interest = ({m for h in pk_.get("open", []) + pk_.get("closed", []) for m in h.get("stocks", []) + h.get("lag", [])}
+                | {m["code"] for x in pk_.get("today", []) for m in x.get("top", []) + x.get("lag", [])}
+                | {h["code"] for h in hits})
+    try:
+        import dart
+        dt = dart.fetch(interest)
+    except Exception as e:
+        dt = None
+        print(f"[공시] 실패(스캔에는 영향 없음): {e}", flush=True)
     print(f"[눌림] 재상승 신호 {len(pbs['trigger'])} · 되돌림 진행 {len(pbs['setup'])}", flush=True)
     out = {
         "kind": "sv4-volume-scan",
@@ -503,8 +513,8 @@ def main():
         "pullbacks": pbs,
         "reviews": rv,
         "us": us_market(),
-        "names": {c: names[c] for c in ({m for h in ((tp or {}).get("picks") or {}).get("open", []) + ((tp or {}).get("picks") or {}).get("closed", [])
-                                            for m in h.get("stocks", [])} | {m["code"] for x in ((tp or {}).get("picks") or {}).get("today", []) for m in x.get("top", [])}) if c in names},
+        "dart": dt,
+        "names": {c: names[c] for c in (interest | set((dt or {}).get("items", {}))) if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)

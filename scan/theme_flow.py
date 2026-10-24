@@ -123,7 +123,12 @@ def daily_payload(rows_by_code, themes, top=40):
               "breadth5": round(x["breadth5"] * 100), "money": round(x["money"], 2),
               "rank": round(x["rank"] * 100), "rankPrev": round(x["rankPrev"] * 100), "phase": x["phase"]} for x in snap]
     picks = update_picks(dates, idx, dret, snap, rows_by_code)
-    return {"date": dates[-1], "count": len(items), "picks": picks,
+    try:
+        tmap_ = theme_map(dates, idx, [x["theme"] for x in (picks or {}).get("today") or []])
+    except Exception as e:
+        print(f"[테마 지도] 실패: {e}", flush=True)
+        tmap_ = None
+    return {"date": dates[-1], "count": len(items), "picks": picks, "map": tmap_,
             "ranks": {x["theme"]: x["rank"] for x in items},
             "leaders": items[:top],
             "rising": sorted([x for x in items if x["phase"] == "떠오름"], key=lambda x: x["rank"] - x["rankPrev"])[:12],
@@ -131,8 +136,64 @@ def daily_payload(rows_by_code, themes, top=40):
             "hot": [x for x in items if x["phase"] == "과열 주의"][:12]}
 
 
+def quad(r60, r20):
+    return "주도" if r60 > 0 and r20 > 0 else "과열·눌림" if r60 > 0 else "부상" if r20 > 0 else "소외"
+
+
+def theme_map(dates, idx, picks=(), n=24, trail=(10, 5, 0)):
+    """4분면 테마 지도: x=60일, y=20일 테마 수익률(%). 최근 20일 거래대금 큰 테마 n개 + 오늘 제안 테마.
+    amt = 최근 20일 하루 평균 거래대금(억 원). trail = 10·5거래일 전 위치(이동 궤적). 3년 검증: '주도' 칸만 다음 10일 평균이 플러스(+0.4%), 나머지 칸은 마이너스."""
+    t = len(dates) - 1
+    if t < 61 + max(trail):
+        return None
+    amt20 = {k: sum(s["amt"][t - 19:t + 1]) / 20 for k, s in idx.items()}
+    # 고르는 법: 오늘 제안 테마 → 20일 강한 순 · 거래대금 순 · 20일 약한 순 · 60일 강한 순을 번갈아 뽑되
+    # 소속 종목이 절반 넘게 겹치는 테마(예: 반도체 대표주·IT 대표주)는 하나만, 50종목 넘는 '지수·밸류업' 묶음은 제외
+    ok = [k for k in idx if 4 <= len(idx[k]["members"]) <= 50]
+    r20 = {k: cum(idx[k]["ret"], t - 20, t) for k in ok}
+    r60 = {k: cum(idx[k]["ret"], t - 60, t) for k in ok}
+    orders = [sorted(ok, key=lambda k: -r20[k]), sorted(ok, key=lambda k: -amt20[k]),
+              sorted(ok, key=lambda k: r20[k]), sorted(ok, key=lambda k: -r60[k])]
+    mset = {k: set(idx[k]["members"]) for k in idx}
+    chosen = [p for p in picks if p in idx]
+
+    def overlaps(k):
+        return any(len(mset[k] & mset[c]) > 0.5 * min(len(mset[k]), len(mset[c])) for c in chosen)
+    ptr = [0] * len(orders)
+    while len(chosen) < n and any(ptr[i] < len(orders[i]) for i in range(len(orders))):
+        for i, od in enumerate(orders):
+            while ptr[i] < len(od):
+                k = od[ptr[i]]
+                ptr[i] += 1
+                if k not in chosen and not overlaps(k):
+                    chosen.append(k)
+                    break
+            if len(chosen) >= n:
+                break
+    for p in picks:
+        if p in idx and p not in chosen:
+            chosen.append(p)
+    r = lambda v: round(v * 100, 1)
+    items = []
+    for k in chosen:
+        ret = idx[k]["ret"]
+        tr = [[r(cum(ret, t - b - 60, t - b)), r(cum(ret, t - b - 20, t - b))] for b in trail]
+        x, y = tr[-1]
+        items.append({"theme": k, "x": x, "y": y, "q": quad(x, y), "tr": tr[:-1], "pick": k in picks,
+                      "amt": round(amt20[k] / 1e8), "n": len(idx[k]["members"])})
+    names = list(idx)
+    avg = lambda a, b: sum(cum(idx[k]["ret"], a, b) for k in names) / len(names)
+    mk = [[r(avg(t - b - 60, t - b)), r(avg(t - b - 20, t - b))] for b in trail]
+    cnt = {}
+    for k in names:
+        q = quad(cum(idx[k]["ret"], t - 60, t), cum(idx[k]["ret"], t - 20, t))
+        cnt[q] = cnt.get(q, 0) + 1
+    return {"asOf": dates[t], "items": items, "mkt": {"x": mk[-1][0], "y": mk[-1][1], "tr": mk[:-1]}, "count": cnt, "total": len(names)}
+
+
 # ───────── 모멘텀 3테마: 오늘의 후보 + 전진 검증(실전 성적) ─────────
 HOLD = 10
+LAG_POOL, LAG_N = 10, 3                  # 그림자 묶음(후발): 거래대금 상위 10 중 20일 덜 오른 3
 PICKS_FILE = os.path.join(HERE, "theme_picks.json")
 
 
@@ -178,11 +239,20 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         h["ret"] = round(sum(cum(idx[n]["ret"], i0, end) for n in th) / len(th) * 100, 2)
         h["base"] = round(base_all(i0, end) * 100, 2)
         st_codes = [c for c in h.get("stocks", []) if c in dret]
+        lg_codes = [c for c in h.get("lag", []) if c in dret]
+        all_codes = list(dict.fromkeys(st_codes + lg_codes))
         if st_codes:
             h["stocksRet"] = round(sum(_mcum(dret[c], i0, end) for c in st_codes) / len(st_codes) * 100, 2)
-            h["sr"] = {c: round(_mcum(dret[c], i0, end) * 100, 1) for c in st_codes}          # 종목별 수익률(%)
-            h["px0"] = h.get("px0") or {c: close_at(c, h["date"]) for c in st_codes}        # 제안일 종가
-            h["px"] = {c: close_at(c, dates[end]) for c in st_codes}                       # 최근(또는 정리일) 종가
+        if lg_codes:                                                                          # 그림자 묶음(후발 3)
+            h["lagRet"] = round(sum(_mcum(dret[c], i0, end) for c in lg_codes) / len(lg_codes) * 100, 2)
+        if all_codes:
+            h["sr"] = {c: round(_mcum(dret[c], i0, end) * 100, 1) for c in all_codes}        # 종목별 수익률(%)
+            p0 = h.get("px0") or {}
+            for c in all_codes:
+                if not p0.get(c):
+                    p0[c] = close_at(c, h["date"])                                           # 제안일 종가
+            h["px0"] = p0
+            h["px"] = {c: close_at(c, dates[end]) for c in all_codes}                        # 최근(또는 정리일) 종가
         h["days"] = min(days, HOLD)
         if days >= HOLD:
             h["status"], h["closedAt"] = "closed", dates[end]
@@ -200,25 +270,39 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
     cand = sorted(snap, key=lambda x: -x["ret20"])[:3]
     today = []
     for x in cand:
-        mem = sorted(idx[x["theme"]]["members"], key=lambda c: -liq(c))[:5]
+        pool = sorted([c for c in idx[x["theme"]]["members"] if dret[c][t] is not None] or idx[x["theme"]]["members"], key=lambda c: -liq(c))[:LAG_POOL]
+        r20s = {c: _mcum(dret[c], t - 20, t) for c in pool}
+        order = sorted(pool, key=lambda c: r20s[c])                       # 20일 덜 오른 순
+        k3 = max(1, len(order) // 3)
+        role = {c: ("lag" if i < k3 else "lead" if i >= len(order) - k3 else "mid") for i, c in enumerate(order)}
+        mem, lag = pool[:5], order[:LAG_N]
+
+        def note(c):
+            n_ = chart_note(c, rows_by_code, dret, t)
+            n_["role"] = role.get(c, "mid")
+            return n_
         today.append({"theme": x["theme"], "ret20": round(x["ret20"] * 100, 2), "ret5": round(x["ret5"] * 100, 2),
                       "phase": x["phase"], "n": len(idx[x["theme"]]["members"]),
-                      "top": [chart_note(c, rows_by_code, dret, t) for c in mem]})
+                      "top": [note(c) for c in mem], "lag": [note(c) for c in lag]})
     if today and not rest and not any(h["date"] == dates[t] for h in hist):
         codes = list(dict.fromkeys(m["code"] for x in today for m in x["top"]))
+        lag = list(dict.fromkeys(m["code"] for x in today for m in x.get("lag", [])))
         tmap = {}                                   # 종목 → [테마, 테마 안 거래대금 순위]
         for x in today:
             for j, m in enumerate(x["top"]):
                 tmap.setdefault(m["code"], [x["theme"], j])
-        hist.append({"date": dates[t], "themes": [x["theme"] for x in today], "stocks": codes, "status": "open", "days": 0, "tmap": tmap,
-                     "px0": {c: close_at(c, dates[t]) for c in codes}, "px": {c: close_at(c, dates[t]) for c in codes},
-                     "sr": {c: 0.0 for c in codes}})
+            for m in x.get("lag", []):
+                tmap.setdefault(m["code"], [x["theme"], None])
+        allc = list(dict.fromkeys(codes + lag))
+        hist.append({"date": dates[t], "themes": [x["theme"] for x in today], "stocks": codes, "lag": lag, "status": "open", "days": 0, "tmap": tmap,
+                     "px0": {c: close_at(c, dates[t]) for c in allc}, "px": {c: close_at(c, dates[t]) for c in allc},
+                     "sr": {c: 0.0 for c in allc}})
     hist = hist[-90:]
     # 열린 제안 종목 + 오늘 후보 종목의 차트 상태
     notes = {}
     for h in hist:
         if h.get("status") == "open":
-            for c in h.get("stocks", []):
+            for c in h.get("stocks", []) + h.get("lag", []):
                 if c in dret and c not in notes:
                     try:
                         notes[c] = chart_note(c, rows_by_code, dret, t)
@@ -233,8 +317,19 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         ex = [r - h["base"] for r, h in zip(rr, closed)]
         summary = {"n": len(closed), "avg": round(sum(rr) / len(rr), 2),
                    "excess": round(sum(ex) / len(ex), 2), "beat": round(sum(1 for e in ex if e > 0) / len(ex) * 100)}
+        both = [h for h in closed if h.get("lagRet") is not None and h.get("stocksRet") is not None]
+        if both:                                                                               # 같은 제안끼리 현행 vs 후발
+            summary["cmp"] = {"n": len(both), "cur": round(sum(h["stocksRet"] for h in both) / len(both), 2),
+                              "lag": round(sum(h["lagRet"] for h in both) / len(both), 2),
+                              "lagWin": round(sum(1 for h in both if h["lagRet"] > h["stocksRet"]) / len(both) * 100)}
+    live = [h for h in hist if h.get("status") == "open" and h.get("days") and h.get("lagRet") is not None and h.get("stocksRet") is not None]
+    if live:
+        summary = summary or {}
+        summary["cmpOpen"] = {"n": len(live), "cur": round(sum(h["stocksRet"] for h in live) / len(live), 2),
+                              "lag": round(sum(h["lagRet"] for h in live) / len(live), 2)}
     slim = lambda h: {k: v for k, v in h.items() if k not in ("px0",)}
     return {"rule": "매일 제안 · 20일 상위 3테마 · 테마별 거래대금 상위 5종목 · 시장 필터(60일·20일) · 산 날부터 10거래일", "mode": "daily",
+            "lagRule": f"그림자 묶음: 같은 3테마에서 거래대금 상위 {LAG_POOL}종목 중 20일 덜 오른 {LAG_N}종목", 
             "rest": rest, "restPrev": rest_prev, "restWhy": rest_why, "hold": HOLD,
             "asOf": dates[t], "mkt60": round(mkt60 * 100, 2), "mkt20": round(mkt20 * 100, 2), "today": today, "notes": notes,
             "open": [h for h in hist if h.get("status") == "open"], "closed": [slim(h) for h in closed[-40:]], "summary": summary}

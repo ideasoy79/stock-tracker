@@ -157,6 +157,17 @@ def proposal_lines(js):
         lines.append(f"오늘의 묶음 제안: {th} ({n}종목) → 앱에서 [묶음 사기] 또는 [패스]")
     elif pk.get("rest"):
         lines.append(f"오늘은 제안 없음 ({pk.get('restWhy') or '시장 약세'})")
+    dt = ((js.get("dart") or {}).get("items")) or {}
+    if not pk.get("rest") and pk.get("today") and dt:
+        warn = []
+        for x in pk["today"]:
+            for m in x.get("top", []) + x.get("lag", []):
+                rk = [z for z in dt.get(m["code"], []) if z["k"] == "risk"]
+                nm = (js.get("names") or {}).get(m["code"], m["code"])
+                if rk and nm + " " + rk[0]["lab"] not in warn:
+                    warn.append(nm + " " + rk[0]["lab"])
+        if warn:
+            lines.append("제안 종목 공시 경고: " + ", ".join(warn[:6]) + " → 앱에서 원문 확인")
     us = js.get("us") or []
     if us:
         lines.append("어젯밤 미국: " + " · ".join(f"{u['name']} {u['chg']:+.1f}%" for u in us[:3]) + " (참고)")
@@ -197,6 +208,18 @@ def evening(js):
                 broke.append(f"{nm} {px:,.0f}원(손절 {stop:,.0f})")
             elif (px - stop) / px < 0.02:
                 near.append(nm)
+        dt = ((js.get("dart") or {}).get("items")) or {}
+        if dt:
+            dw = []
+            for r, code in active(u["records"])[:40]:
+                for z in dt.get(code, [])[:2]:
+                    if z["k"] in ("risk", "info") and z["d"] >= (as_of or "")[:10]:
+                        nm = str(r.get("stock", "")).split(" ")[0]
+                        tag = f"{nm} {z['lab']}" + (" ⚠" if z["k"] == "risk" else "")
+                        if tag not in dw:
+                            dw.append(tag)
+            if dw:
+                lines.append("내 종목 오늘 공시: " + ", ".join(dw[:6]))
         if broke:
             lines.append("손절선 이탈: " + ", ".join(broke))
         if near:

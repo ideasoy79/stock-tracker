@@ -554,7 +554,7 @@ def practical_test(dates, idx, dret, damt, cost_pct, hold=10):
     return out
 
 
-def daily_sim(keep, dates, idx, dret, damt, cost_pct, K=2, topn=5, filt="60&20", hold=10):
+def daily_sim(keep, dates, idx, dret, damt, cost_pct, K=2, topn=5, filt="60&20", hold=10, how="liq"):
     """트래커 실전형: 매일 제안 → 빈 자리(동시 K개)가 있으면 다음날 시가에 묶음 매수 → 10거래일째 종가 정리.
     포트폴리오를 매일 평가(일별 최대 낙폭). 반환: 연환산·누적·최대 낙폭·묶음 수, 앞/뒤 절반"""
     names = list(idx)
@@ -591,7 +591,14 @@ def daily_sim(keep, dates, idx, dret, damt, cost_pct, K=2, topn=5, filt="60&20",
         out = []
         for n in th:
             mem = [c for c in idx[n]["members"] if dret[c][t] is not None]
-            for c in sorted(mem, key=lambda c: -sum(damt[c][t - 19:t + 1]))[:topn]:
+            byliq = sorted(mem, key=lambda c: -sum(damt[c][t - 19:t + 1]))
+            if how == "lag":            # 거래대금 상위 10 중 20일 덜 오른 topn (후발)
+                pool = byliq[:10]
+                r20 = {c: tf._mcum(dret[c], t - 20, t) for c in pool}
+                sel = sorted(pool, key=lambda c: r20[c])[:topn]
+            else:
+                sel = byliq[:topn]
+            for c in sel:
                 if c not in out:
                     out.append(c)
         return out
@@ -636,7 +643,7 @@ def daily_sim(keep, dates, idx, dret, damt, cost_pct, K=2, topn=5, filt="60&20",
         return {"cagr": round((eq[-1] ** (1 / yrs) - 1) * 100, 1) if eq[-1] > 0 else -100, "total": round((eq[-1] - 1) * 100, 1),
                 "mdd": round(mdd * 100, 1), "n": n}
     mid = 70 + (T - 70) // 2
-    return {"K": K, "topn": topn, "filt": filt, "hold": hold, "all": run(70, T), "first": run(70, mid), "second": run(mid, T),
+    return {"K": K, "topn": topn, "filt": filt, "hold": hold, "how": how, "all": run(70, T), "first": run(70, mid), "second": run(mid, T),
             "cut": dates[mid]}
 
 
@@ -660,8 +667,8 @@ def run(keep, themes, cost_pct, ratio_min=3.0, amount_min=5e9):
     except Exception as e:
         print(f"[테마] 급증×테마 검증 실패: {e}", flush=True)
     try:
-        res["daily"] = [daily_sim(keep, dates, idx, dret, damt, cost_pct, K=k, topn=tn, filt=f)
-                        for k, tn, f in ((2, 5, "60&20"), (1, 8, "60&20"), (2, 5, "60"))]
+        res["daily"] = [daily_sim(keep, dates, idx, dret, damt, cost_pct, K=k, topn=tn, filt=f, how=hw)
+                        for k, tn, f, hw in ((2, 5, "60&20", "liq"), (1, 8, "60&20", "liq"), (2, 5, "60", "liq"), (2, 3, "60&20", "lag"))]
     except Exception as e:
         print(f"[테마] 매일 제안 시뮬레이션 실패: {e}", flush=True)
     try:
