@@ -35,6 +35,7 @@ jobs:
         env:   # 저장소 Settings › Secrets and variables › Actions 에 등록 (없으면 네이버 시세로 자동 대체)
           KIS_APPKEY: ${{ secrets.KIS_APPKEY }}
           KIS_APPSECRET: ${{ secrets.KIS_APPSECRET }}
+          DART_KEY: ${{ secrets.DART_KEY }}
         run: python scan/volume_scan.py
 
       - name: 결과 저장(커밋)
