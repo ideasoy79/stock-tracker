@@ -1411,6 +1411,37 @@ button.bk-mine b{color:var(--text)} button.bk-mine b.up{color:var(--up)} button.
 .bk-score small{color:var(--text3)}
 .bk-hint.warn{color:var(--red)}
 .bk-tn button[data-k="lag"].on{background:var(--green);color:#fff}
+
+/* ── 지도 확대 · 기능 가이드 ── */
+.tm-svg.tap{cursor:zoom-in}
+.tm-svg.full{touch-action:none;user-select:none;-webkit-user-select:none}
+.tm-fh{display:flex;justify-content:space-between;align-items:baseline}
+.tm-zq{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 8px}
+.tm-zq>button{font:inherit;font-size:12.5px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text2)}
+.tm-zq>button.on{background:var(--text);color:var(--card);border-color:var(--text)}
+.tm-zpm{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tm-zpm button{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card);font-size:18px;color:var(--text)}
+.tm-zpm b{font-size:12px;color:var(--text3);min-width:30px;text-align:center}
+.tm-zbox{min-height:200px}
+.tm-hint{font-size:11.5px;color:var(--text3);margin:6px 0 4px;line-height:1.5}
+.tm-near{margin-top:6px}
+.tm-nh{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin:4px 0}
+.tl-q{font-size:12.5px;font-weight:700;margin:10px 0 2px}.tl-q small{font-weight:400;color:var(--text3)}
+.tl-it{display:flex;justify-content:space-between;align-items:center;width:100%;font:inherit;font-size:13.5px;text-align:left;padding:9px 4px;border:0;border-bottom:1px solid var(--border);background:none;color:var(--text)}
+.tl-it em{font-style:normal}.tl-it .num{font-size:12.5px;color:var(--text3);white-space:nowrap}
+.tl-pk{font-size:10.5px;color:#fff;background:var(--green);padding:1px 5px;border-radius:5px;margin-right:6px}
+.tm-near .tl-it{background:var(--card2);border-radius:8px;margin-bottom:4px;border-bottom:0;padding:9px 10px}
+.gd-q{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--border-hover);background:var(--card);color:var(--text2);font-size:12px;font-weight:700;margin-left:6px;vertical-align:1px;padding:0;line-height:1;cursor:pointer}
+.gd-q-i{display:inline-block;width:18px;height:18px;border-radius:50%;border:1px solid var(--border-hover);text-align:center;font-size:11px;line-height:16px}
+.gd-intro{font-size:13px;color:var(--text2);margin:-4px 0 8px}
+.gd-s{border-bottom:1px solid var(--border);padding:2px 0}
+.gd-s summary{font-size:15px;font-weight:700;padding:12px 2px;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+.gd-s summary::after{content:'＋';color:var(--text3);font-weight:400}.gd-s[open] summary::after{content:'－'}
+.gd-s summary::-webkit-details-marker{display:none}
+.gd-s p,.gd-how{font-size:13.5px;line-height:1.65;color:var(--text);margin:0 2px 8px}
+.gd-what{color:var(--text)}
+.gd-how ul{margin:4px 0 0;padding-left:18px}.gd-how li{margin:3px 0}
+.gd-warn{background:var(--yellow-light);border-radius:8px;padding:8px 10px;color:var(--text)!important}
 </style>
 </head>
 <body>
@@ -4364,7 +4395,7 @@ function noteList(x){return '<div class="pk-ml">'+x.top.map(m=>'<div class="pk-m
   +(window.rdRoleTag?rdRoleTag(m.role):'')+(m.state?(typeof window.rdStateBadge==='function'?window.rdStateBadge(m.state):'<span class="pk-s">'+m.state+'</span>'):'')+(window.rdDartBadge?rdDartBadge(m.code):'')
   +'<span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(m.gap!=null?'<span class="dim">20일선 '+pct(m.gap,0)+'</span>':'')+'</div>'
   +(m.note?'<div class="pk-n">'+TM(esc(m.note))+'</div>':'')+'</div>').join('')+'</div>';}
-const lagLine=x=>x.lag&&x.lag.length?'<div class="pk-lag"><b>그림자 · 후발 3</b> '+x.lag.map(m=>stLink(m.code,esc(stockName2(m.code)))+' <span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(window.rdDartRisk&&rdDartRisk(m.code)?' ⚠':'')).join(' · ')+'</div>':'';
+const lagLine=x=>x.lag&&x.lag.length?'<div class="pk-lag"><b>그림자 · 후발 3</b>'+(window.rdGQ?rdGQ('shadow'):'')+' '+x.lag.map(m=>stLink(m.code,esc(stockName2(m.code)))+' <span class="'+(m.ret20>=0?'pos':'neg')+'">'+pct(m.ret20,0)+'</span>'+(window.rdDartRisk&&rdDartRisk(m.code)?' ⚠':'')).join(' · ')+'</div>':'';
 function picksHtml(tf){
   const pk=tf&&tf.picks;if(!pk)return '';
   const asOf=pk.asOf||tf.date,hold=pk.hold||10,sm=pk.summary;
@@ -4373,7 +4404,7 @@ function picksHtml(tf){
   let h=(window.rdThemeMap?rdThemeMap(tf,{empty:false}):'')+'<div class="pk-box">';
   const mk='테마 평균 60일 '+pct(pk.mkt60,1)+(pk.mkt20!=null?' · 20일 '+pct(pk.mkt20,1):'');
   if(pk.rest){
-    h+='<div class="pk-h"><b>쉬는 구간 · '+esc(pk.restWhy||'시장 약세')+'</b><span>'+md(asOf)+' 종가 기준</span></div>'
+    h+='<div class="pk-h"><b>쉬는 구간 · '+esc(pk.restWhy||'시장 약세')+'</b><span>'+md(asOf)+' 종가 기준'+(window.rdGQ?rdGQ('basket'):'')+'</span></div>'
       +'<div class="pk-row"><div class="pk-op">'+TM('시장 필터')+': '+mk+' → 오늘은 묶음 제안이 없어요. 둘 다 플러스로 돌아오면 다시 제안해요.</div></div>';
     if(pk.today&&pk.today.length)h+='<details class="bt-det pk-prev"><summary>오늘 강한 테마 (참고 · 제안 아님)</summary>'+pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> 20일</span></div>'+noteList(x)+'</div>').join('')+'</details>';
   }else if(pk.today&&pk.today.length){
@@ -4382,7 +4413,7 @@ function picksHtml(tf){
       +pk.today.map(x=>'<div class="pk-row"><div><b>'+esc(x.theme)+'</b> <span class="pos">'+pct(x.ret20)+'</span><span class="dim"> 20일 · '+(x.n||'')+'종목'+(x.phase==='과열 주의'?' · 과열 주의':'')+'</span></div>'+(window.rdThemeDesc&&rdThemeDesc(x.theme)?'<div class="pk-desc">'+esc(rdThemeDesc(x.theme))+'</div>':'')+noteList(x)+lagLine(x)+'</div>').join('')
       +(window.rdDartStatus?rdDartStatus():'')
       +(window.rdStateLegend||'')
-      +'<button class="vs-b" style="margin-top:8px" onclick="vsAskPicks()">🤖 미증시·뉴스까지 Claude에게 묻기</button>';
+      +'<button class="vs-b" style="margin-top:8px" onclick="vsAskPicks()">🤖 미증시·뉴스까지 Claude에게 묻기</button>'+(window.rdGQ?rdGQ('claude'):'')+'';
   }
   if(us.length)h+='<div class="pk-us">어젯밤 미국 '+us.map(u=>esc(u.name)+' <b class="'+(u.chg>=0?'pos':'neg')+'">'+pct(u.chg,1)+'</b>').join(' · ')+' <span class="dim">(참고 · 효과 검증 전)</span></div>';
   const op=(pk.open||[]).slice().reverse();
@@ -4798,6 +4829,7 @@ function renderSheet(){
    +'<div class="gt">도구</div>'
    +it('비중 관리','rdWeights()','수량 · 평단 · 더 사기 / 일부 팔기')
    +it('설정 · 알림','rdSettings()','운영 자금 · 동시 묶음 수 · 텔레그램')
+   +it('기능 가이드','rdGuide()','기능마다 무엇 · 언제 · 어떻게 · 주의')
    +it('용어 풀이','rdGlossary()','')
    +it('오늘의 루틴 · 사용 가이드','switchTab(\'guide\')','')
    +it('백업 내보내기','exportData()','')
@@ -5093,18 +5125,18 @@ const ACT={'진입 검토':['go','조용히 쉬는 자리'],'추세 양호':['ok
   '고점 반락':['wait','단기 고점 의심'],'급락 관망':['wait','급락한 날'],'보류':['no','하락 추세']};
 window.rdStateBadge=function(state){if(!state)return '';const a=ACT[state]||['ok',''];
   return '<span class="pk-s s-'+a[0]+'">'+esc(state)+'</span><span class="st-say">'+esc(a[1])+'</span>';};
-window.rdStateLegend='<div class="st-legend">상태는 참고용이에요. 3년 시뮬레이션에서 상태로 종목을 빼는 건 수익을 일정하게 올리지 못했고, 특히 \'눌림 대기\'(많이 오른 종목)를 빼면 오히려 나빠졌어요. 기본은 묶음 전체를 사요.</div>';
+window.rdStateLegend='<div class="st-legend"><button class="gd-q" onclick="rdGuide(\'state\')">?</button> 상태는 참고용이에요. 3년 시뮬레이션에서 상태로 종목을 빼는 건 수익을 일정하게 올리지 못했고, 특히 \'눌림 대기\'(많이 오른 종목)를 빼면 오히려 나빠졌어요. 기본은 묶음 전체를 사요.</div>';
 function heldMap(){const m={};recs().filter(isAct).forEach(r=>{const c=codeIn(r.stock);if(c)m[c]=(m[c]||0)+(r.current||r.entry||0)*(r.qty||0);});return m;}
 function scorecard(s){
   const a=app(),cl=(s.pk.closed||[]).filter(x=>x.stocksRet!=null);
   const g={buy:[],pass:[],none:[]};cl.forEach(x=>{const d=a.dec[x.date];(d==='buy'||d==='part'?g.buy:d==='pass'?g.pass:g.none).push(x.stocksRet);});
   const sm=s.pk.summary||{},cm=sm.cmp,co=sm.cmpOpen;
-  const sh=cm||co?'<div class="bk-score sh"><b>그림자 비교</b> 같은 제안에서 현행 5 vs 후발 3 · '+(cm?'끝난 '+cm.n+'개: 현행 '+pct(cm.cur,2)+' · 후발 <b class="'+(cm.lag>=cm.cur?'up':'down')+'">'+pct(cm.lag,2)+'</b> · 후발이 앞선 비율 '+cm.lagWin+'%':'')
+  const sh=cm||co?'<div class="bk-score sh"><b>그림자 비교</b>'+(window.rdGQ?rdGQ('shadow'):'')+' 같은 제안에서 현행 5 vs 후발 3 · '+(cm?'끝난 '+cm.n+'개: 현행 '+pct(cm.cur,2)+' · 후발 <b class="'+(cm.lag>=cm.cur?'up':'down')+'">'+pct(cm.lag,2)+'</b> · 후발이 앞선 비율 '+cm.lagWin+'%':'')
     +(co?(cm?' · ':'')+'진행 중 '+co.n+'개: 현행 '+pct(co.cur,1)+' · 후발 '+pct(co.lag,1):'')
     +((cm&&cm.n||0)<20?'<br><small>20개 이상 쌓이면(약 4~6주) 기본 구성을 바꿀지 판단해요. 그전 결과는 우연일 수 있어요.</small>':'')+'</div>':'';
   if(g.buy.length+g.pass.length<2)return sh;
   const av=v=>v.length?pct(v.reduce((x,y)=>x+y,0)/v.length,2):'—';
-  return '<div class="bk-score"><b>내 판단 성적</b> 끝난 제안 기준 10거래일 · 산 제안 '+av(g.buy)+' ('+g.buy.length+') · 패스 '+av(g.pass)+' ('+g.pass.length+')'+(g.none.length?' · 미결정 '+av(g.none)+' ('+g.none.length+')':'')+'</div>'+sh;
+  return '<div class="bk-score"><b>내 판단 성적</b>'+(window.rdGQ?rdGQ('score'):'')+' 끝난 제안 기준 10거래일 · 산 제안 '+av(g.buy)+' ('+g.buy.length+') · 패스 '+av(g.pass)+' ('+g.pass.length+')'+(g.none.length?' · 미결정 '+av(g.none)+' ('+g.none.length+')':'')+'</div>'+sh;
 }
 window.rdBasketCard=function(){
   const s=bstate();
@@ -5118,7 +5150,7 @@ window.rdBasketCard=function(){
       +'<div class="bk-sub">'+n+'종목 · 사면 '+md(asOf)+' 묶음 · 정리 '+md(rdNextTD(asOf,hold))+(dup?' · 이미 보유 '+dup+'종목':'')+'</div></div></div>';
   }else main='<div class="bk-main"><div class="bk-l"><div class="bk-lab">오늘의 '+rdTmify('테마 묶음')+' 제안</div><div class="bk-d">'+(pk.rest?'오늘은 제안 없음':'제안을 불러오는 중')+'</div>'+(pk.rest?'<div class="bk-sub">60일·20일 테마 평균이 모두 플러스일 때만 제안해요</div>':'')+'</div></div>';
   const btn=s.btns.length?'<div class="bk-btns">'+s.btns.map(b=>'<button class="bk-btn'+(b.quiet?' quiet':'')+'" onclick="'+b.fn+'">'+b.label+'</button>').join('')+'</div>':'';
-  const mineH='<div class="bk-my"><div class="bk-my-h">내 묶음 <b>'+live.length+'/'+maxB+'</b><button class="bk-link" onclick="rdWeights()">비중 관리 ›</button></div>'
+  const mineH='<div class="bk-my"><div class="bk-my-h">내 묶음 <b>'+live.length+'/'+maxB+'</b>'+(window.rdGQ?rdGQ('mine'):'')+'<button class="bk-link" onclick="rdWeights()">비중 관리 ›</button></div>'
     +(live.length?live.map(b=>'<button class="bk-mine" onclick="rdWeights()"><span><b>'+md(b.date)+' 묶음</b> D+'+b.days+'/'+hold+' · 정리 '+md(b.end)+'</span><b class="'+(b.val>=b.inv?'up':'down')+'">'+(b.inv?pct((b.val/b.inv-1)*100,1):'—')+'</b></button>').join(''):'<div class="bk-sub">아직 산 묶음이 없어요</div>')+'</div>';
   const list=prop?'<details class="bk-st"><summary>제안 종목 · 차트 상태 보기</summary>'
     +pk.today.map(x=>'<div class="bk-sr-t">'+esc(shortT(x.theme))+' <span class="up">'+pct(x.ret20,0)+'</span></div>'+x.top.map(m=>'<div class="bk-sr"><div class="bk-sr-h">'+(typeof stLink==='function'?stLink(m.code,esc(nameOf(m.code))):esc(nameOf(m.code)))
@@ -5126,7 +5158,7 @@ window.rdBasketCard=function(){
       +(x.lag&&x.lag.length?'<div class="bk-lag">후발 3: '+x.lag.map(m=>esc(nameOf(m.code))+(window.rdDartRisk&&rdDartRisk(m.code)?' ⚠':'')).join(' · ')+'</div>':'')).join('')
     +rdStateLegend+'</details>':'';
   return '<section class="rd-card bk">'
-    +'<div class="bk-top">'+mk+'<span class="bk-asof">'+md(asOf)+' 종가 기준</span></div>'
+    +'<div class="bk-top">'+mk+'<span class="bk-asof">'+md(asOf)+' 종가 기준'+(window.rdGQ?rdGQ('basket'):'')+'</span></div>'
     +(meta.intraday?'<div class="bk-warn">장중에 돌린 스캔이라 오늘 봉은 빼고 계산했어요</div>':'')
     +main
     +'<div class="bk-act'+(s.urgent?' urgent':'')+'"><span class="bk-act-l">오늘 할 일</span><span class="bk-act-t">'+esc(s.text)+'</span></div>'+btn
@@ -5172,7 +5204,7 @@ window.rdBasketSheet=function(){
   const freeN=Math.max(s.free,1),defAmt=acct?Math.round(Math.min(cash,acct/(s.maxB||2))):0;
   window._bkList=list;window._bkDate=s.asOf;
   const ck=COMP[a.prefs.comp]?a.prefs.comp:'liq5',on=x=>compOn(x,ck)&&!x.risk;window._bkComp=ck;
-  sheet('bk-buy','<div class="grab"></div><h3>묶음 수량 계산 · '+md(s.asOf)+' 제안</h3>'
+  sheet('bk-buy','<div class="grab"></div><h3>묶음 수량 계산 · '+md(s.asOf)+' 제안'+(window.rdGQ?rdGQ('buy'):'')+'</h3>'
     +'<div class="bk-form"><label><span>운영 자금</span><input id="bk-acct" inputmode="numeric" value="'+(acct||'')+'" placeholder="예: 4000000" oninput="rdBkAmt()"></label>'
     +'<label><span>이번 묶음 금액</span><input id="bk-amt" inputmode="numeric" value="'+(defAmt||'')+'" oninput="rdBkCalc()"></label>'
     +'<label><span>'+rdTmify('비상 손절')+' %</span><input id="bk-stop" inputmode="decimal" value="'+a.prefs.stop+'" oninput="rdBkCalc()"></label></div>'
@@ -5248,7 +5280,7 @@ window.rdWeights=function(){
   const body=keys.map(k=>{const g=groups[k],gv=g.reduce((x,r)=>x+valOf(r),0),avg=k==='_'?0:gv/g.length;
     const end=k==='_'?'':' · 정리 '+md(rdNextTD(k,(jget('sv4_theme_flow',{})||{}).picks&&jget('sv4_theme_flow',{}).picks.hold||10))+' 무렵';
     return '<div class="wt-g"><div class="wt-gh">'+(k==='_'?'개별 종목':md(k)+' 묶음')+' <small>'+g.length+'종목 · '+won(gv)+(total?' · '+Math.round(gv/total*100)+'%':'')+end+'</small></div>'+g.map(r=>row(r,avg)).join('')+'</div>';}).join('');
-  sheet('bk-wt','<div class="grab"></div><h3>비중 관리</h3>'
+  sheet('bk-wt','<div class="grab"></div><h3>비중 관리'+(window.rdGQ?rdGQ('weights'):'')+'</h3>'
     +'<div class="wt-top"><div><small>운영 자금</small><b>'+(acct?won(acct):'미입력')+'</b></div><div><small>투자 중</small><b>'+won(tv)+'</b>'+(total?'<small>'+Math.round(tv/total*100)+'%</small>':'')+'</div><div><small>현금(추정)</small><b class="'+(cash<0?'down':'')+'">'+(acct?won(cash):'—')+'</b></div><div><small>평가손익</small><b class="'+(tv>=tc?'up':'down')+'">'+(tv-tc>=0?'+':'')+won(tv-tc)+'</b></div></div>'
     +(acct?'':'<div class="bk-warn">설정 › 운영 자금을 넣으면 현금과 비중(%)이 정확해져요</div>')
     +(cash<0?'<div class="bk-warn">보유 원금이 운영 자금보다 많아요. 운영 자금을 고쳐 주세요</div>':'')
@@ -5404,7 +5436,7 @@ window.rdFirstDone=function(){const a=app();a.firstRun=true;saveApp(a);rdCloseBk
 /* ── 설정 · 알림 (U5 · U4) ── */
 window.rdSettings=function(){
   const a=app(),c=jget('sv4_scan_cfg',{})||{};
-  sheet('bk-set','<div class="grab"></div><h3>설정 · 알림</h3>'
+  sheet('bk-set','<div class="grab"></div><h3>설정 · 알림'+(window.rdGQ?rdGQ('settings'):'')+'</h3>'
     +(window._syncDenied?'<div class="bk-warn">클라우드 저장이 막혀 있어요(Firestore 규칙). 지금은 이 기기에만 저장돼요.</div>':'')
     +'<div class="bk-form"><label>운영 자금<input id="st-acct" inputmode="numeric" value="'+(a.prefs.acct||'')+'" placeholder="예: 4000000"></label>'
     +'<label>동시 묶음 수<select id="st-maxb" class="bk-sel">'+[1,2,3].map(n=>'<option value="'+n+'"'+((a.prefs.maxB||2)===n?' selected':'')+'>'+n+'개</option>').join('')+'</select></label>'
@@ -5608,63 +5640,148 @@ window.rdDartBadge=function(code,all){
   return pick.map(z=>'<a class="dt dt-'+z.k+'" href="'+esc(z.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="'+esc(z.t)+'">'+(z.k==='risk'?'⚠ ':'')+esc(z.lab)+' '+esc(String(z.d).slice(5).replace('-','/'))+'</a>').join('');
 };
 window.rdDartStatus=function(){const d=jget('sv4_dart',null);
-  if(!d)return '<div class="dt-off">공시 경고는 꺼져 있어요 — OpenDART 키를 GitHub Secrets(DART_KEY)에 넣으면 다음 저녁 스캔부터 켜져요.</div>';
-  if(d.error)return '<div class="dt-off">공시 조회 오류: '+esc(d.error)+' — 키가 맞는지 확인해 주세요.</div>';
-  return '<div class="dt-on">최근 '+d.days+'일 공시 기준 · '+esc(String(d.asOf).slice(5).replace('-','/'))+' 확인 · 제목으로만 분류해서 내용은 원문에서 확인</div>';};
+  const gq=window.rdGQ?rdGQ('dart'):'';
+  if(!d)return '<div class="dt-off">'+gq+' 공시 경고는 꺼져 있어요 — OpenDART 키를 GitHub Secrets(DART_KEY)에 넣으면 다음 저녁 스캔부터 켜져요.</div>';
+  if(d.error)return '<div class="dt-off">'+gq+' 공시 조회 오류: '+esc(d.error)+' — 키가 맞는지 확인해 주세요.</div>';
+  return '<div class="dt-on">'+gq+' 최근 '+d.days+'일 공시 기준 · '+esc(String(d.asOf).slice(5).replace('-','/'))+' 확인 · 제목으로만 분류해서 내용은 원문에서 확인</div>';};
 
 /* ── 지도 ── */
 const ROLE={lead:['대장','20일 많이 오름'],mid:['중간',''],lag:['후발','20일 덜 오름']};
 window.rdRoleTag=r=>r&&ROLE[r]&&r!=='mid'?'<span class="role role-'+r+'">'+ROLE[r][0]+'</span>':'';
 function qv(arr,q){const a=arr.slice().sort((x,y)=>x-y);return a.length?a[Math.min(a.length-1,Math.floor(a.length*q))]:0;}
+function baseDom(M){const its=M.items,xs=its.map(i=>Math.abs(i.x)).concat([Math.abs(M.mkt.x)]),ys=its.map(i=>Math.abs(i.y)).concat([Math.abs(M.mkt.y)]);
+  const XR=Math.max(8,qv(xs,.96)*1.12),YR=Math.max(6,qv(ys,.96)*1.12);return {x0:-XR,x1:XR,y0:-YR,y1:YR};}
+/* 지도 그리기 — opt.dom(보이는 범위, % 단위)을 주면 그 범위만 확대해서 그림 */
 window.rdThemeMap=function(tf,opt){
   opt=opt||{};const M=tf&&tf.map;
   if(!M||!M.items||!M.items.length)return opt.empty===false?'':'<div class="tm-empty">테마 지도는 다음 저녁 스캔 뒤에 나와요.</div>';
-  const W=340,H=opt.small?230:280,P=26;
+  const W=340,H=opt.full?380:opt.small?230:280,P=26;
   const its=M.items;window._tmItems=its;
-  const xs=its.map(i=>Math.abs(i.x)).concat([Math.abs(M.mkt.x)]),ys=its.map(i=>Math.abs(i.y)).concat([Math.abs(M.mkt.y)]);
-  const XR=Math.max(8,qv(xs,.96)*1.12),YR=Math.max(6,qv(ys,.96)*1.12);
-  const cx=v=>P+(Math.max(-XR,Math.min(XR,v))+XR)/(2*XR)*(W-2*P),cy=v=>H-P-(Math.max(-YR,Math.min(YR,v))+YR)/(2*YR)*(H-2*P);
+  const B=baseDom(M),D=opt.dom||B,zoom=(B.x1-B.x0)/(D.x1-D.x0);
+  const inX=v=>v>=D.x0&&v<=D.x1,inY=v=>v>=D.y0&&v<=D.y1;
+  const raw=(v,a0,a1,p0,p1)=>p0+(v-a0)/(a1-a0)*(p1-p0);
+  const cx=v=>raw(opt.dom?v:Math.max(D.x0,Math.min(D.x1,v)),D.x0,D.x1,P,W-P),cy=v=>raw(opt.dom?v:Math.max(D.y0,Math.min(D.y1,v)),D.y0,D.y1,H-P,P);
   const amax=Math.max(...its.map(i=>i.amt||1),1),rad=i=>4+Math.sqrt((i.amt||1)/amax)*7;
-  const lab=new Set(its.filter(i=>i.pick).map(i=>i.theme).concat(its.slice().sort((a,b)=>b.amt-a.amt).filter(i=>!i.pick).slice(0,opt.small?3:5).map(i=>i.theme)));
-  let g='<rect x="'+cx(0)+'" y="'+P+'" width="'+(W-P-cx(0))+'" height="'+(cy(0)-P)+'" class="tm-zone"/>';
-  g+='<line x1="'+P+'" y1="'+cy(0)+'" x2="'+(W-P)+'" y2="'+cy(0)+'" class="tm-ax"/><line x1="'+cx(0)+'" y1="'+P+'" x2="'+cx(0)+'" y2="'+(H-P)+'" class="tm-ax"/>';
-  const cl=(t,x,y,a)=>'<text x="'+x+'" y="'+y+'" class="tm-q" text-anchor="'+a+'">'+t+'</text>';
-  g+=cl('주도',W-P-2,P+12,'end')+cl('부상',P+2,P+12,'start')+cl('과열·눌림',W-P-2,H-P-5,'end')+cl('소외',P+2,H-P-5,'start');
+  const vis=its.map((i,k)=>[i,k]).filter(([i])=>!opt.dom||(inX(i.x)&&inY(i.y)));
+  const nLab=opt.full?(zoom>=1.6?99:8):opt.small?3:5;
+  const lab=new Set(vis.filter(([i])=>i.pick).map(([i])=>i.theme).concat(vis.map(([i])=>i).sort((a,b)=>b.amt-a.amt).filter(i=>!i.pick).slice(0,nLab).map(i=>i.theme)));
+  const X0=cx(0),Y0=cy(0),cX=v=>Math.max(P,Math.min(W-P,v)),cY=v=>Math.max(P,Math.min(H-P,v));
+  let g='<defs><clipPath id="tmc'+(opt.full?'f':'')+'"><rect x="'+P+'" y="'+P+'" width="'+(W-2*P)+'" height="'+(H-2*P)+'"/></clipPath></defs>';
+  g+='<rect x="'+cX(X0)+'" y="'+P+'" width="'+(W-P-cX(X0))+'" height="'+(cY(Y0)-P)+'" class="tm-zone"/>';
+  if(Y0>=P&&Y0<=H-P)g+='<line x1="'+P+'" y1="'+Y0+'" x2="'+(W-P)+'" y2="'+Y0+'" class="tm-ax"/>';
+  if(X0>=P&&X0<=W-P)g+='<line x1="'+X0+'" y1="'+P+'" x2="'+X0+'" y2="'+(H-P)+'" class="tm-ax"/>';
+  const cl=(t,x,y,an)=>'<text x="'+x+'" y="'+y+'" class="tm-q" text-anchor="'+an+'">'+t+'</text>';
+  if(!opt.dom||zoom<1.15)g+=cl('주도',W-P-2,P+12,'end')+cl('부상',P+2,P+12,'start')+cl('과열·눌림',W-P-2,H-P-5,'end')+cl('소외',P+2,H-P-5,'start');
+  else{const qn=(D.x0+D.x1)/2>0?((D.y0+D.y1)/2>0?'주도':'과열·눌림'):((D.y0+D.y1)/2>0?'부상':'소외');g+=cl(qn+' 칸 확대 ×'+zoom.toFixed(1),W-P-2,P+12,'end');}
   g+='<text x="'+(W-P)+'" y="'+(H-6)+'" class="tm-axl" text-anchor="end">60일 →</text><text x="8" y="'+(P-8)+'" class="tm-axl">↑ 20일</text>';
+  if(opt.dom)g+='<text x="'+P+'" y="'+(H-6)+'" class="tm-axl">'+pct(D.x0,0)+' ~ '+pct(D.x1,0)+' · 세로 '+pct(D.y0,0)+' ~ '+pct(D.y1,0)+'</text>';
+  g+='<g clip-path="url(#tmc'+(opt.full?'f':'')+')">';
   const trail=(tr,x,y,cls)=>tr&&tr.length?'<polyline class="'+cls+'" points="'+tr.map(p=>cx(p[0])+','+cy(p[1])).concat([cx(x)+','+cy(y)]).join(' ')+'"/>':'';
-  its.forEach(i=>{g+=trail(i.tr,i.x,i.y,'tm-tr'+(i.pick?' pk':''));});
-  g+=trail(M.mkt.tr,M.mkt.x,M.mkt.y,'tm-tr mk');
-  const order=its.map((i,k)=>[i,k]).sort((a,b)=>(a[0].pick-b[0].pick)||(b[0].amt-a[0].amt));
-  const mX=cx(M.mkt.x),mY=cy(M.mkt.y);
-  // 라벨 겹침 피하기: 제안 테마 먼저, 오른쪽→왼쪽→위→아래 순으로 빈 자리에, 자리가 없으면 생략(점을 누르면 이름이 나옴)
-  const boxes=[[mX+7,mY-17,60,13],[W-P-34,P+1,34,14],[P,P+1,30,14],[W-P-62,H-P-17,62,14],[P,H-P-17,30,14]],LB={};
+  vis.forEach(([i])=>{g+=trail(i.tr,i.x,i.y,'tm-tr'+(i.pick?' pk':''));});
+  g+=trail(M.mkt.tr,M.mkt.x,M.mkt.y,'tm-tr mk')+'</g>';
+  const mX=cx(M.mkt.x),mY=cy(M.mkt.y),mIn=!opt.dom||(inX(M.mkt.x)&&inY(M.mkt.y));
+  const boxes=[[W-P-34,P+1,34,14],[P,P+1,30,14],[W-P-62,H-P-17,62,14],[P,H-P-17,30,14]].concat(mIn?[[mX+7,mY-17,60,13]]:[]),LB={};
   const free=b=>b[0]>=2&&b[0]+b[2]<=W-2&&b[1]>=P-2&&b[1]+b[3]<=H-2&&!boxes.some(o=>b[0]<o[0]+o[2]&&o[0]<b[0]+b[2]&&b[1]<o[1]+o[3]&&o[1]<b[1]+b[3]);
-  its.map((i,k)=>[i,k]).filter(([i])=>lab.has(i.theme)).sort((a,b)=>(b[0].pick-a[0].pick)||(b[0].amt-a[0].amt)).forEach(([i,k])=>{
-    const X=cx(i.x),Y=cy(i.y),r=rad(i),t=shortT(i.theme).slice(0,9),w=t.length*10.5+4,h=13;
+  vis.filter(([i])=>lab.has(i.theme)).sort((a,b)=>(b[0].pick-a[0].pick)||(b[0].amt-a[0].amt)).forEach(([i,k])=>{
+    const X=cx(i.x),Y=cy(i.y),r=rad(i),t=shortT(i.theme).slice(0,opt.full?11:9),w=t.length*10.5+4,h=13;
     const cand=[[X+r+3,Y-9,'start'],[X-r-3-w,Y-9,'end'],[X-w/2,Y-r-h-2,'middle'],[X-w/2,Y+r+2,'middle']];
-    for(const [bx,by,an] of cand){const b=[bx,by,w,h];if(free(b)){boxes.push(b);LB[k]={x:an==='start'?bx:an==='end'?bx+w:bx+w/2,y:by+10,an,t};break;}}});
-  order.forEach(([i,k])=>{const X=cx(i.x),Y=cy(i.y),r=rad(i),q=Q[i.q]||Q['소외'],l=LB[k];
-    g+='<g class="tm-pt '+q.c+(i.pick?' pk':'')+'" onclick="rdThemeSheet('+k+')"><circle cx="'+X+'" cy="'+Y+'" r="'+Math.max(r,12)+'" class="hit"/><circle cx="'+X+'" cy="'+Y+'" r="'+r+'" class="dot"/>'
+    for(const [bx,by,an] of cand){const bb=[bx,by,w,h];if(free(bb)){boxes.push(bb);LB[k]={x:an==='start'?bx:an==='end'?bx+w:bx+w/2,y:by+10,an,t};break;}}});
+  const pos={};
+  vis.sort((a,b)=>(a[0].pick-b[0].pick)||(b[0].amt-a[0].amt)).forEach(([i,k])=>{const X=cx(i.x),Y=cy(i.y),r=rad(i),q=Q[i.q]||Q['소외'],l=LB[k];pos[k]=[X,Y];
+    g+='<g class="tm-pt '+q.c+(i.pick?' pk':'')+'"'+(opt.full?' onclick="rdTmTap('+k+',event)"':'')+'><circle cx="'+X+'" cy="'+Y+'" r="'+Math.max(r,12)+'" class="hit"/><circle cx="'+X+'" cy="'+Y+'" r="'+r+'" class="dot"/>'
       +(l?'<text x="'+l.x+'" y="'+l.y+'" text-anchor="'+l.an+'" class="tm-lb">'+esc(l.t)+'</text>':'')+'</g>';});
-  g+='<g class="tm-mk"><rect x="'+(mX-5)+'" y="'+(mY-5)+'" width="10" height="10" transform="rotate(45 '+mX+' '+mY+')"/><text x="'+(mX+9)+'" y="'+(mY-7)+'" class="tm-lb mk">시장 평균</text></g>';
+  if(opt.full)window._tmPos=pos;
+  if(mIn)g+='<g class="tm-mk"><rect x="'+(mX-5)+'" y="'+(mY-5)+'" width="10" height="10" transform="rotate(45 '+mX+' '+mY+')"/><text x="'+(mX+9)+'" y="'+(mY-7)+'" class="tm-lb mk">시장 평균</text></g>';
+  const svg='<svg class="tm-svg'+(opt.full?' full':' tap')+'" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="4분면 테마 지도"'
+    +(opt.full?'':' data-x0="'+D.x0+'" data-x1="'+D.x1+'" data-y0="'+D.y0+'" data-y1="'+D.y1+'" data-w="'+W+'" data-h="'+H+'" onclick="rdTmOpenAt(event,this)"')+'>'+g+'</svg>';
+  if(opt.svgOnly)return svg;
   const cnt=M.count||{},tot=M.total||0;
   const cline=tot?'<div class="tm-cnt">전체 '+tot+'개 테마 · '+['주도','부상','과열·눌림','소외'].map(q=>'<span class="'+Q[q].c+'">'+q+' '+(cnt[q]||0)+'</span>').join(' · ')+'</div>':'';
-  return '<div class="tm-box">'+(opt.title===false?'':'<div class="tm-h"><b>테마 지도</b><span>'+esc(String(M.asOf||'').slice(5).replace('-','/'))+' · 점을 누르면 설명</span></div>')
-    +'<svg class="tm-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="4분면 테마 지도">'+g+'</svg>'+cline
+  return '<div class="tm-box">'+(opt.title===false?'':'<div class="tm-h"><b>테마 지도</b><span>'+esc(String(M.asOf||'').slice(5).replace('-','/'))+' · 누르면 크게 보기</span></div>')
+    +svg+cline
     +'<div class="tm-leg"><span><i class="dot pk"></i>오늘 제안 테마</span><span><i class="ln"></i>10일 이동 궤적</span><span>점 크기 = 거래대금</span></div>'
     +(opt.small?'':'<div class="tm-note">3년 검증(10거래일 뒤 평균): 주도 +0.4% · 부상 -0.2% · 과열·눌림 -0.4% · 소외 -0.5%. 트래커는 주도 칸, 그중 20일 상위 3개 테마만 제안하고, 시장 평균(◆)이 주도 칸 밖이면 쉬어요.</div>')+'</div>';
 };
 window.rdThemeMapCard=function(){
   const tf=jget('sv4_theme_flow',null);if(!tf||!tf.map)return '';
   const pk=tf.picks||{},mq=tf.map.mkt?quadOf(tf.map.mkt.x,tf.map.mkt.y):'';
-  return '<section class="rd-card tm-card"><div class="rd-h"><h2>테마 지도</h2><span class="rd-hb"><button onclick="rdThemeMapFull()">크게</button></span></div>'
-    +'<div class="tm-sum">시장 평균은 <b class="'+((Q[mq]||{}).c||'')+'">'+mq+'</b> 칸'+(pk.rest?' → 쉬는 구간':' → 공격 구간')+'</div>'
+  return '<section class="rd-card tm-card"><div class="rd-h"><h2>테마 지도</h2><span class="rd-hb"><button onclick="rdGuide(\'map\')">?</button><button onclick="rdThemeMapFull()">크게</button></span></div>'
+    +'<div class="tm-sum">시장 평균은 <b class="'+((Q[mq]||{}).c||'')+'">'+mq+'</b> 칸'+(pk.rest?' → 쉬는 구간':' → 공격 구간')+' · 지도를 누르면 그 자리를 확대해요</div>'
     +rdThemeMap(tf,{small:true,title:false})+'</section>';
 };
-window.rdThemeMapFull=function(){const tf=jget('sv4_theme_flow',null);
-  sheet('tm-full','<div class="grab"></div><h3>테마 지도</h3>'+rdThemeMap(tf,{title:false})+'<div class="tm-how"><b>읽는 법</b> 가로는 60일, 세로는 20일 테마 수익률이에요. 오른쪽 위로 갈수록 길게도 짧게도 강한 테마예요. 꼬리는 10일 전 → 5일 전 → 지금 위치예요.</div>'
-    +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-full\')">닫기</button></div>');};
-function sheet(id,html){let el=$(id);if(!el){el=document.createElement('div');el.id=id;el.className='bk-sheet';document.body.appendChild(el);}
+/* 작은 지도를 누르면: 누른 자리를 중심으로 2.5배 확대한 큰 지도 */
+window.rdTmOpenAt=function(e,svg){
+  const r=svg.getBoundingClientRect(),d=svg.dataset,W=+d.w,H=+d.h,P=26;
+  const vx=(e.clientX-r.left)/r.width*W,vy=(e.clientY-r.top)/r.height*H;
+  const x=+d.x0+(vx-P)/(W-2*P)*(d.x1-d.x0),y=+d.y1-(vy-P)/(H-2*P)*(d.y1-d.y0);
+  rdThemeMapFull({x,y,z:2.5});
+};
+function zoomDom(c,z){const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map),hx=(B.x1-B.x0)/z/2,hy=(B.y1-B.y0)/z/2;return {x0:c.x-hx,x1:c.x+hx,y0:c.y-hy,y1:c.y+hy};}
+function drawFull(){const tf=jget('sv4_theme_flow',null),box=$('tm-zbox');if(!tf||!box)return;
+  box.innerHTML=rdThemeMap(tf,{full:true,svgOnly:true,dom:window._tmDom});
+  const B=baseDom(tf.map),z=(B.x1-B.x0)/(window._tmDom.x1-window._tmDom.x0),zb=$('tm-zl');if(zb)zb.textContent='×'+z.toFixed(1);}
+window.rdTmZoom=function(k){const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map),D=window._tmDom||B;
+  const m=.08;
+  if(k==='all')window._tmDom=Object.assign({},B);
+  else if(k==='in'||k==='out'){const f=k==='in'?.6:1/.6,c={x:(D.x0+D.x1)/2,y:(D.y0+D.y1)/2},hx=(D.x1-D.x0)*f/2,hy=(D.y1-D.y0)*f/2;
+    const mx=(B.x1-B.x0)*.75,my=(B.y1-B.y0)*.75;window._tmDom={x0:c.x-Math.min(hx,mx),x1:c.x+Math.min(hx,mx),y0:c.y-Math.min(hy,my),y1:c.y+Math.min(hy,my)};}
+  else{const L={'주도':[-B.x1*m,B.x1,-B.y1*m,B.y1],'부상':[B.x0,B.x1*m,-B.y1*m,B.y1],'과열·눌림':[-B.x1*m,B.x1,B.y0,B.y1*m],'소외':[B.x0,B.x1*m,B.y0,B.y1*m]}[k];
+    window._tmDom={x0:L[0],x1:L[1],y0:L[2],y1:L[3]};}
+  document.querySelectorAll('.tm-zq button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));drawFull();$('tm-near').innerHTML='';};
+/* 큰 지도 · 확대: 두 손가락 벌리기/모으기, 한 손가락 끌기, 칸 버튼, ＋/－ */
+window.rdThemeMapFull=function(at){
+  const tf=jget('sv4_theme_flow',null);if(!tf||!tf.map){toast&&toast('테마 지도는 다음 저녁 스캔 뒤에 나와요');return;}
+  const B=baseDom(tf.map);window._tmDom=at?zoomDom(at,at.z):Object.assign({},B);
+  const its=tf.map.items,qs=['주도','부상','과열·눌림','소외'];
+  const list=qs.map(q=>{const L=its.map((i,k)=>[i,k]).filter(([i])=>i.q===q).sort((a,b)=>b[0].y-a[0].y);if(!L.length)return '';
+    return '<div class="tl-q '+Q[q].c+'">'+q+' <small>'+L.length+'</small></div>'+L.map(([i,k])=>'<button class="tl-it" onclick="rdThemeSheet('+k+')"><span>'+(i.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(i.theme))+'</span><span class="num"><em class="'+(i.x>=0?'up':'down')+'">'+pct(i.x,0)+'</em> · <em class="'+(i.y>=0?'up':'down')+'">'+pct(i.y,0)+'</em></span></button>').join('');}).join('');
+  sheet('tm-full','<div class="grab"></div><div class="tm-fh"><h3>테마 지도</h3><button class="bk-link" onclick="rdGuide(\'map\')">읽는 법</button></div>'
+    +'<div class="tm-zq">'+['all'].concat(qs).map(k=>'<button data-k="'+k+'" class="'+(!at&&k==='all'?'on':'')+'" onclick="rdTmZoom(\''+k+'\')">'+(k==='all'?'전체':k)+'</button>').join('')
+    +'<span class="tm-zpm"><button onclick="rdTmZoom(\'out\')" aria-label="축소">－</button><b id="tm-zl">×1.0</b><button onclick="rdTmZoom(\'in\')" aria-label="확대">＋</button></span></div>'
+    +'<div id="tm-zbox" class="tm-zbox"></div>'
+    +'<div id="tm-near" class="tm-near"></div>'
+    +'<div class="tm-hint">두 손가락으로 벌리면 확대, 끌면 이동. 점이 겹치면 누른 자리 근처 테마를 아래에 모아 보여 줘요.</div>'
+    +'<div class="set-gt">지도에 있는 테마 '+its.length+'개 <small>60일 · 20일 수익률, 누르면 설명</small></div><div class="tl">'+list+'</div>'
+    +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-full\')">닫기</button></div>');
+  drawFull();bindPinch($('tm-zbox'));
+};
+function bindPinch(el){
+  if(!el||el._pinch)return;el._pinch=1;const pts=new Map();let st=null,raf=0;
+  const plot=()=>{const svg=el.querySelector('svg');const r=svg.getBoundingClientRect();return {w:r.width*(340-52)/340,h:r.height*(380-52)/380,r};};
+  const snap=()=>{st={dom:Object.assign({},window._tmDom),pts:new Map([...pts].map(([k,v])=>[k,Object.assign({},v)])),moved:false,pl:plot()};};
+  el.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});snap();});
+  el.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId)||!st)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const D=st.dom,pl=st.pl,sx=(D.x1-D.x0)/pl.w,sy=(D.y1-D.y0)/pl.h,a=[...pts.values()],b=[...st.pts.values()];
+    let nd=null;
+    if(a.length===1&&b.length===1){const dx=a[0].x-b[0].x,dy=a[0].y-b[0].y;if(Math.hypot(dx,dy)>6)st.moved=true;if(!st.moved)return;
+      nd={x0:D.x0-dx*sx,x1:D.x1-dx*sx,y0:D.y0+dy*sy,y1:D.y1+dy*sy};}
+    else if(a.length>=2&&b.length>=2){st.moved=true;const d0=Math.hypot(b[0].x-b[1].x,b[0].y-b[1].y)||1,d1=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1;
+      const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map);let f=d0/d1;
+      f=Math.max(f,((B.x1-B.x0)/8)/(D.x1-D.x0));f=Math.min(f,((B.x1-B.x0)*1.5)/(D.x1-D.x0));
+      const mx=(b[0].x+b[1].x)/2-pl.r.left,my=(b[0].y+b[1].y)/2-pl.r.top,Px=26*pl.r.width/340,Py=26*pl.r.height/380;
+      const fx=D.x0+(mx-Px)*sx,fy=D.y1-(my-Py)*sy;
+      const pan=[((a[0].x+a[1].x)/2-(b[0].x+b[1].x)/2)*sx*f,((a[0].y+a[1].y)/2-(b[0].y+b[1].y)/2)*sy*f];
+      nd={x0:fx-(fx-D.x0)*f-pan[0],x1:fx+(D.x1-fx)*f-pan[0],y0:fy-(fy-D.y0)*f+pan[1],y1:fy+(D.y1-fy)*f+pan[1]};}
+    if(nd){e.preventDefault();window._tmDom=nd;if(!raf)raf=requestAnimationFrame(()=>{raf=0;drawFull();});}},{passive:false});
+  const up=e=>{pts.delete(e.pointerId);if(st&&st.moved)window._tmDragged=Date.now();if(pts.size)snap();else st=null;};
+  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+}
+/* 겹친 점 처리: 누른 점 근처(18px) 테마가 여럿이면 목록으로 */
+window.rdTmTap=function(k,e){
+  if(e)e.stopPropagation();if(window._tmDragged&&Date.now()-window._tmDragged<350)return;
+  const P=window._tmPos||{},me=P[k],its=window._tmItems||[];if(!me){rdThemeSheet(k);return;}
+  const svg=document.querySelector('#tm-zbox svg'),sc=svg?340/svg.getBoundingClientRect().width:1,R=18*sc;
+  const near=Object.keys(P).map(Number).filter(j=>Math.hypot(P[j][0]-me[0],P[j][1]-me[1])<=R).sort((a,b)=>Math.hypot(P[a][0]-me[0],P[a][1]-me[1])-Math.hypot(P[b][0]-me[0],P[b][1]-me[1]));
+  if(near.length<=1){rdThemeSheet(k);return;}
+  const nb=$('tm-near');if(!nb){rdThemeSheet(k);return;}
+  nb.innerHTML='<div class="tm-nh">이 근처 테마 '+near.length+'개 <button class="bk-link" onclick="rdTmZoomAt('+k+')">이 자리 확대 ›</button></div>'
+    +near.map(j=>{const i=its[j];return '<button class="tl-it" onclick="rdThemeSheet('+j+')"><span>'+(i.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(i.theme))+'</span><span class="num"><em class="'+(i.x>=0?'up':'down')+'">'+pct(i.x,0)+'</em> · <em class="'+(i.y>=0?'up':'down')+'">'+pct(i.y,0)+'</em></span></button>';}).join('');
+  nb.scrollIntoView({block:'nearest',behavior:'smooth'});
+};
+window.rdTmZoomAt=function(k){const i=(window._tmItems||[])[k],D=window._tmDom;if(!i||!D)return;const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map);
+  const z=Math.min(8,(B.x1-B.x0)/(D.x1-D.x0)*2.5);window._tmDom=zoomDom({x:i.x,y:i.y},z);drawFull();$('tm-near').innerHTML='';
+  document.querySelectorAll('.tm-zq button').forEach(b=>b.classList.remove('on'));};
+function sheet(id,html){let el=$(id);if(!el){el=document.createElement('div');el.id=id;el.className='bk-sheet';}document.body.appendChild(el);
   el.innerHTML='<div class="bg" onclick="rdCloseBk(\''+id+'\')"></div><div class="pn" role="dialog">'+html+'</div>';el.classList.add('open');return el;}
 window.rdThemeSheet=function(k){
   const i=(window._tmItems||[])[k];if(!i)return;const q=Q[i.q]||Q['소외'];
@@ -5680,9 +5797,90 @@ window.rdThemeSheet=function(k){
     +'<div class="ts-stat">3년 검증: 이 칸 테마를 다음날 사서 10거래일 들고 있었을 때 평균 '+q.stat+'. '+q.tip+'</div>'
     +(tx?'<div class="set-gt">오늘 제안 종목 · 거래대금 상위 5</div>'+tx.top.map(sl).join('')
       +(tx.lag&&tx.lag.length?'<div class="set-gt">그림자 묶음 · 후발 3 <small>거래대금 상위 10 중 20일 덜 오른 3</small></div>'+tx.lag.map(sl).join(''):''):'')
-    +'<div class="bk-note">대장·후발은 같은 테마 안 거래대금 상위 10종목을 20일 수익률로 나눈 것이에요. 칸 이름과 숫자는 규칙으로 계산한 설명이지 예측이 아니에요.</div>'
+    +'<div class="bk-note"><button class="bk-link" onclick="rdGuide(\'map\')">지도 읽는 법</button> · <button class="bk-link" onclick="rdGuide(\'role\')">대장·후발이란</button><br>대장·후발은 같은 테마 안 거래대금 상위 10종목을 20일 수익률로 나눈 것이에요. 칸 이름과 숫자는 규칙으로 계산한 설명이지 예측이 아니에요.</div>'
     +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-th\')">닫기</button></div>');
 };
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════
+   기능 가이드 — 메뉴 › 기능 가이드, 각 카드의 ? 버튼
+   형식: 무엇 / 언제 / 어떻게 / 주의
+   ══════════════════════════════════════════════════════ */
+(function(){
+const $=id=>document.getElementById(id);
+const G=[
+ {id:'flow',t:'하루 흐름 한눈에',what:'트래커는 "매일 저녁 제안 → 내가 결정 → 다음 날 매수 → 10거래일 뒤 정리"를 돕는 도구예요. 주문 기능은 없어요. 매매는 증권 앱에서 직접 해요.',
+  how:['평일 20:40 전 종목 스캔이 자동으로 돌아요. 텔레그램을 연결했다면 저녁 요약이 와요.','앱 오늘 화면에서 [묶음 사기 · 수량 계산] 또는 [패스]를 고르세요.','다음 거래일 증권 앱에서 기록한 수량대로 사요. 체결가가 다르면 종목 탭에서 진입가를 고쳐요.','10거래일째 되는 날 장 마감 전에 팔고, 앱에서 [정리 기록하기]를 눌러요. 전날 저녁과 당일 아침에 알림이 와요.'],
+  warn:'하루에 할 일은 보통 1번(저녁 결정)뿐이에요. 장중에 계속 볼 필요는 없어요.'},
+ {id:'basket',t:'오늘의 묶음 제안',what:'최근 20일 가장 강한 테마 3개에서, 테마마다 거래대금 큰 종목 5개를 묶은 제안이에요.',
+  when:'시장 필터(테마 평균 60일·20일 수익률이 둘 다 플러스)를 통과한 날만 나와요. 통과 못 하면 "쉬는 구간"이에요.',
+  how:['맨 위 칩: 공격 구간 / 쉬는 구간과 시장 필터 숫자','"오늘 할 일" 칸이 지금 해야 할 한 가지를 알려 줘요(살지 결정 · 정리일 · 할 일 없음).','[제안 종목 · 차트 상태 보기]를 펼치면 종목별 상태와 대장·후발, 공시 배지를 볼 수 있어요.','묶음 자리(기본 2개)가 차 있으면 새 제안은 살 수 없고 패스로 기록돼요.'],
+  warn:'3년 시뮬레이션 기준 최대 낙폭은 -40% 안팎이었어요. 운영 자금 전체가 아니라 묶음당 절반씩만 들어가는 이유예요.'},
+ {id:'buy',t:'묶음 사기 · 수량 계산',what:'운영 자금과 이번 묶음 금액을 넣으면 종목별로 몇 주를 살지 계산하고, 산 내역을 기록해요.',
+  how:['운영 자금: 이 전략에 쓸 전체 돈(예: 400만 원). 한 번 넣으면 기억해요.','이번 묶음 금액: 기본은 운영 자금 ÷ 동시 묶음 수(2). 일부만 사려면 금액을 줄이거나 종목 체크를 빼세요.','비상 손절 %: 종목별로 이만큼 빠지면 파는 선(기본 15%). 손절가가 종목 옆에 표시돼요.','구성: [현행 5] 거래대금 상위 5 · [현행 3] 상위 3 · [후발 3] 상위 10 중 20일 덜 오른 3. 고르면 체크가 자동으로 바뀌어요.','1주 값이 종목당 금액보다 조금 비싸면 1주를 담고, 남는 돈은 덜 담긴 종목에 1주씩 채워요.','실패 가정 칸에 "3주 뒤 -10%라면 이유"를 한 줄 적어 두면 복기 때 다시 보여 줘요.','[이대로 기록하기]를 누르면 종목 탭에 묶음 종목으로 저장되고 정리일이 계산돼요.'],
+  warn:'기준가는 제안일 종가예요. 실제로는 다음 날 시가 근처에서 사게 되니, 체결 뒤 진입가를 고쳐야 손익이 정확해요. ⚠ 위험 공시가 있는 종목은 체크를 빼 두었으니 원문을 보고 직접 정하세요.'},
+ {id:'pass',t:'패스',what:'오늘 제안을 사지 않겠다고 기록하는 버튼이에요.',
+  how:['패스해도 그 제안의 10거래일 결과는 계속 추적돼요.','"내 판단 성적"에서 산 제안과 패스한 제안의 평균이 비교돼요.'],
+  warn:'시뮬레이션에서 무작위로 절반을 패스하면 연 +28% → +10%로 줄었어요. 특히 "너무 올라서" 패스하는 건 손해였어요. 패스는 이유가 분명할 때만.'},
+ {id:'mine',t:'내 묶음 · 정리',what:'산 묶음마다 경과일(D+n/10)과 정리일, 손익을 보여 줘요.',
+  how:['정리일 = 산 날부터 10거래일째(주말·휴장일 제외).','정리일 전날: "내일 정리" 안내 · 당일 아침: 텔레그램 알림(연결 시).','판 뒤 [정리 기록하기] → 매도가를 넣으면 묶음이 끝나고 자리가 비어요.'],
+  warn:'정리일이 지나도 기록하지 않으면 자리가 계속 찬 것으로 보여서 새 제안을 살 수 없어요.'},
+ {id:'weights',t:'비중 관리',what:'가진 종목의 수량·평단·비중(%)을 보고, 더 사거나 일부 팔 때 기록하는 화면이에요.',
+  how:['맨 위: 운영 자금 · 투자 중 · 현금(추정) · 평가손익','종목마다 비중 막대와 "한 종목 25% 넘음 / 묶음 평균보다 무거움" 표시','[+ 더 사기] [− 일부 팔기]로 수량과 가격을 넣으면 평단과 손익이 다시 계산돼요. 판 손익은 운영 자금에 더해져요.'],
+  warn:'검증된 규칙은 처음에 고르게 사고 10거래일 동안 건드리지 않는 방식이에요. 중간에 손대면 그 회차는 규칙 밖 거래가 되니 이유를 적어 두세요.'},
+ {id:'map',t:'테마 지도 (4분면)',what:'테마 24개 정도를 60일(가로)·20일(세로) 수익률로 찍은 지도예요. 지금 돈이 어디에 몰려 있는지 한눈에 봐요.',
+  how:['오른쪽 위 주도: 60일·20일 모두 강함 → 제안은 이 칸에서만 나와요.','왼쪽 위 부상: 길게는 약했지만 최근 반등 · 오른쪽 아래 과열·눌림: 강했다가 쉬는 중 · 왼쪽 아래 소외: 둘 다 약함','◆ 시장 평균이 주도 칸 밖이면 쉬는 구간이에요.','초록 테두리 = 오늘 제안 테마 · 꼬리 = 10일 전 → 5일 전 → 지금 위치 · 점 크기 = 거래대금','오늘 화면의 작은 지도를 누르면 그 자리를 확대한 큰 지도가 열려요. 큰 지도에서는 두 손가락으로 벌려 확대, 끌어서 이동, 위의 칸 버튼으로 칸별 확대가 돼요.','점이 겹친 곳을 누르면 근처 테마가 아래에 목록으로 나와요. 맨 아래 전체 목록에서도 바로 고를 수 있어요.'],
+  warn:'3년 검증에서 10거래일 뒤 평균이 플러스였던 건 주도 칸(+0.4%)뿐이었어요. 다른 칸 테마를 따로 사라는 뜻은 없어요. 지도는 위치를 보여 줄 뿐, 언제 사야 하는지는 알려 주지 않아요.'},
+ {id:'role',t:'대장 · 후발 표시',what:'같은 테마에서 거래대금 상위 10종목을 20일 수익률로 셋으로 나눈 표시예요.',
+  how:['대장(빨강): 20일 동안 가장 많이 오른 쪽 · 후발(초록): 가장 덜 오른 쪽 · 가운데는 표시 없음'],
+  warn:'3년 시뮬레이션에서는 대장만 사면 낙폭이 -55%로 가장 컸고, 후발 3이 -23%로 가장 작았어요. 다만 아직 실전 검증 전이에요.'},
+ {id:'shadow',t:'그림자 비교 (현행 5 vs 후발 3)',what:'매일 제안마다 현행 5종목과 후발 3종목을 둘 다 기록해서, 10거래일 뒤 성적을 나란히 비교해요. 실제로 사지 않아도 쌓여요.',
+  how:['오늘 화면 "그림자 비교" 줄과 신호 탭 제안 아래에 나와요.','끝난 n개: 같은 제안끼리 평균 비교 · 후발이 앞선 비율 · 진행 중은 참고','바꿀지 판단 기준(제안): 끝난 제안 20개 이상 + 후발 평균이 앞섬 + 앞선 비율 60% 이상이면 기본 구성을 후발로 바꾸는 걸 검토'],
+  warn:'백테스트에서 후발이 크게 좋았던 건 테마 구성이 현재 기준이라 부풀려졌을 수 있어요. 그래서 실전 기록으로 다시 확인하는 거예요. 몇 주 단위로는 뒤집힐 수 있어요.'},
+ {id:'state',t:'차트 상태 배지',what:'종목별 종가 기준 상태를 규칙으로 붙인 거예요.',
+  how:['진입 검토: 상승 추세에서 5일선까지 조용히 쉼','추세 양호: 20일선 위 상승 중','눌림 대기: 20일선보다 15% 넘게 떠 있음','고점 반락: 오늘 신고가 찍고 크게 밀림','급락 관망: 하루 -5% 이상','보류: 20일선 아래 또는 20일선이 내려가는 중'],
+  warn:'참고용이에요. 상태로 종목을 빼는 건 시뮬레이션에서 수익을 일정하게 올리지 못했고, 눌림 대기를 빼면 오히려 나빠졌어요. 기본은 묶음 전체를 사요.'},
+ {id:'dart',t:'공시 배지 (OpenDART)',what:'최근 10일 공시 제목을 보고 종목 옆에 배지를 붙여요. 누르면 공시 원문이 열려요.',
+  how:['⚠ 빨강(위험): 유상증자 · 전환사채/신주인수권부사채/교환사채 발행 · 감자 · 관리종목 · 상장폐지 심사 · 거래정지 · 투자경고/위험 · 불성실공시 · 횡령/배임 · 회생 · 최대주주 변경 · 소송','초록(좋은 쪽): 자사주 매입 · 공급계약 · 무상증자 · 회색(정보): 잠정실적 · 실적 변동 · IR 개최 · 배당','수량 계산에서 ⚠ 종목은 체크가 빠진 채로 열려요. 텔레그램 저녁 요약에도 들어가요.','"공시 경고는 꺼져 있어요"가 보이면 GitHub Secrets에 DART_KEY가 없는 거예요.'],
+  warn:'제목으로만 분류해서 규모·조건은 몰라요. 작은 규모의 공시나 정정 공시도 경고로 잡힐 수 있으니 원문을 보고 판단하세요.'},
+ {id:'score',t:'내 판단 성적',what:'끝난 제안을 내가 산 것 / 패스한 것 / 결정 안 한 것으로 나눠 10거래일 평균을 비교해요.',
+  how:['산 제안 평균이 패스한 제안 평균보다 계속 낮다면, 내 판단이 규칙보다 못하다는 신호예요.'],
+  warn:'2개 이상 쌓여야 보이고, 10개 전까지는 우연이 커요.'},
+ {id:'claude',t:'Claude에게 묻기',what:'오늘 제안 종목의 숫자(현재가·이평선·상태·후발·공시)를 담은 질문을 만들어 Claude를 열어요. 질문은 클립보드에도 복사돼요.',
+  how:['미국 증시·최근 뉴스·공시 확인과 종목별 살 가격·손절·팔 때를 쉬운 말로 받아요.','숫자가 비어 있으면 설정의 시세 서버 주소를 확인하세요.'],
+  warn:'Claude의 답은 판단 보조예요. 결정과 책임은 본인에게 있어요.'},
+ {id:'signal',t:'신호 탭',what:'테마 묶음(제안 · 지도 · 테마 순위 · 과거 검증)과 거래량 급증 목록이 있는 탭이에요.',
+  how:['테마 묶음: 오늘 화면보다 자세한 제안, 그림자 줄, 테마 순위 표','관찰 · 거래량 급증: 평소의 몇 배로 거래가 터진 종목 목록. 📈 가격 추적으로 이후 흐름을 봐요.','⚙: 자동 스캔 결과 주소 · 가져오기 범위 · 시세 서버 연결'],
+  warn:'거래량 급증은 3년 검증에서 사는 신호로는 손해였어요. "살펴볼 목록"으로만 쓰세요.'},
+ {id:'bt',t:'과거 검증 요약',what:'GitHub Actions의 backtest가 매월 1일 다시 계산한 규칙별 성적이에요. 핵심 몇 줄만 보여 주고 나머지는 접어 둬요.',
+  how:['📌 지금 쓰는 규칙: 연수익 · 최대 낙폭 · 앞 절반 → 뒤 절반','🌓 후발 3, 🛡 20일 필터 효과 같은 비교 줄','빨간 경고("최근 절반이 마이너스")가 뜨면 묶음 금액을 줄이는 게 안전해요.','Actions › backtest › Run workflow로 바로 다시 계산할 수 있어요.'],
+  warn:'과거 성적은 미래 수익을 보장하지 않아요.'},
+ {id:'alert',t:'텔레그램 알림',what:'저녁 요약(20:40 스캔 뒤), 아침 정리일 알림, 장중 손절선 이탈 알림을 보내요.',
+  how:['설정 › 텔레그램에서 연결 · 봇 토큰은 GitHub Secrets에만 있어요.','저녁 요약: 공격/쉬는 구간 · 오늘 제안 · 제안 종목 공시 경고 · 내 묶음 정리 · 손절선 근접/이탈 · 내 종목 오늘 공시'],
+  warn:'알림이 안 오면 Actions › volume-scan 실행 로그의 "텔레그램" 단계를 확인하세요.'},
+ {id:'settings',t:'설정',what:'운영 자금, 동시 묶음 수, 텔레그램, 시세 서버 같은 기본값이에요. 계정에 저장돼 다른 기기에서도 같아요.',
+  how:['운영 자금: 수량 계산과 비중(%)의 기준','동시 묶음 수: 기본 2. 3개 이상은 시뮬레이션상 성적이 나빴어요.'],
+  warn:'증권사 키, 텔레그램 토큰, DART 키는 앱에 넣지 않아요. GitHub Secrets / Cloudflare Worker에만 넣어요.'},
+ {id:'review',t:'개선 알림 · 복기',what:'개선 알림은 때가 된 개선 과제(데이터가 충분히 쌓인 검증 등)만 오늘 화면에 띄워요. 복기 탭은 판단 기록과 실패 가정을 다시 보는 곳이에요.',
+  how:['[로드에게 보낼 문장 복사] → 대화창에 붙여 넣으면 그 개선을 진행해요.','[2주 뒤에] 미루기 · [완료] 닫기'],
+  warn:''}
+];
+window.rdGuide=function(id){
+  let el=$('gd-sheet');if(!el){el=document.createElement('div');el.id='gd-sheet';el.className='bk-sheet';}document.body.appendChild(el);
+  const sec=x=>'<details class="gd-s" id="gd-'+x.id+'"'+(x.id===id?' open':'')+'><summary>'+x.t+'</summary>'
+    +'<p class="gd-what">'+x.what+'</p>'+(x.when?'<p><b>언제</b> '+x.when+'</p>':'')
+    +(x.how&&x.how.length?'<div class="gd-how"><b>어떻게</b><ul>'+x.how.map(h=>'<li>'+h+'</li>').join('')+'</ul></div>':'')
+    +(x.warn?'<p class="gd-warn"><b>주의</b> '+x.warn+'</p>':'')+'</details>';
+  el.innerHTML='<div class="bg" onclick="rdCloseBk(\'gd-sheet\')"></div><div class="pn" role="dialog"><div class="grab"></div><h3>기능 가이드</h3>'
+    +'<div class="gd-intro">궁금한 기능을 누르면 펼쳐져요. 각 화면의 <b class="gd-q-i">?</b> 버튼을 누르면 그 기능이 바로 열려요.</div>'
+    +G.map(sec).join('')
+    +'<div class="bk-note">숫자는 KRX 전 종목(상장폐지 포함) 2023.10~2026.10 시뮬레이션, 다음 날 시가 매수·비용 0.35% 반영 기준이에요. 투자 조언이 아니에요.</div>'
+    +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'gd-sheet\')">닫기</button></div></div>';
+  el.classList.add('open');
+  if(id){const t=$('gd-'+id);if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),60);}
+};
+window.rdGQ=id=>'<button class="gd-q" onclick="event.stopPropagation();rdGuide(\''+id+'\')" aria-label="도움말">?</button>';
 })();
 </script>
 </body></html>
