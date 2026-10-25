@@ -1442,6 +1442,11 @@ button.bk-mine b{color:var(--text)} button.bk-mine b.up{color:var(--up)} button.
 .gd-what{color:var(--text)}
 .gd-how ul{margin:4px 0 0;padding-left:18px}.gd-how li{margin:3px 0}
 .gd-warn{background:var(--yellow-light);border-radius:8px;padding:8px 10px;color:var(--text)!important}
+.tm-zbox{touch-action:none}
+.tm-past{fill:var(--card2);stroke:var(--text3);stroke-width:1;opacity:.7}
+.tm-past.old{opacity:.45}
+.tm-past.pk{stroke:var(--green);opacity:1}.tm-past.pk.old{opacity:.6}
+.tm-leg i.pst{display:inline-block;width:7px;height:7px;border-radius:50%;border:1.5px solid var(--green);background:var(--card);margin:0 4px 0 -2px;vertical-align:0}
 </style>
 </head>
 <body>
@@ -5676,7 +5681,10 @@ window.rdThemeMap=function(tf,opt){
   g+='<text x="'+(W-P)+'" y="'+(H-6)+'" class="tm-axl" text-anchor="end">60일 →</text><text x="8" y="'+(P-8)+'" class="tm-axl">↑ 20일</text>';
   if(opt.dom)g+='<text x="'+P+'" y="'+(H-6)+'" class="tm-axl">'+pct(D.x0,0)+' ~ '+pct(D.x1,0)+' · 세로 '+pct(D.y0,0)+' ~ '+pct(D.y1,0)+'</text>';
   g+='<g clip-path="url(#tmc'+(opt.full?'f':'')+')">';
-  const trail=(tr,x,y,cls)=>tr&&tr.length?'<polyline class="'+cls+'" points="'+tr.map(p=>cx(p[0])+','+cy(p[1])).concat([cx(x)+','+cy(y)]).join(' ')+'"/>':'';
+  const trail=(tr,x,y,cls)=>{if(!tr||!tr.length)return '';const ps=tr.map(p=>[cx(p[0]),cy(p[1])]).concat([[cx(x),cy(y)]]);
+    let o='<polyline class="'+cls+'" points="'+ps.map(p=>p.join(',')).join(' ')+'"/>';
+    if(cls.indexOf('pk')>=0||cls.indexOf('mk')>=0)ps.slice(0,-1).forEach((p,j)=>{o+='<circle class="tm-past'+(j===0?' old':'')+(cls.indexOf('pk')>=0?' pk':'')+'" cx="'+p[0]+'" cy="'+p[1]+'" r="'+(j===0?2.2:2.8)+'"/>';});
+    return o;};
   vis.forEach(([i])=>{g+=trail(i.tr,i.x,i.y,'tm-tr'+(i.pick?' pk':''));});
   g+=trail(M.mkt.tr,M.mkt.x,M.mkt.y,'tm-tr mk')+'</g>';
   const mX=cx(M.mkt.x),mY=cy(M.mkt.y),mIn=!opt.dom||(inX(M.mkt.x)&&inY(M.mkt.y));
@@ -5699,7 +5707,7 @@ window.rdThemeMap=function(tf,opt){
   const cline=tot?'<div class="tm-cnt">전체 '+tot+'개 테마 · '+['주도','부상','과열·눌림','소외'].map(q=>'<span class="'+Q[q].c+'">'+q+' '+(cnt[q]||0)+'</span>').join(' · ')+'</div>':'';
   return '<div class="tm-box">'+(opt.title===false?'':'<div class="tm-h"><b>테마 지도</b><span>'+esc(String(M.asOf||'').slice(5).replace('-','/'))+' · 누르면 크게 보기</span></div>')
     +svg+cline
-    +'<div class="tm-leg"><span><i class="dot pk"></i>오늘 제안 테마</span><span><i class="ln"></i>10일 이동 궤적</span><span>점 크기 = 거래대금</span></div>'
+    +'<div class="tm-leg"><span><i class="dot pk"></i>오늘 제안 테마</span><span><i class="ln"></i><i class="pst"></i>지나온 길(빈 점 → 색 점 = 10일 전 → 지금)</span><span>점 크기 = 거래대금</span></div>'
     +(opt.small?'':'<div class="tm-note">3년 검증(10거래일 뒤 평균): 주도 +0.4% · 부상 -0.2% · 과열·눌림 -0.4% · 소외 -0.5%. 트래커는 주도 칸, 그중 20일 상위 3개 테마만 제안하고, 시장 평균(◆)이 주도 칸 밖이면 쉬어요.</div>')+'</div>';
 };
 window.rdThemeMapCard=function(){
@@ -5745,26 +5753,43 @@ window.rdThemeMapFull=function(at){
     +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-full\')">닫기</button></div>');
   drawFull();bindPinch($('tm-zbox'));
 };
+/* 확대 제스처: 손가락이 움직이는 동안은 SVG viewBox만 바꿔서(다시 그리지 않음) 부드럽게,
+   손을 떼면 그 범위로 한 번만 다시 그려 이름표를 정리. iOS에서 터치 대상이 사라져 멈추던 문제 해결 */
 function bindPinch(el){
-  if(!el||el._pinch)return;el._pinch=1;const pts=new Map();let st=null,raf=0;
-  const plot=()=>{const svg=el.querySelector('svg');const r=svg.getBoundingClientRect();return {w:r.width*(340-52)/340,h:r.height*(380-52)/380,r};};
-  const snap=()=>{st={dom:Object.assign({},window._tmDom),pts:new Map([...pts].map(([k,v])=>[k,Object.assign({},v)])),moved:false,pl:plot()};};
-  el.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});snap();});
-  el.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId)||!st)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    const D=st.dom,pl=st.pl,sx=(D.x1-D.x0)/pl.w,sy=(D.y1-D.y0)/pl.h,a=[...pts.values()],b=[...st.pts.values()];
-    let nd=null;
-    if(a.length===1&&b.length===1){const dx=a[0].x-b[0].x,dy=a[0].y-b[0].y;if(Math.hypot(dx,dy)>6)st.moved=true;if(!st.moved)return;
-      nd={x0:D.x0-dx*sx,x1:D.x1-dx*sx,y0:D.y0+dy*sy,y1:D.y1+dy*sy};}
-    else if(a.length>=2&&b.length>=2){st.moved=true;const d0=Math.hypot(b[0].x-b[1].x,b[0].y-b[1].y)||1,d1=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1;
-      const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map);let f=d0/d1;
-      f=Math.max(f,((B.x1-B.x0)/8)/(D.x1-D.x0));f=Math.min(f,((B.x1-B.x0)*1.5)/(D.x1-D.x0));
-      const mx=(b[0].x+b[1].x)/2-pl.r.left,my=(b[0].y+b[1].y)/2-pl.r.top,Px=26*pl.r.width/340,Py=26*pl.r.height/380;
-      const fx=D.x0+(mx-Px)*sx,fy=D.y1-(my-Py)*sy;
-      const pan=[((a[0].x+a[1].x)/2-(b[0].x+b[1].x)/2)*sx*f,((a[0].y+a[1].y)/2-(b[0].y+b[1].y)/2)*sy*f];
-      nd={x0:fx-(fx-D.x0)*f-pan[0],x1:fx+(D.x1-fx)*f-pan[0],y0:fy-(fy-D.y0)*f+pan[1],y1:fy+(D.y1-fy)*f+pan[1]};}
-    if(nd){e.preventDefault();window._tmDom=nd;if(!raf)raf=requestAnimationFrame(()=>{raf=0;drawFull();});}},{passive:false});
-  const up=e=>{pts.delete(e.pointerId);if(st&&st.moved)window._tmDragged=Date.now();if(pts.size)snap();else st=null;};
-  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+  if(!el||el._pinch)return;el._pinch=1;
+  const W=340,H=380,P=26,pts=new Map();let st=null,cur=null;
+  const svgEl=()=>el.querySelector('svg');
+  const begin=()=>{const sv=svgEl();if(!sv)return;const r=sv.getBoundingClientRect(),a=[...pts.values()];
+    const vb=cur||{x:0,y:0,w:W,h:H};
+    st={r,vb:Object.assign({},vb),a:a.map(p=>Object.assign({},p)),moved:st?st.moved:false};};
+  const limits=()=>{const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map),D=window._tmDom,Dw=D.x1-D.x0,Bw=B.x1-B.x0;
+    return [W*(Bw/8)/Dw,W*(Bw*1.5)/Dw];};
+  el.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});begin();},{passive:true});
+  el.addEventListener('pointermove',e=>{
+    if(!pts.has(e.pointerId)||!st)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const a=[...pts.values()],b=st.a,r=st.r,v0=st.vb;let vb=null;
+    if(a.length===1&&b.length===1){const dx=a[0].x-b[0].x,dy=a[0].y-b[0].y;if(!st.moved&&Math.hypot(dx,dy)<7)return;st.moved=true;
+      vb={x:v0.x-dx/r.width*v0.w,y:v0.y-dy/r.height*v0.h,w:v0.w,h:v0.h};}
+    else if(a.length>=2&&b.length>=2){st.moved=true;
+      const d0=Math.hypot(b[0].x-b[1].x,b[0].y-b[1].y)||1,d1=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1;
+      const [mn,mx]=limits();const w=Math.max(mn,Math.min(mx,v0.w*d0/d1)),h=w*H/W;
+      const m0={x:(b[0].x+b[1].x)/2-r.left,y:(b[0].y+b[1].y)/2-r.top},m1={x:(a[0].x+a[1].x)/2-r.left,y:(a[0].y+a[1].y)/2-r.top};
+      const sx=v0.x+m0.x/r.width*v0.w,sy=v0.y+m0.y/r.height*v0.h;
+      vb={x:sx-m1.x/r.width*w,y:sy-m1.y/r.height*h,w,h};}
+    if(vb){if(e.cancelable)e.preventDefault();cur=vb;const sv=svgEl();if(sv)sv.setAttribute('viewBox',vb.x+' '+vb.y+' '+vb.w+' '+vb.h);
+      const zl=$('tm-zl'),tf=jget('sv4_theme_flow',null);if(zl&&tf){const B=baseDom(tf.map),D=window._tmDom;zl.textContent='×'+((B.x1-B.x0)/((D.x1-D.x0)*vb.w/W)).toFixed(1);}}
+  },{passive:false});
+  const commit=()=>{if(!cur)return;const D=window._tmDom,Dw=D.x1-D.x0,Dh=D.y1-D.y0,v=cur;
+    const nw=Dw*v.w/W,nh=Dh*v.h/H;
+    const x0=D.x0+((v.x-P)*Dw+P*nw)/(W-2*P),y0=D.y0+((H-P-v.y)*Dh-(H-P)*nh)/(H-2*P);
+    window._tmDom={x0,x1:x0+nw,y0:y0,y1:y0+nh};cur=null;drawFull();
+    document.querySelectorAll('.tm-zq button').forEach(b=>b.classList.remove('on'));};
+  const up=e=>{pts.delete(e.pointerId);
+    if(st&&st.moved)window._tmDragged=Date.now();
+    if(pts.size){begin();}else{const mv=st&&st.moved;st=null;if(mv)commit();}};
+  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('lostpointercapture',e=>{if(pts.has(e.pointerId))up(e);});
+  // iOS Safari: 두 손가락 제스처를 페이지 확대가 가로채지 않도록
+  el.addEventListener('gesturestart',e=>e.preventDefault());el.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 }
 /* 겹친 점 처리: 누른 점 근처(18px) 테마가 여럿이면 목록으로 */
 window.rdTmTap=function(k,e){
@@ -5786,7 +5811,8 @@ function sheet(id,html){let el=$(id);if(!el){el=document.createElement('div');el
 window.rdThemeSheet=function(k){
   const i=(window._tmItems||[])[k];if(!i)return;const q=Q[i.q]||Q['소외'];
   const tf=jget('sv4_theme_flow',null),pk=tf&&tf.picks||{},tx=(pk.today||[]).find(x=>x.theme===i.theme);
-  const tr=(i.tr||[]).map(p=>quadOf(p[0],p[1])),move=tr.length&&tr[0]!==i.q?tr[0]+' → '+i.q+' 칸으로 이동':i.q+' 칸에 머무는 중';
+  const tr=(i.tr||[]).map(p=>quadOf(p[0],p[1])),move=(tr.length&&tr[0]!==i.q?tr[0]+' → '+i.q+' 칸으로 이동':i.q+' 칸에 머무는 중')
+    +((i.tr||[]).length===2?'<br><span class="dim">지나온 길(60일·20일): 10일 전 '+pct(i.tr[0][0],0)+'·'+pct(i.tr[0][1],0)+' → 5일 전 '+pct(i.tr[1][0],0)+'·'+pct(i.tr[1][1],0)+' → 지금 '+pct(i.x,0)+'·'+pct(i.y,0)+'. 앞으로의 방향을 예측하는 선이 아니에요.</span>':'');
   const desc=window.rdThemeDesc?rdThemeDesc(i.theme):'';
   const sl=m=>'<div class="ts-m"><span class="ts-nm">'+(typeof stLink==='function'?stLink(m.code,esc(nameOf(m.code))):esc(nameOf(m.code)))+rdRoleTag(m.role)+'</span><span class="'+(m.ret20>=0?'up':'down')+'">'+pct(m.ret20,0)+'</span>'+(m.state&&window.rdStateBadge?rdStateBadge(m.state):'')+rdDartBadge(m.code)+'</div>';
   sheet('tm-th','<div class="grab"></div><h3>'+esc(i.theme)+'</h3>'
@@ -5830,8 +5856,8 @@ const G=[
   how:['맨 위: 운영 자금 · 투자 중 · 현금(추정) · 평가손익','종목마다 비중 막대와 "한 종목 25% 넘음 / 묶음 평균보다 무거움" 표시','[+ 더 사기] [− 일부 팔기]로 수량과 가격을 넣으면 평단과 손익이 다시 계산돼요. 판 손익은 운영 자금에 더해져요.'],
   warn:'검증된 규칙은 처음에 고르게 사고 10거래일 동안 건드리지 않는 방식이에요. 중간에 손대면 그 회차는 규칙 밖 거래가 되니 이유를 적어 두세요.'},
  {id:'map',t:'테마 지도 (4분면)',what:'테마 24개 정도를 60일(가로)·20일(세로) 수익률로 찍은 지도예요. 지금 돈이 어디에 몰려 있는지 한눈에 봐요.',
-  how:['오른쪽 위 주도: 60일·20일 모두 강함 → 제안은 이 칸에서만 나와요.','왼쪽 위 부상: 길게는 약했지만 최근 반등 · 오른쪽 아래 과열·눌림: 강했다가 쉬는 중 · 왼쪽 아래 소외: 둘 다 약함','◆ 시장 평균이 주도 칸 밖이면 쉬는 구간이에요.','초록 테두리 = 오늘 제안 테마 · 꼬리 = 10일 전 → 5일 전 → 지금 위치 · 점 크기 = 거래대금','오늘 화면의 작은 지도를 누르면 그 자리를 확대한 큰 지도가 열려요. 큰 지도에서는 두 손가락으로 벌려 확대, 끌어서 이동, 위의 칸 버튼으로 칸별 확대가 돼요.','점이 겹친 곳을 누르면 근처 테마가 아래에 목록으로 나와요. 맨 아래 전체 목록에서도 바로 고를 수 있어요.'],
-  warn:'3년 검증에서 10거래일 뒤 평균이 플러스였던 건 주도 칸(+0.4%)뿐이었어요. 다른 칸 테마를 따로 사라는 뜻은 없어요. 지도는 위치를 보여 줄 뿐, 언제 사야 하는지는 알려 주지 않아요.'},
+  how:['오른쪽 위 주도: 60일·20일 모두 강함 → 제안은 이 칸에서만 나와요.','왼쪽 위 부상: 길게는 약했지만 최근 반등 · 오른쪽 아래 과열·눌림: 강했다가 쉬는 중 · 왼쪽 아래 소외: 둘 다 약함','◆ 시장 평균이 주도 칸 밖이면 쉬는 구간이에요.','초록 테두리 = 오늘 제안 테마 · 점 크기 = 거래대금','선(꼬리)은 지나온 길이에요: 빈 점(10일 전) → 빈 점(5일 전) → 색 점(지금). 선 끝이 뾰족해 보여도 앞으로 갈 방향이 아니라 과거 위치예요.','오늘 화면의 작은 지도를 누르면 그 자리를 확대한 큰 지도가 열려요. 큰 지도에서는 두 손가락으로 벌려 확대, 끌어서 이동, 위의 칸 버튼으로 칸별 확대가 돼요.','점이 겹친 곳을 누르면 근처 테마가 아래에 목록으로 나와요. 맨 아래 전체 목록에서도 바로 고를 수 있어요.'],
+  warn:'지나온 방향으로 계속 간다는 보장은 없어요. 3년 데이터로 확인해 보니 주도 칸에서 최근 위로 올라온 테마는 뒤 절반(2025~26)엔 10일 뒤 평균 +1.8%(테마 지수 기준)였지만 앞 절반(2023~25)엔 -0.5%로 오히려 나빴어요. 그리고 10거래일 뒤 평균이 플러스였던 건 주도 칸(+0.4%)뿐이었어요. 다른 칸 테마를 따로 사라는 뜻은 없어요. 지도는 위치를 보여 줄 뿐, 언제 사야 하는지는 알려 주지 않아요.'},
  {id:'role',t:'대장 · 후발 표시',what:'같은 테마에서 거래대금 상위 10종목을 20일 수익률로 셋으로 나눈 표시예요.',
   how:['대장(빨강): 20일 동안 가장 많이 오른 쪽 · 후발(초록): 가장 덜 오른 쪽 · 가운데는 표시 없음'],
   warn:'3년 시뮬레이션에서는 대장만 사면 낙폭이 -55%로 가장 컸고, 후발 3이 -23%로 가장 작았어요. 다만 아직 실전 검증 전이에요.'},
