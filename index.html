@@ -1447,6 +1447,55 @@ button.bk-mine b{color:var(--text)} button.bk-mine b.up{color:var(--up)} button.
 .tm-past.old{opacity:.45}
 .tm-past.pk{stroke:var(--green);opacity:1}.tm-past.pk.old{opacity:.6}
 .tm-leg i.pst{display:inline-block;width:7px;height:7px;border-radius:50%;border:1.5px solid var(--green);background:var(--card);margin:0 4px 0 -2px;vertical-align:0}
+
+/* fix17 뉴스 연결 */
+.nw-card .rd-hs{font-size:12px;color:var(--text3)}
+.nw-g{font-size:12px;font-weight:700;color:var(--text3);margin:4px 0 2px}
+.nw-b{padding:10px 0;border-bottom:1px solid var(--border)}
+.nw-th{display:flex;align-items:center;gap:8px;font-size:14.5px}
+.nw-th span{font-size:12px}
+.nw-pk{font-size:10.5px;color:#fff;background:var(--green);padding:1px 6px;border-radius:5px}
+.nw-desc{font-size:12px;color:var(--text3);margin:2px 0 4px}
+.nw-a{display:block;text-decoration:none;color:var(--text);padding:6px 8px;margin:4px 0;background:var(--card2);border-radius:8px}
+.nw-t{display:block;font-size:13.5px;line-height:1.45}
+.nw-m{display:block;font-size:11px;color:var(--text3);margin-top:2px}
+.nw-st{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12.5px;margin-top:6px}
+.nw-st>span{font-size:11.5px;color:var(--text3)}
+.nw-st em{font-style:normal;background:var(--green-light);padding:2px 7px;border-radius:6px}
+.nw-st em small{color:var(--text3)}
+.nw-st.none,.nw-none{font-size:12px;color:var(--text3);margin-top:4px}
+.nw-more summary{font-size:13px;font-weight:600;padding:10px 0;cursor:pointer;color:var(--text2)}
+.nw-stb{display:block;margin:10px 0 4px}
+.nw-warn{font-size:11.5px;color:var(--text3);line-height:1.55;margin-top:8px}
+
+/* fix18 대시보드 */
+.ds{border:1.5px solid var(--border-hover)}
+.ds-top{display:flex;justify-content:space-between;align-items:center}
+.ds-lab{font-size:12.5px;font-weight:700;color:var(--text3)}.ds-asof{font-size:11.5px;color:var(--text3)}
+.ds-word{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:6px 0 4px;line-height:1.15}
+.ds-go .ds-word{color:var(--green)}.ds-warn .ds-word{color:var(--red)}.ds-stop .ds-word{color:var(--red)}
+.ds-stop{border-color:var(--red)}.ds-go{border-color:var(--green)}
+.ds-text{font-size:14.5px;line-height:1.55;color:var(--text);margin-bottom:10px}
+.ds-cks{display:flex;flex-direction:column;gap:2px;margin-top:10px;border-top:1px solid var(--border);padding-top:6px}
+.ds-ck{display:flex;align-items:center;gap:10px;width:100%;font:inherit;text-align:left;background:none;border:0;padding:7px 0;color:var(--text)}
+.ds-ck i{flex:0 0 22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:800;color:#fff;background:var(--text3)}
+.ds-ck.ok i{background:var(--green)}.ds-ck.no i{background:var(--red)}
+.ds-ck span{flex:1;font-size:12px;color:var(--text3);line-height:1.35}
+.ds-ck span b{display:block;font-size:13.5px;color:var(--text);font-weight:600}
+.ds-ck em{font-style:normal;font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap}
+.ds-ck.ok em{color:var(--green)}.ds-ck.no em{color:var(--red)}
+.ds .bk-btns{flex-wrap:wrap}.ds .bk-btns .bk-btn{flex:1 1 44%}
+.ds-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+.ds-t{font:inherit;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 12px 11px;color:var(--text);display:flex;flex-direction:column;gap:3px;min-height:104px}
+.ds-t small{font-size:11.5px;font-weight:700;color:var(--text3)}
+.ds-t b{font-size:17px;font-weight:800;letter-spacing:-.01em;line-height:1.25}
+.ds-t b em{font-style:normal;font-size:13px;color:var(--text3);font-weight:600}
+.ds-t span{font-size:11.5px;color:var(--text2);line-height:1.4}.ds-t span em{font-style:normal}
+.ds-st{font-style:normal;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:6px;background:var(--card2);color:var(--text2);vertical-align:2px;margin-left:2px}
+.ds-st.pass{background:var(--green-light);color:var(--green)}.ds-st.fail{background:var(--red-light);color:var(--red)}
+.ds-bar{height:5px;border-radius:3px;background:var(--bg2);margin-top:auto;overflow:hidden}
+.ds-bar i{display:block;height:100%;background:var(--green);border-radius:3px}
+.ds-bar.low i{background:var(--yellow)}.ds-bar.stop i{background:var(--red)}
 </style>
 </head>
 <body>
@@ -4182,7 +4231,7 @@ function ingestScan(js,source){
   if(js.themes)jset('sv4_theme_flow',js.themes);
   if(js.pullbacks)jset('sv4_pullbacks',Object.assign({date:js.baseDate},js.pullbacks));
   if(js.names)jset('sv4_names',Object.assign(jget('sv4_names',{}),js.names));
-  jset('sv4_reviews',js.reviews||[]);jset('sv4_us',js.us||[]);jset('sv4_dart',js.dart||null);
+  jset('sv4_reviews',js.reviews||[]);jset('sv4_us',js.us||[]);jset('sv4_dart',js.dart||null);jset('sv4_news',js.news||null);
   jset(META_KEY,{baseDate:js.baseDate,generatedAt:js.generatedAt,intraday:!!js.intraday,total:js.hits.length,inRange:hits.length,loadedAt:new Date().toISOString(),source});
   saveScans();return {added,total:js.hits.length,inRange:hits.length};
 }
@@ -4378,6 +4427,7 @@ window.vsAskPicks=async function(){
   const dj=jget('sv4_dart',null),dl=[];
   if(dj&&dj.items)themes.forEach(x=>x.top.concat(x.lag||[]).forEach(m=>(dj.items[m.code]||[]).slice(0,2).forEach(z=>{const l='- '+stockName(m.code)+': '+z.d+' '+z.t;if(!dl.includes(l))dl.push(l);})));
   if(dl.length)t+='\n[트래커가 OpenDART에서 찾은 최근 공시 · 제목만]\n'+dl.slice(0,12).join('\n')+'\n';
+  if(window.rdNewsPrompt)t+=rdNewsPrompt(themes.map(x=>x.theme));
   t+='\n[요청] 주식 용어를 잘 모르는 사람도 바로 따라 할 수 있게, 쉬운 말로 답해줘.\n'
     +'1) 맨 위에 한 줄: 오늘 3개 테마 중 가장 나은 1개와 그 안의 1종목, 이유 한 문장\n'
     +'2) 그다음 테마별로 1종목씩, 아래 4줄 형식만:\n'
@@ -4551,6 +4601,9 @@ function btSummary(){
   if(!dl)
   if(ad){alert=alert||ad.excess<=0||(ad.split&&ad.split.after!=null&&ad.split.after<=0);
     L.push({c:alert?'neg':'pos',t:'📌 <b>테마 지수 기준</b>(강한 테마 3개 + 시장 필터, 10일 보유): 회당 '+pct(ad.avg,2)+', 아무 테마보다 '+pct(ad.excess,2)+'p'+(ad.split?', 최근 기간 '+pct(ad.split.after,2):'')+' → '+(alert?'<b>약해졌어요. 비중을 줄이고 다음 결과까지 지켜보세요</b>':'유지')});}
+  L.push({c:'neg',t:'🎯 <b>오르기 전 진입·목표가 매도 검증</b>(11/13, 2023.10~2026.11): 막 주도 칸에 들어온 테마 사기 연 -12% · 부상 칸 사기 연 -20% (지금 방식 +15%) · 목표 +10%/손절 -7% 매도 연 -10% (10일 보유 +15%) → 이 전략에선 둘 다 나빠졌어요. <button class="bk-link" onclick="rdGuide(\'verify\')">자세히</button>'});
+  L.push({c:'neg',t:'📏 <b>기준선(지수) 비교</b>(11/14, 2023.10~2026.11): 이 규칙 연 +15%·최대 낙폭 -33% / 코스피 시가총액 비중 보유 연 +29% 안팎·낙폭 -45% 안팎 / 코스피 종목 똑같이 나눠 사기 연 +6% → 평균 종목보다는 낫지만 지수보다 낫다는 근거는 없어요. 실전 제안 20개로 다시 판정해요. <button class="bk-link" onclick="rdGuide(\'verdict\')">판정 기준</button>'});
+  L.push({c:'neg',t:'⚠️ <b>최근 성적</b>: 9월~11월 제안은 종목 평균 -8% 안팎으로 손해였고, 테마 구성 갱신만으로 같은 기간 성적이 연 +28% → +19%로 바뀌었어요. 검증 숫자가 흔들리는 중이에요.'});
   if(!dl)L.push({c:'dim',t:'🌓 <b>후발 3 검증</b>(10/24 계산, 같은 3테마·거래대금 상위 10 중 20일 덜 오른 3종목): 연 +40% · 최대 낙폭 -23% · 약세장 구간도 연 +26% (현행 5종목 연 +28%·낙폭 -38%) → 테마 구성이 현재 기준이라 후발에 유리하게 나왔을 수 있어 실전 그림자 비교로 확인 중'});
   if(!dl)L.push({c:'dim',t:'🧪 <b>실전형 시뮬레이션</b>(KRX 전 종목·상장폐지 포함·다음날 시가 매수, 10/15 계산): 매일 제안·동시 2묶음 연 +25~28% · 최대 낙폭 -38~-41% · 2023.10~2025.3 약세장 연 -8% · 아무 테마 3개는 연 +9% → 테마 지수 숫자(-16%)보다 실제 흔들림이 훨씬 커요'});
   const real=ss.find(x=>x.strategy==='실제 매수형: 시장 필터 + 테마별 거래대금 상위 5종목'&&x.hold===10),realS=ss.find(x=>x.strategy==='실제 매수형 + 종목별 -15% 비상 손절'&&x.hold===10);
@@ -4887,8 +4940,9 @@ function renderToday(){
   const upd=window._rdPriceAt?'<div class="rd-note">현재가 자동 갱신 '+window._rdPriceAt+'</div>':'<div class="rd-note">묶음 종목은 저녁 스캔 종가로 갱신돼요</div>';
   const deny=window._syncDenied?'<div class="rd-warn">클라우드 저장이 막혀 있어요(Firestore 규칙 만료). 지금은 이 기기에만 저장돼요 — 메뉴 › 백업 내보내기를 먼저 해 두세요.</div>':'';
   box.innerHTML='<div class="rd-head"><div class="rd-date">'+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+wd+')</div><div class="rd-phase"><i class="'+(ph==='정규장'?'live':'')+'"></i>'+ph+'</div></div>'
-    +deny+(window.rdBasketCard?rdBasketCard():'')
+    +deny+(window.rdDashboard?rdDashboard():'')+(window.rdBasketCard?rdBasketCard():'')
     +(window.rdThemeMapCard?rdThemeMapCard():'')
+    +(window.rdNewsCard?rdNewsCard():'')
     +'<section class="rd-card"><div class="rd-h"><h2>챙길 일</h2></div><ul class="rd-todo">'+todo+'</ul></section>'
     +'<section class="rd-card"><div class="rd-h"><h2>보유 종목</h2><span class="rd-hb">'+(active.length&&window.rdWeights?'<button onclick="rdWeights()">비중</button>':'')+'<button onclick="switchTab(\'stocks\')">전체</button></span></div><ul class="rd-pos">'+pos+'</ul>'+upd+'</section>'
     +(window.rdReviewCard?rdReviewCard():'');
@@ -5049,7 +5103,7 @@ function nameOf(code){const n=jget('sv4_names',{});if(n[code])return n[code];con
 const APP_KEY='sv4_app';
 function app(){
   const a=jget(APP_KEY,{})||{};
-  a.prefs=Object.assign({acct:0,pct:50,stop:15,maxB:2,topn:5},a.prefs);
+  a.prefs=Object.assign({acct:0,pct:50,stop:15,maxB:2,topn:5,halt:10,testPct:25},a.prefs);
   if(!a.prefs.comp)a.prefs.comp=a.prefs.topn===3?'liq3':'liq5';
   a.comp=Object.assign({},a.comp);
   a.dec=Object.assign({},a.dec);
@@ -5164,9 +5218,7 @@ window.rdBasketCard=function(){
     +rdStateLegend+'</details>':'';
   return '<section class="rd-card bk">'
     +'<div class="bk-top">'+mk+'<span class="bk-asof">'+md(asOf)+' 종가 기준'+(window.rdGQ?rdGQ('basket'):'')+'</span></div>'
-    +(meta.intraday?'<div class="bk-warn">장중에 돌린 스캔이라 오늘 봉은 빼고 계산했어요</div>':'')
     +main
-    +'<div class="bk-act'+(s.urgent?' urgent':'')+'"><span class="bk-act-l">오늘 할 일</span><span class="bk-act-t">'+esc(s.text)+'</span></div>'+btn
     +list+mineH+scorecard(s)
     +'<div class="bk-what">매일 저녁 강한 테마 3개의 대표 종목을 묶음으로 제안해요. 사면 산 날부터 10거래일 들고 있다가 함께 팔아요. <button class="bk-link" onclick="rdWhy()">왜 이렇게 하나요?</button></div>'
     +'<button class="bk-more" onclick="switchTab(\'signal\')">테마 순위·검증 자세히 ›</button></section>';
@@ -5206,14 +5258,16 @@ window.rdBasketSheet=function(){
   const a=app(),list=basketStocks(s).filter(x=>x.px),hm=heldMap(),acct=a.prefs.acct||0;
   if(!list.length){toast('살 종목 목록이 없어요');return;}
   const tc=recs().filter(isAct).reduce((x,r)=>x+(r.entry||0)*(r.qty||0),0),cash=acct?Math.max(acct-tc,0):0;
-  const freeN=Math.max(s.free,1),defAmt=acct?Math.round(Math.min(cash,acct/(s.maxB||2))):0;
+  const freeN=Math.max(s.free,1),vd=verdict(s.pk),tp=vd.st==='pass'?1:Math.max(0,Math.min(100,a.prefs.testPct==null?25:a.prefs.testPct))/100,defAmt=acct?Math.round(Math.min(cash,acct/(s.maxB||2))*tp):0;window._bkTp=tp;
   window._bkList=list;window._bkDate=s.asOf;
   const ck=COMP[a.prefs.comp]?a.prefs.comp:'liq5',on=x=>compOn(x,ck)&&!x.risk;window._bkComp=ck;
   sheet('bk-buy','<div class="grab"></div><h3>묶음 수량 계산 · '+md(s.asOf)+' 제안'+(window.rdGQ?rdGQ('buy'):'')+'</h3>'
     +'<div class="bk-form"><label><span>운영 자금</span><input id="bk-acct" inputmode="numeric" value="'+(acct||'')+'" placeholder="예: 4000000" oninput="rdBkAmt()"></label>'
     +'<label><span>이번 묶음 금액</span><input id="bk-amt" inputmode="numeric" value="'+(defAmt||'')+'" oninput="rdBkCalc()"></label>'
     +'<label><span>'+rdTmify('비상 손절')+' %</span><input id="bk-stop" inputmode="decimal" value="'+a.prefs.stop+'" oninput="rdBkCalc()"></label></div>'
-    +'<div class="bk-hint">기본 금액 = 운영 자금 ÷ 동시 묶음 수('+(s.maxB||2)+')'+(acct?' · 현금(추정) '+won(cash):'')+'. 일부만 사려면 종목 체크를 빼거나 금액을 줄이세요.</div>'
+    +'<div class="bk-hint">기본 금액 = 운영 자금 ÷ 동시 묶음 수('+(s.maxB||2)+')'+(tp<1?' × '+Math.round(tp*100)+'%(검증 전)':'')+(acct?' · 현금(추정) '+won(cash):'')+'. 일부만 사려면 종목 체크를 빼거나 금액을 줄이세요.</div>'
+    +(tp<1?'<div class="bk-hint warn">아직 검증 전이에요(끝난 제안 '+vd.n+'/'+VER_N+'). 이 규칙이 지수 ETF보다 낫다는 실전 근거가 없어서 기본 금액을 줄여 뒀어요. 비율은 설정에서 바꿀 수 있어요.</div>':'')
+    +(ledger().halted?'<div class="bk-hint warn">멈춤선에 닿은 상태예요. 재검토 전에는 새로 사지 않는 것이 규칙이에요.</div>':'')
     +'<div class="bk-tn"><span>구성</span>'+Object.keys(COMP).map(k=>'<button data-k="'+k+'" class="'+(ck===k?'on':'')+'" onclick="rdBkComp(\''+k+'\')">'+COMP[k][0]+'</button>').join('')
     +'<small>3년 시뮬레이션(동시 2묶음): 현행 5 연 +28%·최대 낙폭 -38% · 현행 3 낙폭 -50% · 후발 3 연 +40%·낙폭 -23%. 후발은 아직 실전 검증 전이라 그림자 묶음으로 비교 중이에요.</small></div>'
     +(list.some(x=>x.risk)?'<div class="bk-hint warn">⚠ 최근 위험 공시(유상증자·전환사채 등)가 있는 종목은 체크를 빼 두었어요. 원문을 보고 직접 정하세요.</div>':'')
@@ -5225,7 +5279,7 @@ window.rdBasketSheet=function(){
   rdBkCalc();
 };
 window.rdBkAmt=function(){const s=bstate(),acct=parseFloat(($('bk-acct')||{}).value)||0,tc=recs().filter(isAct).reduce((x,r)=>x+(r.entry||0)*(r.qty||0),0);
-  const e=$('bk-amt');if(e&&acct)e.value=Math.round(Math.min(Math.max(acct-tc,0),acct/((s&&s.maxB)||2)));rdBkCalc();};
+  const e=$('bk-amt');if(e&&acct)e.value=Math.round(Math.min(Math.max(acct-tc,0),acct/((s&&s.maxB)||2))*(window._bkTp==null?1:window._bkTp));rdBkCalc();};
 window.rdBkComp=function(k){const a=app();a.prefs.comp=k;if(k!=='lag')a.prefs.topn=k==='liq3'?3:5;saveApp(a,false);window._bkComp=k;
   (window._bkList||[]).forEach((x,i)=>{const c=$('bk-c'+i);if(c)c.checked=compOn(x,k)&&!x.risk;});
   document.querySelectorAll('.bk-tn button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));rdBkCalc();};
@@ -5445,7 +5499,10 @@ window.rdSettings=function(){
     +(window._syncDenied?'<div class="bk-warn">클라우드 저장이 막혀 있어요(Firestore 규칙). 지금은 이 기기에만 저장돼요.</div>':'')
     +'<div class="bk-form"><label>운영 자금<input id="st-acct" inputmode="numeric" value="'+(a.prefs.acct||'')+'" placeholder="예: 4000000"></label>'
     +'<label>동시 묶음 수<select id="st-maxb" class="bk-sel">'+[1,2,3].map(n=>'<option value="'+n+'"'+((a.prefs.maxB||2)===n?' selected':'')+'>'+n+'개</option>').join('')+'</select></label>'
-    +'<label>비상 손절 %<input id="st-stop" inputmode="decimal" value="'+a.prefs.stop+'"></label></div>'
+    +'<label>비상 손절 %<input id="st-stop" inputmode="decimal" value="'+a.prefs.stop+'"></label>'
+    +'<label>멈춤선 % <input id="st-halt" inputmode="decimal" value="'+(a.prefs.halt==null?10:a.prefs.halt)+'"></label>'
+    +'<label>검증 전 금액 %<input id="st-test" inputmode="numeric" value="'+(a.prefs.testPct==null?25:a.prefs.testPct)+'"></label></div>'
+    +'<div class="bk-hint">멈춤선 = 묶음 거래 누적 손익이 운영 자금의 -N%에 닿으면 새로 사지 않고 재검토(0이면 끔). 검증 전 금액 = 끝난 제안 20개가 지수보다 낫다고 확인되기 전까지 묶음 기본 금액에 곱하는 비율.</div>'
     +'<div class="bk-hint">운영 자금 = 주식에 쓰는 돈 전체(예: 300~500만 원). 팔아서 생긴 손익은 자동으로 더하고 빼요. 묶음 하나에 운영 자금 ÷ 동시 묶음 수만큼 써요.</div>'
     +'<div class="bk-note">시뮬레이션(400만 원, 테마별 5종목): 동시 1개 연 +30% · 낙폭 -36% / 동시 2개 연 +25% · 낙폭 -41% / 동시 3개 이상은 성적이 나빠졌어요. 매일 판단하시려면 2개를 권해요.</div>'
     +'<div class="set-gt">텔레그램 알림</div>'
@@ -5461,10 +5518,89 @@ window.rdSettings=function(){
 };
 window.rdShared=function(){const a=app();a.usage.shared=today();saveApp(a);toast('기록했어요. 1주 뒤에 피드백 알림이 떠요');rdSettings();};
 window.rdSettingsSave=function(){
-  const a=app();a.prefs.acct=parseFloat($('st-acct').value)||0;a.prefs.stop=parseFloat($('st-stop').value)||0;a.prefs.maxB=parseInt($('st-maxb').value)||2;
+  const a=app();a.prefs.acct=parseFloat($('st-acct').value)||0;a.prefs.stop=parseFloat($('st-stop').value)||0;a.prefs.maxB=parseInt($('st-maxb').value)||2;{const h=parseFloat($('st-halt').value),t=parseFloat($('st-test').value);a.prefs.halt=isNaN(h)?10:Math.max(0,h);a.prefs.testPct=isNaN(t)?25:Math.max(0,Math.min(100,t));}
   a.notify.chatId=($('st-chat').value||'').replace(/[^0-9-]/g,'');a.notify.on=$('st-on').checked;
   const c=jget('sv4_scan_cfg',{})||{};c.worker=($('st-worker').value||'').trim().replace(/\/+$/,'');jset('sv4_scan_cfg',c);
   saveApp(a);rdCloseBk('bk-set');toast(window._syncDenied?'이 기기에 저장했어요 (클라우드는 규칙을 고친 뒤 반영)':'저장했어요');
+};
+
+
+/* ══════════════════════════════════════════════════════
+   대시보드 (fix18): 오늘의 결정 한 줄 + 숫자 타일 4개
+   · 결정 = 규칙 기준 결론 + 확인 4가지(시장 필터 · 묶음 자리 · 멈춤선 · 검증 단계)
+   · 멈춤선 = 묶음 거래 누적 손익이 운영 자금의 -N%에 닿으면 새로 사지 않고 재검토
+   · 검증 = 끝난 제안 20개를 같은 기간 지수 ETF(KODEX 200)와 비교
+   ══════════════════════════════════════════════════════ */
+const VER_N=20;
+function ledger(){
+  const a=app(),from=a.prefs.haltFrom||'';let real=0,unr=0,realAll=0,unrAll=0,inv=0,val=0,n=0;
+  recs().forEach(r=>{if(!r.basket)return;const act=isAct(r),rp=act?(r.pnlPart||0):(r.pnl||0),sc=!from||(r.date||'')>=from;
+    realAll+=rp;if(sc)real+=rp;n++;
+    if(act){const c=(r.entry||0)*(r.qty||0),v=(r.current||r.entry||0)*(r.qty||0);inv+=c;val+=v;unrAll+=v-c;if(sc)unr+=v-c;}});
+  const acct=a.prefs.acct||0,base=Math.max(acct-real,0),halt=a.prefs.halt||0,pl=real+unr;
+  const plPct=base?pl/base*100:null,halted=!!(halt&&base&&plPct<=-halt);
+  return {acct,inv,val,real,unr,realAll,unrAll,total:realAll+unrAll,base,halt,pl,plPct,halted,n,from};
+}
+function verdict(pk){
+  const v=(pk&&pk.summary&&pk.summary.vsIdx)||null,n=v?v.n:0;
+  let st='test',say='검증 중';
+  if(n>=VER_N){if(v.cur>v.idx&&v.beat>=50){st='pass';say='기준 통과';}else{st='fail';say='기준 미달';}}
+  return {v,n,st,say};
+}
+window.rdVerdict=()=>{const tf=jget('sv4_theme_flow',null);return verdict(tf&&tf.picks);};
+window.rdLedger=ledger;
+window.rdHaltReset=function(){const a=app();a.prefs.haltFrom=today();saveApp(a);toast('멈춤을 풀었어요. 오늘부터 손익을 다시 세요');if(typeof renderAll==='function')renderAll();else if(window.renderToday)renderToday();};
+function decide(){
+  const s=bstate();if(!s)return null;
+  const L=ledger(),V=verdict(s.pk),pk=s.pk,a=app();
+  const risk=s.prop?[...new Set((pk.today||[]).flatMap(x=>x.top.map(m=>m.code)))].filter(c=>window.rdDartRisk&&rdDartRisk(c)).length:0;
+  let word,tone='calm',text=s.text,btns=s.btns.slice();
+  if(s.kind==='clear'){word='정리하기';tone='warn';}
+  else if(s.kind==='soon'){word='내일 정리';tone='warn';}
+  else if(L.halted&&(s.kind==='prop'||s.kind==='full'||s.kind==='hold'||s.kind==='rest'||s.kind==='done')){word='멈춤';tone='stop';
+    text='묶음 거래 누적 손익이 멈춤선(-'+L.halt+'%)에 닿았어요. 새로 사지 않고, 무엇이 달랐는지 복기한 뒤 다시 정해요.'+(s.live.length?' 가진 묶음은 정리일까지 규칙대로.':'');
+    btns=[{label:'복기 탭 열기',fn:"switchTab('review')"},{label:'재검토했어요 · 멈춤 풀기',fn:'rdHaltReset()',quiet:true}];
+    if(s.prop&&!s.dec)btns.push({label:'오늘 제안 패스로 기록',fn:'rdPass()',quiet:true});}
+  else if(s.kind==='prop'){word='살지 결정';tone='go';
+    text='규칙으로는 살 차례예요. 다음 거래일에 살지 오늘 정해 주세요.'+(V.st!=='pass'?' 검증 전이라 기본 금액은 평소의 '+(a.prefs.testPct||25)+'%로 잡아 둬요.':'');}
+  else if(s.kind==='full'){word='유지';}
+  else if(s.kind==='done'){word=s.dec==='pass'?'패스함':'기록 완료';}
+  else if(s.kind==='rest'){word='쉬기';text='시장 필터를 통과하지 못해 오늘은 새로 살 것이 없어요.'+(s.live.length?' 가진 묶음은 정리일까지 그대로 두세요.':' 할 일 없음.');}
+  else{word='유지';text='할 일 없어요. 내일 저녁 새 제안을 봐요.';}
+  const ck=[];
+  ck.push({ok:!pk.rest,t:'시장 필터',v:'60일 '+pct(pk.mkt60,1)+' · 20일 '+pct(pk.mkt20,1),say:pk.rest?'쉬는 구간':'통과',g:'basket'});
+  ck.push({ok:s.free>0,t:'묶음 자리',v:s.live.length+'/'+s.maxB+' 사용',say:s.free>0?'자리 있음':'가득',g:'mine',neutral:s.free<=0});
+  ck.push({ok:!L.halted,t:'멈춤선',v:L.halt?(L.plPct==null?'운영 자금 미입력':'누적 '+pct(L.plPct,1)+' / 멈춤 -'+L.halt+'%'):'꺼짐',say:L.halted?'도달':L.halt?'여유':'꺼짐',g:'halt',neutral:!L.halt||L.plPct==null});
+  ck.push({ok:V.st==='pass',t:'검증 단계',v:'끝난 제안 '+V.n+'/'+VER_N+(V.v?' · 제안 '+pct(V.v.cur,1)+' vs 지수 '+pct(V.v.idx,1):''),say:V.say,g:'verdict',neutral:V.st==='test'});
+  if(risk)ck.push({ok:false,t:'위험 공시',v:'제안 종목 중 '+risk+'개',say:'원문 확인',g:'dart'});
+  return {s,L,V,word,tone,text,btns,ck};
+}
+window.rdDecide=decide;
+window.rdDashboard=function(){
+  const d=decide();
+  if(!d)return '<section class="rd-card ds"><div class="ds-lab">오늘의 결정</div><div class="ds-word">불러오는 중</div><div class="ds-text">저녁 스캔 결과를 불러오는 중이에요. 계속 비어 있으면 신호 탭 › 관찰 › ⚙에서 스캔 결과 주소를 확인하세요.</div></section>';
+  const {s,L,V}=d,pk=s.pk,tf=s.tf,bn=tf.bench,meta=jget('sv4_scan_meta',{})||{};
+  const cks=d.ck.map(c=>'<button class="ds-ck '+(c.neutral?'nt':c.ok?'ok':'no')+'" onclick="rdGuide(\''+c.g+'\')"><i>'+(c.neutral?'·':c.ok?'✓':'✕')+'</i><span><b>'+c.t+'</b>'+esc(c.v)+'</span><em>'+c.say+'</em></button>').join('');
+  const btn=d.btns.length?'<div class="bk-btns">'+d.btns.map(b=>'<button class="bk-btn'+(b.quiet?' quiet':'')+'" onclick="'+b.fn+'">'+b.label+'</button>').join('')+'</div>':'';
+  const card='<section class="rd-card ds ds-'+d.tone+'"><div class="ds-top"><span class="ds-lab">오늘의 결정'+(window.rdGQ?rdGQ('dash'):'')+'</span><span class="ds-asof">'+md(s.asOf)+' 종가 기준</span></div>'
+    +(meta.intraday?'<div class="bk-warn">장중에 돌린 스캔이라 오늘 봉은 빼고 계산했어요</div>':'')
+    +'<div class="ds-word">'+d.word+'</div><div class="ds-text">'+esc(d.text)+'</div>'+btn
+    +'<div class="ds-cks">'+cks+'</div></section>';
+  // 숫자 타일
+  const cash=L.acct?Math.max(L.acct-L.inv,0):0,use=L.acct?Math.round(L.inv/L.acct*100):null;
+  const room=L.halt&&L.plPct!=null?Math.max(0,Math.min(100,(1+L.plPct/L.halt)*100)):null;
+  const t1='<button class="ds-t" onclick="rdWeights()"><small>내 돈</small><b>'+(L.inv?won(L.val):'투자 없음')+'</b><span>'+(L.acct?'운영 자금 '+won(L.acct)+(use!=null?' · 투자 '+use+'%':''):'설정에서 운영 자금 입력')+'</span>'
+    +(L.inv?'<span class="'+(L.unrAll>=0?'up':'down')+'">평가손익 '+(L.unrAll>=0?'+':'')+Math.round(L.unrAll).toLocaleString()+'원</span>':'')+'</button>';
+  const t2='<button class="ds-t" onclick="rdGuide(\'halt\')"><small>누적 손익 · 멈춤선</small><b class="'+(L.total>0?'up':L.total<0?'down':'')+'">'+(L.n?(L.total>=0?'+':'')+Math.round(L.total).toLocaleString()+'원':'기록 없음')+'</b>'
+    +'<span>'+(L.halt?(L.plPct==null?'멈춤 -'+L.halt+'%':'지금 '+pct(L.plPct,1)+' · 멈춤 -'+L.halt+'%'):'멈춤선 꺼짐')+'</span>'
+    +(room!=null?'<div class="ds-bar'+(L.halted?' stop':room<34?' low':'')+'"><i style="width:'+room+'%"></i></div>':'')+'</button>';
+  const v=V.v,t3='<button class="ds-t" onclick="rdGuide(\'verdict\')"><small>검증 · 지수 대비</small><b>'+V.n+'<em>/'+VER_N+'</em> <i class="ds-st '+V.st+'">'+V.say+'</i></b>'
+    +'<span>'+(v?'제안 '+pct(v.cur,1)+' · 지수 '+pct(v.idx,1):'끝난 제안이 쌓이면 비교해요')+'</span>'+(v?'<span>지수를 이긴 비율 '+v.beat+'%</span>':'')
+    +'<div class="ds-bar"><i style="width:'+Math.min(100,V.n/VER_N*100)+'%"></i></div></button>';
+  const t4='<button class="ds-t" onclick="'+(window.rdThemeMapFull?'rdThemeMapFull()':'')+'"><small>시장</small><b class="'+(pk.rest?'':'up')+'">'+(pk.rest?'쉬는 구간':'공격 구간')+'</b>'
+    +'<span>테마 평균 60일 '+pct(pk.mkt60,1)+' · 20일 '+pct(pk.mkt20,1)+'</span>'
+    +(bn?'<span>'+esc(bn.name)+' 20일 <em class="'+(bn.ret20>=0?'up':'down')+'">'+pct(bn.ret20,1)+'</em> · 60일 <em class="'+(bn.ret60>=0?'up':'down')+'">'+pct(bn.ret60,1)+'</em></span>':'')+'</button>';
+  return card+'<div class="ds-grid">'+t1+t2+t3+t4+'</div>';
 };
 
 window.rdSyncBasketPrices=syncBasketPrices;
@@ -5823,6 +5959,7 @@ window.rdThemeSheet=function(k){
     +'<div class="ts-stat">3년 검증: 이 칸 테마를 다음날 사서 10거래일 들고 있었을 때 평균 '+q.stat+'. '+q.tip+'</div>'
     +(tx?'<div class="set-gt">오늘 제안 종목 · 거래대금 상위 5</div>'+tx.top.map(sl).join('')
       +(tx.lag&&tx.lag.length?'<div class="set-gt">그림자 묶음 · 후발 3 <small>거래대금 상위 10 중 20일 덜 오른 3</small></div>'+tx.lag.map(sl).join(''):''):'')
+    +(window.rdNewsForTheme?rdNewsForTheme(i.theme):'')
     +'<div class="bk-note"><button class="bk-link" onclick="rdGuide(\'map\')">지도 읽는 법</button> · <button class="bk-link" onclick="rdGuide(\'role\')">대장·후발이란</button><br>대장·후발은 같은 테마 안 거래대금 상위 10종목을 20일 수익률로 나눈 것이에요. 칸 이름과 숫자는 규칙으로 계산한 설명이지 예측이 아니에요.</div>'
     +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-th\')">닫기</button></div>');
 };
@@ -5836,6 +5973,15 @@ window.rdThemeSheet=function(k){
 (function(){
 const $=id=>document.getElementById(id);
 const G=[
+ {id:'dash',t:'대시보드 · 오늘의 결정',what:'오늘 화면 맨 위 카드가 규칙 기준 결론을 한 단어로 보여 줘요: 살지 결정 / 쉬기 / 유지 / 내일 정리 / 정리하기 / 멈춤. 그 아래 확인 4가지가 결론의 근거예요.',
+  how:['시장 필터: 테마 평균 60일·20일이 둘 다 플러스여야 제안이 나와요.','묶음 자리: 동시 묶음 수(기본 2) 안에 빈 자리가 있는지','멈춤선: 묶음 거래 누적 손익이 정한 선 아래로 내려갔는지','검증 단계: 끝난 제안 20개를 지수 ETF와 비교한 결과','확인 줄이나 아래 숫자 타일을 누르면 설명 또는 해당 화면이 열려요.','타일 4개: 내 돈(평가금액·투자 비중) · 누적 손익과 멈춤선까지 여유 · 검증 진행 · 시장(테마 평균과 KODEX 200)'],
+  warn:'결론은 "규칙대로라면"이에요. 규칙 자체가 지수보다 나은지는 아직 검증 중이라, 검증 단계가 통과로 바뀌기 전에는 소액으로만 다루는 걸 기본값으로 뒀어요.'},
+ {id:'verdict',t:'검증 단계 · 지수 대비',what:'"이 규칙을 따르는 것이 아무것도 안 하고 지수 ETF(KODEX 200)를 들고 있는 것보다 나은가"를 실전 기록으로 판정해요. 제안마다 같은 10거래일 동안의 KODEX 200 수익률을 함께 기록해요.',
+  how:['판정 기준(미리 정해 둠): 끝난 제안 20개 이상 + 제안 평균이 지수 평균보다 높음 + 지수를 이긴 비율 50% 이상 → 기준 통과','20개가 되기 전: 검증 중 · 20개가 됐는데 못 미치면: 기준 미달','검증 중·기준 미달일 때는 묶음 기본 금액이 설정의 "검증 전 금액 %"(기본 25%)로 줄어요.','사지 않고 패스해도 제안 기록은 쌓여요. 돈을 넣지 않고도 판정까지 갈 수 있어요.'],
+  warn:'3년 시뮬레이션에서 이 규칙은 연 +15%(최대 낙폭 -33%)였는데, 같은 기간 코스피를 시가총액 비중대로 들고 있었다면 연 +29% 안팎(낙폭 -45% 안팎), 종목을 똑같이 나눠 샀다면 연 +6%였어요. 평균 종목보다는 나았지만 지수보다 낫다는 근거는 아직 없어요. 기준 미달로 끝나면 "지수 ETF가 낫다"가 결론일 수 있어요.'},
+ {id:'halt',t:'멈춤선 · 누적 손익',what:'묶음으로 산 종목의 실현 손익과 평가 손익을 합쳐 운영 자금 대비 몇 %인지 보고, 정한 선(기본 -10%)에 닿으면 새로 사지 않게 알려 줘요.',
+  how:['누적 손익 타일의 막대가 멈춤선까지 남은 여유예요.','닿으면 오늘의 결정이 "멈춤"으로 바뀌고 [복기 탭 열기] [재검토했어요 · 멈춤 풀기]가 나와요.','멈춤을 풀면 그날부터 손익을 다시 세요.','설정에서 %를 바꾸거나 0으로 끌 수 있어요.'],
+  warn:'멈춤선은 가진 종목을 팔라는 뜻이 아니에요. 가진 묶음은 정리일까지 규칙대로 두고, 새로 사는 것만 멈춰요. 손실이 이어질 때 금액을 키워 만회하려는 걸 막는 장치예요.'},
  {id:'flow',t:'하루 흐름 한눈에',what:'트래커는 "매일 저녁 제안 → 내가 결정 → 다음 날 매수 → 10거래일 뒤 정리"를 돕는 도구예요. 주문 기능은 없어요. 매매는 증권 앱에서 직접 해요.',
   how:['평일 20:40 전 종목 스캔이 자동으로 돌아요. 텔레그램을 연결했다면 저녁 요약이 와요.','앱 오늘 화면에서 [묶음 사기 · 수량 계산] 또는 [패스]를 고르세요.','다음 거래일 증권 앱에서 기록한 수량대로 사요. 체결가가 다르면 종목 탭에서 진입가를 고쳐요.','10거래일째 되는 날 장 마감 전에 팔고, 앱에서 [정리 기록하기]를 눌러요. 전날 저녁과 당일 아침에 알림이 와요.'],
   warn:'하루에 할 일은 보통 1번(저녁 결정)뿐이에요. 장중에 계속 볼 필요는 없어요.'},
@@ -5888,6 +6034,12 @@ const G=[
  {id:'settings',t:'설정',what:'운영 자금, 동시 묶음 수, 텔레그램, 시세 서버 같은 기본값이에요. 계정에 저장돼 다른 기기에서도 같아요.',
   how:['운영 자금: 수량 계산과 비중(%)의 기준','동시 묶음 수: 기본 2. 3개 이상은 시뮬레이션상 성적이 나빴어요.'],
   warn:'증권사 키, 텔레그램 토큰, DART 키는 앱에 넣지 않아요. GitHub Secrets / Cloudflare Worker에만 넣어요.'},
+ {id:'news',t:'뉴스 연결',what:'저녁 스캔이 오늘 제안 테마와 5일 새 크게 움직인 테마의 이름으로 최근 3일 뉴스를 찾고, 기사 제목·요약에 나온 그 테마 소속 종목을 이어 줘요. "이 테마가 왜 움직였지?", "이 뉴스가 어떤 종목과 연결되지?"에 답하는 화면이에요.',
+  how:['오늘 화면 › 뉴스 연결 카드: 테마마다 기사 2개와 "기사에 나온 종목"(몇 건에 나왔는지)','기사 제목을 누르면 원문, 종목 이름을 누르면 시세 화면이 열려요.','테마 지도에서 테마를 누르면 그 테마 뉴스가 4개까지 나와요.','[제안 종목별 뉴스]: 제안 종목 이름이 직접 나온 기사만 3개씩','Claude에게 묻기를 누르면 이 뉴스 제목도 질문에 함께 담겨요.','뉴스 출처: 네이버 검색 API 키(무료)를 GitHub Secrets에 넣으면 네이버, 없으면 구글 뉴스'],
+  warn:'연결은 기사에 종목 이름이 나왔는지만 봐요. 좋은 소식인지 나쁜 소식인지, 실제 매출과 관련이 큰지는 기사를 읽고 판단해야 해요. 그리고 뉴스는 기사가 나올 때 이미 주가에 반영되기 시작하는 경우가 많아요.'},
+ {id:'verify',t:'"오르기 전에 사고 목표가에 팔기" 검증 (11/13)',what:'KRX 전 종목 2023.10~2026.11, 동시 2묶음, 다음 날 시가 매수·비용 반영으로 사는 시점과 파는 방식을 바꿔 비교했어요.',
+  how:['사는 시점 · 지금 방식(이미 20일 가장 강한 테마): 연 +15% · 최대 낙폭 -33%','· 막 주도 칸에 들어온 테마: 연 -12% · 순위가 막 오른 테마: 연 +10% · 부상 칸(60일 약세·20일 반등) 테마: 연 -20%','파는 방식 · 10거래일 보유: 연 +15%(현행 5) / +31%(후발 3)','· 목표 +10% · 손절 -7%: 연 -10% / -5% · 목표 +15% · 손절 -7%: 연 -2% / +3%','· 목표 +20% · 손절 -10% · 최대 30일: 연 -2% / +10%(최대 낙폭 -13%)','· 고점 대비 -10% 떨어지면 팔기: 연 -16% / -6%'],
+  warn:'"더 일찍 사기"와 "목표가에 팔기"는 이 전략에선 모두 성적이 나빠졌어요. 목표가에 팔면 크게 오르는 종목을 일찍 놓치고, 손절선은 하루 흔들림에 자주 걸렸어요. 또 테마 구성이 매주 바뀌면서 같은 기간 현행 성적이 +28% → +19%로 달라졌고, 9월 이후 두 달은 크게 손해였어요. 숫자를 확정된 성적으로 보지 마세요.'},
  {id:'review',t:'개선 알림 · 복기',what:'개선 알림은 때가 된 개선 과제(데이터가 충분히 쌓인 검증 등)만 오늘 화면에 띄워요. 복기 탭은 판단 기록과 실패 가정을 다시 보는 곳이에요.',
   how:['[로드에게 보낼 문장 복사] → 대화창에 붙여 넣으면 그 개선을 진행해요.','[2주 뒤에] 미루기 · [완료] 닫기'],
   warn:''}
@@ -5907,6 +6059,62 @@ window.rdGuide=function(id){
   if(id){const t=$('gd-'+id);if(t)setTimeout(()=>t.scrollIntoView({block:'start'}),60);}
 };
 window.rdGQ=id=>'<button class="gd-q" onclick="event.stopPropagation();rdGuide(\''+id+'\')" aria-label="도움말">?</button>';
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════
+   뉴스 → 테마 → 종목 연결 (fix17)
+   저녁 스캔이 테마 이름으로 최근 3일 뉴스를 찾고, 기사에 나온 소속 종목을 연결
+   ══════════════════════════════════════════════════════ */
+(function(){
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const jget=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const pct=(n,d=1)=>n==null||isNaN(n)?'—':(n>0?'+':'')+Number(n).toFixed(d)+'%';
+const shortT=t=>String(t||'').replace(/\s*\(.*\)\s*$/,'');
+const nm=c=>{const n=jget('sv4_names',{});if(n[c])return n[c];const l=typeof KRX_STOCKS!=='undefined'?KRX_STOCKS:[];const x=l.find(s=>s.code===c);return x?x.name:c;};
+const link=(c)=>typeof stLink==='function'?stLink(c,esc(nm(c))):esc(nm(c));
+const art=a=>'<a class="nw-a" href="'+esc(a.url)+'" target="_blank" rel="noopener"><span class="nw-t">'+esc(a.t)+'</span><span class="nw-m">'+esc(a.src||'')+(a.d?' · '+esc(a.d):'')+'</span></a>';
+function themeBlock(x,open){
+  const desc=window.rdThemeDesc?rdThemeDesc(x.theme):'';
+  const head='<div class="nw-th"><b>'+esc(shortT(x.theme))+'</b>'+(x.pick?'<span class="nw-pk">제안</span>':'')
+    +(x.ret5!=null?'<span class="'+(x.ret5>=0?'up':'down')+'">5일 '+pct(x.ret5,1)+'</span>':'')+'</div>'+(desc?'<div class="nw-desc">'+esc(desc)+'</div>':'');
+  const st=(x.stocks||[]).length?'<div class="nw-st"><span>기사에 나온 종목</span>'+x.stocks.map(([c,k])=>'<em>'+link(c)+(k>1?' <small>'+k+'건</small>':'')+'</em>').join('')+'</div>'
+    :'<div class="nw-st none">기사에 이 테마 종목 이름이 직접 나오지 않았어요</div>';
+  const items=(x.items||[]).length?(x.items||[]).slice(0,open?4:2).map(art).join(''):'<div class="nw-none">최근 3일 기사를 찾지 못했어요</div>';
+  return '<div class="nw-b">'+head+items+st+'</div>';
+}
+window.rdNewsForTheme=function(theme){
+  const N=jget('sv4_news',null);if(!N||!N.themes)return '';
+  const x=N.themes.find(t=>t.theme===theme);
+  if(!x)return '<div class="set-gt">최근 뉴스</div><div class="nw-none">이 테마는 오늘 뉴스 연결 대상(제안 테마 · 5일 새 크게 움직인 테마)이 아니었어요.</div>';
+  return '<div class="set-gt">최근 3일 뉴스 · 기사에 나온 종목</div>'+themeBlock(x,true);
+};
+window.rdNewsCard=function(){
+  const N=jget('sv4_news',null),q=window.rdGQ?rdGQ('news'):'';
+  if(!N)return '<section class="rd-card nw-card"><div class="rd-h"><h2>뉴스 연결'+q+'</h2></div><div class="bk-sub">다음 저녁 스캔 뒤에 나와요. 강한 테마의 최근 뉴스와 기사에 나온 종목을 이어서 보여 줘요.</div></section>';
+  const th=N.themes||[],pk=th.filter(x=>x.top||x.pick),ot=th.filter(x=>!(x.top||x.pick));
+  const stN=Object.keys(N.stocks||{}).length;
+  return '<section class="rd-card nw-card"><div class="rd-h"><h2>뉴스 연결'+q+'</h2><span class="rd-hs">'+esc(String(N.asOf||'').slice(5).replace('-','/'))+' · '+(N.src==='naver'?'네이버':'구글')+' 뉴스</span></div>'
+    +(N.error&&!th.some(x=>(x.items||[]).length)?'<div class="bk-warn">뉴스를 가져오지 못했어요: '+esc(N.error)+'</div>':'')
+    +(pk.length?'<div class="nw-g">'+(N.rest?'오늘 가장 강한 테마 · 쉬는 구간이라 참고용':'오늘 제안 테마')+'</div>'+pk.map(x=>themeBlock(x)).join(''):'')
+    +(ot.length?'<details class="nw-more"'+(pk.length?'':' open')+'><summary>5일 새 크게 움직인 테마 '+ot.length+'개</summary>'+ot.map(x=>themeBlock(x)).join('')+'</details>':'')
+    +(stN?'<button class="bk-link nw-stb" onclick="rdNewsStocks()">'+(N.rest?'강한 테마 종목별 뉴스 ':'제안 종목별 뉴스 ')+stN+'종목 ›</button>':'')
+    +'<div class="nw-warn">뉴스는 대개 기사가 나올 때 이미 주가에 반영되기 시작해요. "왜 움직였나"를 이해하는 용도로 보세요. 3년 검증에서 막 강해지기 시작한 테마를 먼저 사는 방식은 손해였어요.</div></section>';
+};
+window.rdNewsStocks=function(){
+  const N=jget('sv4_news',null)||{},S=N.stocks||{};
+  let el=document.getElementById('nw-sheet');if(!el){el=document.createElement('div');el.id='nw-sheet';el.className='bk-sheet';}document.body.appendChild(el);
+  el.innerHTML='<div class="bg" onclick="rdCloseBk(\'nw-sheet\')"></div><div class="pn" role="dialog"><div class="grab"></div><h3>제안 종목별 뉴스</h3><div class="bk-sub">최근 3일 · 종목 이름이 제목이나 요약에 나온 기사만</div>'
+    +Object.keys(S).map(c=>'<div class="nw-b"><div class="nw-th"><b>'+link(c)+'</b>'+(window.rdDartBadge?rdDartBadge(c):'')+'</div>'+S[c].map(art).join('')+'</div>').join('')
+    +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'nw-sheet\')">닫기</button></div></div>';
+  el.classList.add('open');
+};
+window.rdNewsPrompt=function(themes){
+  const N=jget('sv4_news',null);if(!N)return '';const L=[];
+  (N.themes||[]).filter(x=>themes.includes(x.theme)).forEach(x=>(x.items||[]).slice(0,2).forEach(a=>L.push('- ['+shortT(x.theme)+'] '+a.t+' ('+(a.src||'')+' '+(a.d||'')+')')));
+  Object.keys(N.stocks||{}).forEach(c=>(N.stocks[c]||[]).slice(0,1).forEach(a=>L.push('- ['+nm(c)+'] '+a.t+' ('+(a.src||'')+' '+(a.d||'')+')')));
+  return L.length?'\n[트래커가 찾은 최근 3일 뉴스 제목]\n'+L.slice(0,16).join('\n')+'\n':'';
+};
 })();
 </script>
 </body></html>
