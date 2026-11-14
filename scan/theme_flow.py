@@ -109,7 +109,7 @@ def snapshot(dates, idx, dret, at=None):
     return rows
 
 
-def daily_payload(rows_by_code, themes, top=40):
+def daily_payload(rows_by_code, themes, top=40, bench=None):
     """latest.json 에 넣을 테마 흐름 요약"""
     if not themes:
         return None
@@ -122,13 +122,13 @@ def daily_payload(rows_by_code, themes, top=40):
     items = [{"theme": x["theme"], "n": x["n"], "ret5": r(x["ret5"]), "ret20": r(x["ret20"]),
               "breadth5": round(x["breadth5"] * 100), "money": round(x["money"], 2),
               "rank": round(x["rank"] * 100), "rankPrev": round(x["rankPrev"] * 100), "phase": x["phase"]} for x in snap]
-    picks = update_picks(dates, idx, dret, snap, rows_by_code)
+    picks = update_picks(dates, idx, dret, snap, rows_by_code, bench)
     try:
         tmap_ = theme_map(dates, idx, [x["theme"] for x in (picks or {}).get("today") or []])
     except Exception as e:
         print(f"[테마 지도] 실패: {e}", flush=True)
         tmap_ = None
-    return {"date": dates[-1], "count": len(items), "picks": picks, "map": tmap_,
+    return {"date": dates[-1], "count": len(items), "picks": picks, "map": tmap_, "bench": bench_info(bench),
             "ranks": {x["theme"]: x["rank"] for x in items},
             "leaders": items[:top],
             "rising": sorted([x for x in items if x["phase"] == "떠오름"], key=lambda x: x["rank"] - x["rankPrev"])[:12],
@@ -206,7 +206,19 @@ def _mcum(rr, a, b):
     return x - 1
 
 
-def update_picks(dates, idx, dret, snap, rows_by_code=None):
+BENCH = ("069500", "KODEX 200")     # 기준선: 아무것도 안 하고 지수 ETF를 들고 있었을 때
+
+
+def bench_info(bench):
+    """기준선(지수 ETF) 최근 흐름. bench = 일봉 rows [{d,c}, ...]"""
+    if not bench or len(bench) < 61:
+        return None
+    c = [r["c"] for r in bench]
+    f = lambda k: round((c[-1] / c[-1 - k] - 1) * 100, 2)
+    return {"code": BENCH[0], "name": BENCH[1], "asOf": bench[-1]["d"], "close": c[-1], "ret5": f(5), "ret20": f(20), "ret60": f(60)}
+
+
+def update_picks(dates, idx, dret, snap, rows_by_code=None, bench=None):
     """매일 저녁 '오늘의 묶음 제안'(20일 상위 3테마 · 테마별 거래대금 상위 5종목)을 내고,
     제안마다 10거래일 실제 결과를 theme_picks.json 에 쌓는다 (사든 안 사든 기록 → 앱에서 '산 제안 vs 패스한 제안' 비교).
     시장 필터: 테마 평균 60일 수익률 > 0 그리고 20일 수익률 > 0 일 때만 제안 (KRX 전 종목 3년 시뮬레이션에서
@@ -226,6 +238,16 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
         v = cmap[c].get(d)
         return round(v) if v else None
     base_all = lambda a, b: sum(cum(idx[n]["ret"], a, b) for n in names) / len(names)
+    bmap = {r["d"]: r["c"] for r in (bench or [])}
+
+    def idx_ret(d0, d1):               # 같은 기간 지수 ETF 수익률(%) — 제안일 종가 → 평가일 종가
+        a, b = bmap.get(d0), bmap.get(d1)
+        return round((b / a - 1) * 100, 2) if a and b else None
+    for h in hist:                     # 예전에 끝난 제안에도 기준선을 한 번 채워 넣음
+        if h.get("status") == "closed" and h.get("idx") is None and h.get("closedAt"):
+            v = idx_ret(h["date"], h["closedAt"])
+            if v is not None:
+                h["idx"] = v
     # 열린 제안 평가 (제안일 종가 → 10거래일 뒤 종가)
     for h in hist:
         if h.get("status") == "closed" or h["date"] not in pos:
@@ -238,6 +260,9 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
             continue
         h["ret"] = round(sum(cum(idx[n]["ret"], i0, end) for n in th) / len(th) * 100, 2)
         h["base"] = round(base_all(i0, end) * 100, 2)
+        v = idx_ret(h["date"], dates[end])
+        if v is not None:
+            h["idx"] = v
         st_codes = [c for c in h.get("stocks", []) if c in dret]
         lg_codes = [c for c in h.get("lag", []) if c in dret]
         all_codes = list(dict.fromkeys(st_codes + lg_codes))
@@ -322,6 +347,16 @@ def update_picks(dates, idx, dret, snap, rows_by_code=None):
             summary["cmp"] = {"n": len(both), "cur": round(sum(h["stocksRet"] for h in both) / len(both), 2),
                               "lag": round(sum(h["lagRet"] for h in both) / len(both), 2),
                               "lagWin": round(sum(1 for h in both if h["lagRet"] > h["stocksRet"]) / len(both) * 100)}
+    wi = [h for h in closed if h.get("idx") is not None and h.get("stocksRet") is not None]
+    if wi:                             # 판정용: 끝난 제안을 같은 기간 지수 ETF와 비교
+        summary = summary or {}
+        summary["vsIdx"] = {"n": len(wi), "cur": round(sum(h["stocksRet"] for h in wi) / len(wi), 2),
+                            "idx": round(sum(h["idx"] for h in wi) / len(wi), 2),
+                            "beat": round(sum(1 for h in wi if h["stocksRet"] > h["idx"]) / len(wi) * 100)}
+        wl = [h for h in wi if h.get("lagRet") is not None]
+        if wl:
+            summary["vsIdx"].update({"lagN": len(wl), "lag": round(sum(h["lagRet"] for h in wl) / len(wl), 2),
+                                     "lagBeat": round(sum(1 for h in wl if h["lagRet"] > h["idx"]) / len(wl) * 100)})
     live = [h for h in hist if h.get("status") == "open" and h.get("days") and h.get("lagRet") is not None and h.get("stocksRet") is not None]
     if live:
         summary = summary or {}

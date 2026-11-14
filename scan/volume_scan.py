@@ -372,14 +372,14 @@ def tag_themes(hits, tp):
         h["themes"] = [{"t": n, "r": ranks[n], "pick": n in picks} for n in names]
 
 
-def theme_payload(keep):
+def theme_payload(keep, bench=None):
     try:
         import theme_flow
         th = theme_flow.load_themes()
         if not th:
             print("[테마] themes.json 없음 → 테마 흐름 생략", flush=True)
             return None
-        p = theme_flow.daily_payload(keep, th)
+        p = theme_flow.daily_payload(keep, th, bench=bench)
         print(f"[테마] {p['count'] if p else 0}개 테마 흐름 계산", flush=True)
         return p
     except Exception as e:
@@ -473,7 +473,15 @@ def main():
             list(ex.map(enrich, hits))
         print(f"[KIS] 수급·상태 조회 {len(hits)}종목 (오류 {kis.errors})", flush=True)
     hits.sort(key=lambda x: (x["sigDate"], x["ratio"]), reverse=True)
-    tp = theme_payload(keep)
+    try:                                # 기준선: 지수 ETF(KODEX 200) 일봉
+        bench, _ = fetch_rows("069500")
+        if intraday and bench and bench[-1]["d"] == today_s:
+            bench = bench[:-1]
+        bench = [{"d": x["d"], "c": x["c"]} for x in bench]
+    except Exception as e:
+        bench = None
+        print(f"[기준선] 실패: {e}", flush=True)
+    tp = theme_payload(keep, bench)
     tag_themes(hits, tp)
     try:
         import reviews
@@ -496,6 +504,12 @@ def main():
     except Exception as e:
         dt = None
         print(f"[공시] 실패(스캔에는 영향 없음): {e}", flush=True)
+    try:
+        import news as news_mod, theme_flow as _tf
+        nw = news_mod.fetch(tp, names, _tf.load_themes())
+    except Exception as e:
+        nw = None
+        print(f"[뉴스] 실패(스캔에는 영향 없음): {e}", flush=True)
     print(f"[눌림] 재상승 신호 {len(pbs['trigger'])} · 되돌림 진행 {len(pbs['setup'])}", flush=True)
     out = {
         "kind": "sv4-volume-scan",
@@ -514,7 +528,9 @@ def main():
         "reviews": rv,
         "us": us_market(),
         "dart": dt,
-        "names": {c: names[c] for c in (interest | set((dt or {}).get("items", {}))) if c in names},
+        "news": nw,
+        "names": {c: names[c] for c in (interest | set((dt or {}).get("items", {}))
+                                        | {c for x in (nw or {}).get("themes", []) for c, _ in x.get("stocks", [])}) if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)

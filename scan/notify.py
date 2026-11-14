@@ -168,6 +168,16 @@ def proposal_lines(js):
                     warn.append(nm + " " + rk[0]["lab"])
         if warn:
             lines.append("제안 종목 공시 경고: " + ", ".join(warn[:6]) + " → 앱에서 원문 확인")
+    vi = (pk.get("summary") or {}).get("vsIdx")
+    if vi:
+        lines.append(f"검증 {vi['n']}/20: 제안 평균 {vi['cur']:+.1f}% vs 지수 {vi['idx']:+.1f}% (이긴 비율 {vi['beat']}%)")
+    nw = js.get("news") or {}
+    for x in [t for t in nw.get("themes") or [] if t.get("top") or t.get("pick")][:3]:
+        it = (x.get("items") or [])[:1]
+        if it:
+            nm = (js.get("names") or {})
+            st = ", ".join(nm.get(c, c) for c, _ in (x.get("stocks") or [])[:3])
+            lines.append(f"뉴스 · {re.sub(r'[(].*$', '', x['theme']).strip()}: {it[0]['t'][:50]}" + (f" → {st}" if st else ""))
     us = js.get("us") or []
     if us:
         lines.append("어젯밤 미국: " + " · ".join(f"{u['name']} {u['chg']:+.1f}%" for u in us[:3]) + " (참고)")
