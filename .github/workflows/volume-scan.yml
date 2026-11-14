@@ -36,6 +36,8 @@ jobs:
           KIS_APPKEY: ${{ secrets.KIS_APPKEY }}
           KIS_APPSECRET: ${{ secrets.KIS_APPSECRET }}
           DART_KEY: ${{ secrets.DART_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}          # 뉴스 연결 (없으면 구글 뉴스 RSS)
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: python scan/volume_scan.py
 
       - name: 결과 저장(커밋)
