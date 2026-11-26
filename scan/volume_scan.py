@@ -372,6 +372,59 @@ def tag_themes(hits, tp):
         h["themes"] = [{"t": n, "r": ranks[n], "pick": n in picks} for n in names]
 
 
+def flows(tp, keep, names, top_mkt=40, per_theme=5, cache=None):
+    """외국인·기관 순매수(억 원, 수량 × 그날 종가로 환산) — KIS 종목별 투자자 동향
+    - 시장: 최근 20일 거래대금 상위 40종목 합산(시장 전체가 아니라 대형주 흐름의 근사)
+    - 테마: 지도·제안 테마마다 거래대금 상위 5종목 — 최근 1·5일 합계, 외국인이나 기관이 2일 연속 순매수한 종목 수"""
+    import theme_flow as _tf
+    th = _tf.load_themes()
+    liq = {c: sum(r.get("a", 0) for r in rows[-20:]) for c, rows in keep.items()}
+    cache = cache if cache is not None else {}
+
+    def inv(c):
+        if c not in cache:
+            try:
+                cache[c] = kis.investor(c)
+            except Exception:
+                cache[c] = {}
+        return cache[c]
+    px = {c: {r["d"]: r["c"] for r in rows[-40:]} for c, rows in keep.items()}
+
+    def won(c, d, q):
+        p = px.get(c, {}).get(d)
+        return q * p / 1e8 if p else 0.0
+    mk = sorted(keep, key=lambda c: -liq[c])[:top_mkt]
+    days = {}
+    for c in mk:
+        for d, v in inv(c).items():
+            z = days.setdefault(d, {"frgn": 0.0, "orgn": 0.0, "prsn": 0.0})
+            for k in z:
+                z[k] += won(c, d, v[k])
+    ds = sorted(days)[-5:]
+    market = [{"d": d, **{k: round(v, 1) for k, v in days[d].items()}} for d in ds]
+    mp = tp.get("map") or {}
+    want = [x["theme"] for x in mp.get("items") or []] + [x["theme"] for x in (tp.get("picks") or {}).get("today") or []]
+    themes = {}
+    for name in dict.fromkeys(want):
+        mem = sorted([c for c in th.get(name, []) if c in keep], key=lambda c: -liq[c])[:per_theme]
+        f1 = o1 = f5 = o5 = 0.0
+        streak = []
+        for c in mem:
+            iv = inv(c)
+            dd = sorted(iv)[-5:]
+            for i, d in enumerate(dd):
+                f, o = won(c, d, iv[d]["frgn"]), won(c, d, iv[d]["orgn"])
+                f5 += f; o5 += o
+                if i == len(dd) - 1:
+                    f1 += f; o1 += o
+            last2 = dd[-2:]
+            if len(last2) == 2 and (all(iv[d]["frgn"] > 0 for d in last2) or all(iv[d]["orgn"] > 0 for d in last2)):
+                streak.append(c)
+        themes[name] = {"n": len(mem), "f1": round(f1, 1), "o1": round(o1, 1), "f5": round(f5, 1), "o5": round(o5, 1), "streak": streak}
+    print(f"[수급] 시장 {len(mk)}종목 · 테마 {len(themes)}개 · 조회 {len(cache)}종목", flush=True)
+    return {"asOf": ds[-1] if ds else None, "market": market, "mktN": len(mk), "themes": themes}
+
+
 def theme_payload(keep, bench=None):
     try:
         import theme_flow
@@ -499,11 +552,28 @@ def main():
                 | {m["code"] for x in pk_.get("today", []) for m in x.get("top", []) + x.get("lag", [])}
                 | {h["code"] for h in hits})
     try:
+        import watch as watch_mod
+        interest |= watch_mod.codes()
+    except Exception:
+        watch_mod = None
+    try:
         import dart
         dt = dart.fetch(interest)
     except Exception as e:
         dt = None
         print(f"[공시] 실패(스캔에는 영향 없음): {e}", flush=True)
+    fl, inv_cache = None, {}
+    if kis and tp:
+        try:
+            fl = flows(tp, keep, names, cache=inv_cache)
+        except Exception as e:
+            print(f"[수급] 실패(스캔에는 영향 없음): {e}", flush=True)
+    wt = None
+    if watch_mod:
+        try:
+            wt = watch_mod.run(keep, names, kis, dt, tp, bench, inv_cache)
+        except Exception as e:
+            print(f"[관심] 실패(스캔에는 영향 없음): {e}", flush=True)
     try:
         import news as news_mod, theme_flow as _tf
         nw = news_mod.fetch(tp, names, _tf.load_themes())
@@ -529,8 +599,13 @@ def main():
         "us": us_market(),
         "dart": dt,
         "news": nw,
+        "flows": fl,
+        "watch": wt,
         "names": {c: names[c] for c in (interest | set((dt or {}).get("items", {}))
-                                        | {c for x in (nw or {}).get("themes", []) for c, _ in x.get("stocks", [])}) if c in names},
+                                        | {c for x in (nw or {}).get("themes", []) for c, _ in x.get("stocks", [])}
+                                        | {c for x in ((tp or {}).get("map") or {}).get("items", []) for k in ("c1", "c5") for c, *_ in x.get(k, [])}
+                                        | {c for g in ((tp or {}).get("map") or {}).get("ind", []) for x in g.get("themes", []) for k in ("c1", "c5") for c, *_ in x.get(k, [])}
+                                        | {c for v in (fl or {}).get("themes", {}).values() for c in v.get("streak", [])}) if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
         json.dump(out, fp, ensure_ascii=False, indent=1)

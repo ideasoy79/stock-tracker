@@ -124,7 +124,7 @@ def daily_payload(rows_by_code, themes, top=40, bench=None):
               "rank": round(x["rank"] * 100), "rankPrev": round(x["rankPrev"] * 100), "phase": x["phase"]} for x in snap]
     picks = update_picks(dates, idx, dret, snap, rows_by_code, bench)
     try:
-        tmap_ = theme_map(dates, idx, [x["theme"] for x in (picks or {}).get("today") or []])
+        tmap_ = theme_map(dates, idx, [x["theme"] for x in (picks or {}).get("today") or []], dret=dret)
     except Exception as e:
         print(f"[테마 지도] 실패: {e}", flush=True)
         tmap_ = None
@@ -140,7 +140,7 @@ def quad(r60, r20):
     return "주도" if r60 > 0 and r20 > 0 else "과열·눌림" if r60 > 0 else "부상" if r20 > 0 else "소외"
 
 
-def theme_map(dates, idx, picks=(), n=24, trail=(10, 5, 0)):
+def theme_map(dates, idx, picks=(), n=24, trail=(10, 5, 0), dret=None):
     """4분면 테마 지도: x=60일, y=20일 테마 수익률(%). 최근 20일 거래대금 큰 테마 n개 + 오늘 제안 테마.
     amt = 최근 20일 하루 평균 거래대금(억 원). trail = 10·5거래일 전 위치(이동 궤적). 3년 검증: '주도' 칸만 다음 10일 평균이 플러스(+0.4%), 나머지 칸은 마이너스."""
     t = len(dates) - 1
@@ -188,7 +188,75 @@ def theme_map(dates, idx, picks=(), n=24, trail=(10, 5, 0)):
     for k in names:
         q = quad(cum(idx[k]["ret"], t - 60, t), cum(idx[k]["ret"], t - 20, t))
         cnt[q] = cnt.get(q, 0) + 1
-    return {"asOf": dates[t], "items": items, "mkt": {"x": mk[-1][0], "y": mk[-1][1], "tr": mk[:-1]}, "count": cnt, "total": len(names)}
+    for it in items:
+        it.update(contrib(idx[it["theme"]]["members"], dret, t))
+        it["ind"] = _ind_of(it["theme"])
+    out = {"asOf": dates[t], "items": items, "mkt": {"x": mk[-1][0], "y": mk[-1][1], "tr": mk[:-1]}, "count": cnt, "total": len(names)}
+    try:
+        out["ind"] = industry_map(dates, idx, dret, picks, trail)
+    except Exception as e:
+        print(f"[산업 지도] 실패: {e}", flush=True)
+    return out
+
+
+def _ind_of(theme):
+    try:
+        import industries
+        return industries.industry_of(theme)
+    except Exception:
+        return ""
+
+
+def contrib(members, dret, t):
+    """테마(소속 종목 동일가중) 움직임에 종목별로 몇 %p 기여했는지 — 1일·5일, 크게 기여한 순 3개씩"""
+    n = len(members) or 1
+    def top(k):
+        rows = []
+        for c in members:
+            x = _mcum(dret[c], t - k, t)
+            rows.append([c, round(x * 100 / n, 2), round(x * 100, 1)])
+        rows.sort(key=lambda a: -abs(a[1]))
+        return rows[:3]
+    return {"c1": top(1), "c5": top(5)}
+
+
+def industry_map(dates, idx, dret, picks=(), trail=(10, 5, 0)):
+    """산업 지도: 테마를 산업으로 묶고(industries.py), 산업 지수 = 소속 종목(중복 제거) 일간 수익률 평균.
+    산업마다 소속 테마 전체의 위치(60일·20일)도 함께 — 앱에서 산업을 누르면 그 산업의 테마 지도로 내려감"""
+    import industries
+    t = len(dates) - 1
+    r = lambda v: round(v * 100, 1)
+    groups = industries.group([k for k in idx])
+    out = []
+    for name, ths in groups.items():
+        if name == "지수·대표주":
+            continue
+        mem = sorted({c for k in ths for c in idx[k]["members"]})
+        if len(mem) < 3:
+            continue
+        T = len(dates)
+        ret = []
+        for i in range(T):
+            v = [dret[c][i] for c in mem if dret[c][i] is not None]
+            ret.append(sum(v) / len(v) if v else 0.0)
+        tr = [[r(cum(ret, t - b - 60, t - b)), r(cum(ret, t - b - 20, t - b))] for b in trail]
+        amt = sum(sum(idx[k]["amt"][t - 19:t + 1]) for k in ths) / 20 / max(len(ths), 1)
+        sub = []
+        for k in ths:
+            kr = idx[k]["ret"]
+            ktr = [[r(cum(kr, t - b - 60, t - b)), r(cum(kr, t - b - 20, t - b))] for b in trail]
+            it = {"theme": k, "x": ktr[-1][0], "y": ktr[-1][1], "q": quad(ktr[-1][0], ktr[-1][1]), "tr": ktr[:-1], "pick": k in picks,
+                  "amt": round(sum(idx[k]["amt"][t - 19:t + 1]) / 20 / 1e8), "n": len(idx[k]["members"]), "ind": name,
+                  "r1": r(cum(kr, t - 1, t)), "r5": r(cum(kr, t - 5, t))}
+            it.update(contrib(idx[k]["members"], dret, t))
+            sub.append(it)
+        sub.sort(key=lambda a: -a["y"])
+        x, y = tr[-1]
+        out.append({"theme": name, "desc": industries.DESC.get(name, ""), "x": x, "y": y, "q": quad(x, y), "tr": tr[:-1],
+                    "pick": any(k in picks for k in ths), "amt": round(amt / 1e8), "n": len(mem), "nt": len(ths),
+                    "r1": r(cum(ret, t - 1, t)), "r5": r(cum(ret, t - 5, t)), "themes": sub})
+    out.sort(key=lambda a: -a["y"])
+    return out
 
 
 # ───────── 모멘텀 3테마: 오늘의 후보 + 전진 검증(실전 성적) ─────────

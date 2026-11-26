@@ -168,6 +168,11 @@ def proposal_lines(js):
                     warn.append(nm + " " + rk[0]["lab"])
         if warn:
             lines.append("제안 종목 공시 경고: " + ", ".join(warn[:6]) + " → 앱에서 원문 확인")
+    fm = ((js.get("flows") or {}).get("market") or [])[-1:]
+    if fm:
+        m = fm[0]
+        e = lambda v: f"{v:+,.0f}억"
+        lines.append(f"대형주 {js['flows'].get('mktN', 40)}종목 순매수 · 외국인 {e(m['frgn'])} · 기관 {e(m['orgn'])} · 개인 {e(m['prsn'])}")
     vi = (pk.get("summary") or {}).get("vsIdx")
     if vi:
         lines.append(f"검증 {vi['n']}/20: 제안 평균 {vi['cur']:+.1f}% vs 지수 {vi['idx']:+.1f}% (이긴 비율 {vi['beat']}%)")
