@@ -425,6 +425,25 @@ def flows(tp, keep, names, top_mkt=40, per_theme=5, cache=None):
     return {"asOf": ds[-1] if ds else None, "market": market, "mktN": len(mk), "themes": themes}
 
 
+def stock_table(keep, names):
+    """테마에 속한 종목 시세 요약 (v2 화면의 테마 → 종목 목록·종목 화면·검색용)
+    {code: [이름, 종가, 1일%, 5일%, 20일%, 20일 평균 거래대금(억)]}"""
+    import theme_flow as _tf
+    codes = {c for v in (_tf.load_themes() or {}).values() for c in v}
+    out = {}
+    for c in codes:
+        rows = keep.get(c)
+        if not rows or len(rows) < 2:
+            continue
+        cl = rows[-1]["c"]
+
+        def r(k):
+            return round((cl / rows[-1 - k]["c"] - 1) * 100, 1) if len(rows) > k and rows[-1 - k]["c"] else None
+        w = rows[-20:]
+        out[c] = [names.get(c, c), cl, r(1), r(5), r(20), round(sum(x.get("a") or 0 for x in w) / len(w) / 1e8, 1)]
+    return out
+
+
 def theme_payload(keep, bench=None):
     try:
         import theme_flow
@@ -581,6 +600,12 @@ def main():
         nw = None
         print(f"[뉴스] 실패(스캔에는 영향 없음): {e}", flush=True)
     print(f"[눌림] 재상승 신호 {len(pbs['trigger'])} · 되돌림 진행 {len(pbs['setup'])}", flush=True)
+    try:
+        st_tbl = stock_table(keep, names)
+        print(f"[종목표] {len(st_tbl)}종목", flush=True)
+    except Exception as e:
+        st_tbl = None
+        print(f"[종목표] 실패(스캔에는 영향 없음): {e}", flush=True)
     out = {
         "kind": "sv4-volume-scan",
         "version": 1,
@@ -601,6 +626,7 @@ def main():
         "news": nw,
         "flows": fl,
         "watch": wt,
+        "stocks": st_tbl,
         "names": {c: names[c] for c in (interest | set((dt or {}).get("items", {}))
                                         | {c for x in (nw or {}).get("themes", []) for c, _ in x.get("stocks", [])}
                                         | {c for x in ((tp or {}).get("map") or {}).get("items", []) for k in ("c1", "c5") for c, *_ in x.get(k, [])}
@@ -608,7 +634,7 @@ def main():
                                         | {c for v in (fl or {}).get("themes", {}).values() for c in v.get("streak", [])}) if c in names},
     }
     with open(OUT, "w", encoding="utf-8") as fp:
-        json.dump(out, fp, ensure_ascii=False, indent=1)
+        json.dump(out, fp, ensure_ascii=False, separators=(",", ":"))   # 줄바꿈 없이 저장 → 파일이 작아져 앱이 빨리 열려요
     print(f"[완료] 신호 {len(hits)}종목 · 기준일 {base} · 출처 {srcs} · 실패 {fails} · {time.time()-t0:.0f}초 → {OUT}")
     if len(universe) and fails / len(universe) > 0.5:
         sys.exit("시세를 절반 이상 못 받았습니다. 네이버 주소가 바뀌었는지 확인이 필요합니다.")
