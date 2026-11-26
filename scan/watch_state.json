@@ -1,0 +1,2688 @@
+{
+"dart": {
+"000880": [
+{
+"d": "2026-11-12",
+"k": "good",
+"lab": "자사주 매입",
+"t": "주요사항보고서(자기주식취득결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000498"
+},
+{
+"d": "2026-11-12",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000562"
+},
+{
+"d": "2026-11-11",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111800469"
+},
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "잠정실적",
+"t": "영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104800213"
+},
+{
+"d": "2026-10-16",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016800036"
+},
+{
+"d": "2026-10-16",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016800024"
+}
+],
+"099190": [
+{
+"d": "2026-11-09",
+"k": "good",
+"lab": "자사주 매입",
+"t": "주요사항보고서(자기주식취득결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000309"
+},
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104900171"
+}
+],
+"178320": [
+{
+"d": "2026-11-25",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261125900186"
+},
+{
+"d": "2026-11-18",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118900145"
+}
+],
+"207940": [
+{
+"d": "2026-11-05",
+"k": "risk",
+"lab": "유상증자",
+"t": "[기재정정]주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105000355"
+},
+{
+"d": "2026-11-03",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103800043"
+},
+{
+"d": "2026-11-02",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800004"
+},
+{
+"d": "2026-10-21",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021800344"
+},
+{
+"d": "2026-10-02",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결(자율공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261002800830"
+},
+{
+"d": "2026-10-01",
+"k": "risk",
+"lab": "유상증자",
+"t": "[기재정정]주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261001000449"
+}
+],
+"328130": [
+{
+"d": "2026-11-20",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261120900707"
+}
+],
+"104460": [
+{
+"d": "2026-11-04",
+"k": "good",
+"lab": "자사주 매입",
+"t": "주요사항보고서(자기주식취득신탁계약체결결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104000193"
+},
+{
+"d": "2026-10-26",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026900344"
+}
+],
+"267250": [
+{
+"d": "2026-11-23",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결(자회사의 주요경영사항)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261123800197"
+}
+],
+"068270": [
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "잠정실적",
+"t": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800047"
+},
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027000365"
+},
+{
+"d": "2026-10-26",
+"k": "good",
+"lab": "자사주 매입",
+"t": "주요사항보고서(자기주식취득결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026000084"
+},
+{
+"d": "2026-10-12",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012800004"
+},
+{
+"d": "2026-09-29",
+"k": "good",
+"lab": "자사주 매입",
+"t": "주요사항보고서(자기주식취득결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260929000153"
+},
+{
+"d": "2026-08-31",
+"k": "good",
+"lab": "자사주 매입",
+"t": "주요사항보고서(자기주식취득결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260831000538"
+}
+],
+"196170": [
+{
+"d": "2026-11-03",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103900196"
+},
+{
+"d": "2026-10-08",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008900645"
+},
+{
+"d": "2026-10-06",
+"k": "risk",
+"lab": "유상증자",
+"t": "주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006000329"
+},
+{
+"d": "2026-10-06",
+"k": "risk",
+"lab": "유상증자",
+"t": "주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006000323"
+},
+{
+"d": "2026-10-06",
+"k": "risk",
+"lab": "유상증자",
+"t": "주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006000321"
+},
+{
+"d": "2026-10-06",
+"k": "risk",
+"lab": "유상증자",
+"t": "주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006000310"
+}
+],
+"090710": [
+{
+"d": "2026-09-23",
+"k": "risk",
+"lab": "유상증자",
+"t": "주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260923000576"
+}
+],
+"012200": [
+{
+"d": "2026-09-01",
+"k": "risk",
+"lab": "유상증자",
+"t": "[기재정정]주요사항보고서(유상증자결정)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260901000140"
+}
+],
+"388050": [
+{
+"d": "2026-11-26",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261126900217"
+}
+],
+"071280": [
+{
+"d": "2026-11-25",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261125900755"
+}
+],
+"028300": [
+{
+"d": "2026-11-25",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261125900706"
+}
+],
+"112610": [
+{
+"d": "2026-11-25",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261125800441"
+},
+{
+"d": "2026-11-19",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119800079"
+}
+],
+"069620": [
+{
+"d": "2026-11-24",
+"k": "risk",
+"lab": "불성실공시",
+"t": "불성실공시법인지정",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261124800663"
+}
+],
+"052690": [
+{
+"d": "2026-11-24",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261124800429"
+}
+],
+"000270": [
+{
+"d": "2026-11-23",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261123800239"
+}
+],
+"141080": [
+{
+"d": "2026-11-23",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261123900159"
+}
+],
+"006260": [
+{
+"d": "2026-11-23",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결(자회사의 주요경영사항)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261123800001"
+},
+{
+"d": "2026-11-23",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결(자회사의 주요경영사항)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261123800002"
+}
+],
+"000100": [
+{
+"d": "2026-11-20",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261120800691"
+}
+],
+"214150": [
+{
+"d": "2026-11-20",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261120900339"
+}
+],
+"108490": [
+{
+"d": "2026-11-20",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261120900120"
+}
+],
+"012330": [
+{
+"d": "2026-11-19",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119800372"
+},
+{
+"d": "2026-11-18",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118800300"
+},
+{
+"d": "2026-11-18",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118800292"
+}
+],
+"103590": [
+{
+"d": "2026-11-19",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119800214"
+}
+],
+"083650": [
+{
+"d": "2026-11-18",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118900419"
+}
+],
+"437730": [
+{
+"d": "2026-11-18",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결(자율공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118900252"
+}
+],
+"237690": [
+{
+"d": "2026-11-17",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261117900524"
+}
+],
+"105840": [
+{
+"d": "2026-11-17",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261117800253"
+}
+],
+"034020": [
+{
+"d": "2026-11-20",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261120000468"
+}
+],
+"128940": [
+{
+"d": "2026-11-16",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116802492"
+},
+{
+"d": "2026-11-16",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116802490"
+},
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800823"
+},
+{
+"d": "2026-10-30",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030800861"
+},
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800461"
+},
+{
+"d": "2026-10-16",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016800703"
+}
+],
+"006400": [
+{
+"d": "2026-11-16",
+"k": "info",
+"lab": "잠정실적",
+"t": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116801515"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800053"
+},
+{
+"d": "2026-10-12",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012800501"
+}
+],
+"000500": [
+{
+"d": "2026-11-16",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116800983"
+},
+{
+"d": "2026-11-06",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000032"
+},
+{
+"d": "2026-10-19",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261019800156"
+},
+{
+"d": "2026-10-08",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008800258"
+},
+{
+"d": "2026-08-31",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260831800149"
+}
+],
+"001440": [
+{
+"d": "2026-11-16",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116800835"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800321"
+},
+{
+"d": "2026-10-27",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800037"
+},
+{
+"d": "2026-10-20",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020800158"
+},
+{
+"d": "2026-10-15",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261015800054"
+},
+{
+"d": "2026-09-08",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260908800194"
+}
+],
+"394280": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113902045"
+},
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113902044"
+},
+{
+"d": "2026-10-02",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261002900436"
+},
+{
+"d": "2026-09-10",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260910900255"
+}
+],
+"098460": [
+{
+"d": "2026-11-16",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116000824"
+},
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113901903"
+},
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001462"
+},
+{
+"d": "2026-11-12",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000185"
+},
+{
+"d": "2026-11-11",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111000337"
+},
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109000037"
+}
+],
+"060280": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113901559"
+},
+{
+"d": "2026-09-01",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260901900185"
+}
+],
+"300120": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113901235"
+},
+{
+"d": "2026-10-21",
+"k": "info",
+"lab": "잠정실적",
+"t": "영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021900206"
+}
+],
+"005930": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113801115"
+},
+{
+"d": "2026-10-30",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030000716"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "잠정실적",
+"t": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800099"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "배당",
+"t": "현금ㆍ현물배당결정",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800101"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800087"
+},
+{
+"d": "2026-10-23",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023000484"
+}
+],
+"056190": [
+{
+"d": "2026-11-17",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261117000181"
+}
+],
+"326030": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113800988"
+},
+{
+"d": "2026-11-05",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105800127"
+},
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800256"
+},
+{
+"d": "2026-09-23",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260923800342"
+},
+{
+"d": "2026-09-14",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260914800220"
+},
+{
+"d": "2026-09-10",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260910800702"
+}
+],
+"015760": [
+{
+"d": "2026-11-12",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112800706"
+},
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109800307"
+}
+],
+"251630": [
+{
+"d": "2026-11-12",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112900549"
+}
+],
+"058610": [
+{
+"d": "2026-11-12",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112900261"
+},
+{
+"d": "2026-10-08",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008900338"
+},
+{
+"d": "2026-09-07",
+"k": "info",
+"lab": "배당",
+"t": "현금ㆍ현물배당결정              (중간배당)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260907900152"
+}
+],
+"030530": [
+{
+"d": "2026-11-11",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111900738"
+},
+{
+"d": "2026-11-10",
+"k": "risk",
+"lab": "유상증자",
+"t": "[기재정정]유상증자결정(종속회사의주요경영사항)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110900684"
+}
+],
+"145720": [
+{
+"d": "2026-11-10",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261110800570"
+},
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027000376"
+},
+{
+"d": "2026-09-03",
+"k": "risk",
+"lab": "소송",
+"t": "소송등의제기ㆍ신청(경영권분쟁소송)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260903800587"
+}
+],
+"011070": [
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109800785"
+},
+{
+"d": "2026-11-05",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105000074"
+},
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800388"
+},
+{
+"d": "2026-09-18",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260918800093"
+}
+],
+"062040": [
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109800751"
+},
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104800393"
+},
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "잠정실적",
+"t": "영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104800392"
+},
+{
+"d": "2026-10-29",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800777"
+},
+{
+"d": "2026-10-06",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006800320"
+}
+],
+"000150": [
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "배당",
+"t": "현금ㆍ현물배당결정",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109800479"
+},
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109800403"
+},
+{
+"d": "2026-10-26",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026800444"
+},
+{
+"d": "2026-10-26",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026800394"
+}
+],
+"051600": [
+{
+"d": "2026-11-09",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261109800416"
+},
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104800439"
+},
+{
+"d": "2026-10-23",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023800526"
+},
+{
+"d": "2026-10-21",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021800137"
+},
+{
+"d": "2026-10-15",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261015800691"
+}
+],
+"086280": [
+{
+"d": "2026-11-06",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106800248"
+},
+{
+"d": "2026-11-06",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106800241"
+},
+{
+"d": "2026-10-30",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030800303"
+},
+{
+"d": "2026-10-28",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028800065"
+},
+{
+"d": "2026-10-22",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261022800204"
+},
+{
+"d": "2026-10-22",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261022800199"
+}
+],
+"214450": [
+{
+"d": "2026-11-12",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261112000367"
+},
+{
+"d": "2026-11-06",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106900196"
+},
+{
+"d": "2026-11-05",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105900791"
+},
+{
+"d": "2026-09-01",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260901900732"
+}
+],
+"454910": [
+{
+"d": "2026-11-05",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105800603"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800388"
+},
+{
+"d": "2026-10-20",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020800467"
+}
+],
+"041830": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113000375"
+},
+{
+"d": "2026-11-05",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105900410"
+},
+{
+"d": "2026-11-05",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105000050"
+}
+],
+"145020": [
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104900488"
+},
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104900284"
+},
+{
+"d": "2026-10-28",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028900444"
+},
+{
+"d": "2026-09-30",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930900724"
+},
+{
+"d": "2026-09-14",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260914900355"
+},
+{
+"d": "2026-09-07",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260907900454"
+}
+],
+"005380": [
+{
+"d": "2026-11-04",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261104800225"
+},
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "잠정실적",
+"t": "영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800520"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "배당",
+"t": "현금ㆍ현물배당결정",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800269"
+},
+{
+"d": "2026-10-29",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800228"
+},
+{
+"d": "2026-10-22",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261022800377"
+},
+{
+"d": "2026-10-01",
+"k": "info",
+"lab": "잠정실적",
+"t": "영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261001800412"
+}
+],
+"373220": [
+{
+"d": "2026-11-03",
+"k": "info",
+"lab": "잠정실적",
+"t": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103800087"
+},
+{
+"d": "2026-11-02",
+"k": "risk",
+"lab": "불성실공시",
+"t": "불성실공시법인지정",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800824"
+},
+{
+"d": "2026-10-16",
+"k": "risk",
+"lab": "불성실공시",
+"t": "불성실공시법인지정예고",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261016800820"
+},
+{
+"d": "2026-10-14",
+"k": "risk",
+"lab": "횡령·배임",
+"t": "횡령ㆍ배임혐의발생",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261014800616"
+},
+{
+"d": "2026-10-08",
+"k": "info",
+"lab": "잠정실적",
+"t": "[첨부추가]연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008800055"
+},
+{
+"d": "2026-10-08",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008800068"
+}
+],
+"006280": [
+{
+"d": "2026-11-02",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800297"
+},
+{
+"d": "2026-11-02",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800281"
+},
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800193"
+}
+],
+"022100": [
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102800277"
+},
+{
+"d": "2026-10-29",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261029800243"
+},
+{
+"d": "2026-10-21",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021800235"
+}
+],
+"298040": [
+{
+"d": "2026-10-30",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030800916"
+},
+{
+"d": "2026-10-30",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030800927"
+},
+{
+"d": "2026-10-27",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800518"
+},
+{
+"d": "2026-09-30",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930800924"
+},
+{
+"d": "2026-09-15",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260915800149"
+},
+{
+"d": "2026-09-15",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260915800147"
+}
+],
+"011210": [
+{
+"d": "2026-10-30",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030800679"
+},
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800373"
+}
+],
+"475400": [
+{
+"d": "2026-10-30",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결(자율공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261030900219"
+},
+{
+"d": "2026-09-30",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930901064"
+},
+{
+"d": "2026-09-30",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930900698"
+},
+{
+"d": "2026-09-23",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260923900334"
+}
+],
+"066570": [
+{
+"d": "2026-10-28",
+"k": "info",
+"lab": "잠정실적",
+"t": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261028800266"
+},
+{
+"d": "2026-10-07",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261007800158"
+},
+{
+"d": "2026-10-07",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261007800145"
+}
+],
+"267260": [
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "배당",
+"t": "현금ㆍ현물배당결정",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800213"
+},
+{
+"d": "2026-10-27",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261027800226"
+},
+{
+"d": "2026-10-20",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020800731"
+},
+{
+"d": "2026-09-30",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930801077"
+}
+],
+"229640": [
+{
+"d": "2026-10-26",
+"k": "risk",
+"lab": "유상증자",
+"t": "유상증자결정(자회사의 주요경영사항)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026800114"
+},
+{
+"d": "2026-10-20",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020800175"
+}
+],
+"010120": [
+{
+"d": "2026-10-21",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021800162"
+},
+{
+"d": "2026-10-21",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최(안내공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021800160"
+},
+{
+"d": "2026-10-21",
+"k": "info",
+"lab": "잠정실적",
+"t": "연결재무제표기준영업(잠정)실적(공정공시)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261021800151"
+},
+{
+"d": "2026-10-19",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261019800108"
+},
+{
+"d": "2026-10-13",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261013800054"
+},
+{
+"d": "2026-10-01",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261001800079"
+}
+],
+"319400": [
+{
+"d": "2026-10-15",
+"k": "good",
+"lab": "공급계약",
+"t": "[기재정정]단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261015900637"
+},
+{
+"d": "2026-09-30",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930900139"
+}
+],
+"004380": [
+{
+"d": "2026-11-19",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119000363"
+}
+],
+"348340": [
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102000303"
+},
+{
+"d": "2026-10-26",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261026000117"
+},
+{
+"d": "2026-10-01",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261001900148"
+}
+],
+"322180": [
+{
+"d": "2026-09-23",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260923900227"
+}
+],
+"388720": [
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102000170"
+},
+{
+"d": "2026-09-22",
+"k": "info",
+"lab": "IR 개최",
+"t": "기업설명회(IR)개최",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260922900405"
+}
+],
+"377480": [
+{
+"d": "2026-09-11",
+"k": "good",
+"lab": "공급계약",
+"t": "단일판매ㆍ공급계약체결",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260911900132"
+}
+],
+"056080": [
+{
+"d": "2026-11-26",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261126000739"
+},
+{
+"d": "2026-11-19",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119000031"
+}
+],
+"396270": [
+{
+"d": "2026-11-18",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118000187"
+}
+],
+"101170": [
+{
+"d": "2026-11-16",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116000903"
+}
+],
+"000250": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001479"
+}
+],
+"270660": [
+{
+"d": "2026-11-13",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113000323"
+}
+],
+"298380": [
+{
+"d": "2026-11-06",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(일반)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000347"
+}
+],
+"455900": [
+{
+"d": "2026-11-03",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261103000306"
+}
+],
+"160190": [
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102000301"
+}
+],
+"090360": [
+{
+"d": "2026-11-02",
+"k": "info",
+"lab": "5% 대량보유",
+"t": "주식등의대량보유상황보고서(약식)",
+"url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261102000300"
+}
+]
+},
+"dartBackfill": "2026-11-27",
+"fin": {
+"000100": {
+"period": "2026 3분기",
+"sales": 6043,
+"sales0": 5700,
+"op": 332,
+"op0": 220,
+"ok": true,
+"at": "2026-11-27"
+},
+"000150": {
+"period": "2026 3분기",
+"sales": 54269,
+"sales0": 44409,
+"op": 4594,
+"op0": 2315,
+"ok": true,
+"at": "2026-11-27"
+},
+"000250": {
+"period": "2026 3분기",
+"sales": 692,
+"sales0": 580,
+"op": 35,
+"op0": 34,
+"ok": true,
+"at": "2026-11-27"
+},
+"000270": {
+"period": "2026 3분기",
+"sales": 315974,
+"sales0": 286860,
+"op": 18183,
+"op0": 14623,
+"ok": true,
+"at": "2026-11-27"
+},
+"000500": {
+"period": "2026 3분기",
+"sales": 9865,
+"sales0": 6494,
+"op": 520,
+"op0": 261,
+"ok": true,
+"at": "2026-11-27"
+},
+"000880": {
+"period": "2026 3분기",
+"sales": 167686,
+"sales0": 162864,
+"op": 3682,
+"op0": 12681,
+"ok": true,
+"at": "2026-11-27"
+},
+"001440": {
+"period": "2026 3분기",
+"sales": 11764,
+"sales0": 8550,
+"op": 309,
+"op0": 295,
+"ok": true,
+"at": "2026-11-27"
+},
+"0035S0": {
+"period": "2026 3분기",
+"sales": 36,
+"sales0": 21,
+"op": -10,
+"op0": -4,
+"ok": false,
+"at": "2026-11-27"
+},
+"004380": {
+"period": "2026 3분기",
+"sales": 904,
+"sales0": 536,
+"op": 41,
+"op0": -110,
+"ok": true,
+"at": "2026-11-27"
+},
+"005380": {
+"period": "2026 3분기",
+"sales": 451102,
+"sales0": 467214,
+"op": 26772,
+"op0": 25373,
+"ok": false,
+"at": "2026-11-27"
+},
+"005930": {
+"period": "2026 3분기",
+"sales": 1952532,
+"sales0": 860617,
+"op": 1074405,
+"op0": 121661,
+"ok": true,
+"at": "2026-11-27"
+},
+"006260": {
+"period": "2026 3분기",
+"sales": 108125,
+"sales0": 80728,
+"op": 4883,
+"op0": 2571,
+"ok": true,
+"at": "2026-11-27"
+},
+"006280": {
+"period": "2026 3분기",
+"sales": 5221,
+"sales0": 6095,
+"op": 492,
+"op0": 292,
+"ok": false,
+"at": "2026-11-27"
+},
+"006400": {
+"period": "2026 3분기",
+"sales": 46856,
+"sales0": 30714,
+"op": 4078,
+"op0": -5913,
+"ok": true,
+"at": "2026-11-27"
+},
+"010120": {
+"period": "2026 3분기",
+"sales": 18778,
+"sales0": 12163,
+"op": 2335,
+"op0": 1008,
+"ok": true,
+"at": "2026-11-27"
+},
+"011070": {
+"period": "2026 3분기",
+"sales": 63671,
+"sales0": 53694,
+"op": 948,
+"op0": 2037,
+"ok": true,
+"at": "2026-11-27"
+},
+"011210": {
+"period": "2026 3분기",
+"sales": 24590,
+"sales0": 21519,
+"op": 547,
+"op0": 518,
+"ok": true,
+"at": "2026-11-27"
+},
+"012200": {
+"period": "2026 3분기",
+"sales": 909,
+"sales0": 1023,
+"op": -75,
+"op0": -10,
+"ok": false,
+"at": "2026-11-27"
+},
+"012330": {
+"period": "2026 3분기",
+"sales": 157233,
+"sales0": 150319,
+"op": 9141,
+"op0": 7803,
+"ok": true,
+"at": "2026-11-27"
+},
+"015760": {
+"period": "2026 3분기",
+"sales": 268518,
+"sales0": 275724,
+"op": 16441,
+"op0": 56519,
+"ok": false,
+"at": "2026-11-27"
+},
+"022100": {
+"period": "2026 3분기",
+"sales": 2652,
+"sales0": 2447,
+"op": 169,
+"op0": 217,
+"ok": true,
+"at": "2026-11-27"
+},
+"028300": {
+"period": "2026 3분기",
+"sales": 260,
+"sales0": 221,
+"op": -275,
+"op0": -230,
+"ok": false,
+"at": "2026-11-27"
+},
+"030530": {
+"period": "2026 3분기",
+"sales": 2033,
+"sales0": 1434,
+"op": 253,
+"op0": -81,
+"ok": true,
+"at": "2026-11-27"
+},
+"033100": {
+"period": "2026 3분기",
+"sales": 380,
+"sales0": 698,
+"op": 233,
+"op0": 225,
+"ok": false,
+"at": "2026-11-27"
+},
+"034020": {
+"period": "2026 3분기",
+"sales": 44494,
+"sales0": 38804,
+"op": 2612,
+"op0": 1371,
+"ok": true,
+"at": "2026-11-27"
+},
+"041830": {
+"period": "2026 3분기",
+"sales": 713,
+"sales0": 598,
+"op": 193,
+"op0": 98,
+"ok": true,
+"at": "2026-11-27"
+},
+"051600": {
+"period": "2026 3분기",
+"sales": 3305,
+"sales0": 3937,
+"op": 117,
+"op0": 474,
+"ok": false,
+"at": "2026-11-27"
+},
+"052690": {
+"period": "2026 3분기",
+"sales": 1446,
+"sales0": 1183,
+"op": 108,
+"op0": 160,
+"ok": true,
+"at": "2026-11-27"
+},
+"053080": {
+"period": "2026 3분기",
+"sales": 1219,
+"sales0": 1234,
+"op": 68,
+"op0": 36,
+"ok": false,
+"at": "2026-11-27"
+},
+"056080": {
+"period": "2026 3분기",
+"sales": 78,
+"sales0": 29,
+"op": -20,
+"op0": -11,
+"ok": false,
+"at": "2026-11-27"
+},
+"056190": {
+"period": "2026 3분기",
+"sales": 4302,
+"sales0": 3940,
+"op": 221,
+"op0": 267,
+"ok": true,
+"at": "2026-11-27"
+},
+"058610": {
+"period": "2026 3분기",
+"sales": 825,
+"sales0": 841,
+"op": 34,
+"op0": 49,
+"ok": false,
+"at": "2026-11-27"
+},
+"059120": {
+"period": "2026 3분기",
+"sales": 108,
+"sales0": 62,
+"op": 23,
+"op0": 15,
+"ok": true,
+"at": "2026-11-27"
+},
+"060280": {
+"period": "2026 3분기",
+"sales": 147,
+"sales0": 172,
+"op": -19,
+"op0": 3,
+"ok": false,
+"at": "2026-11-27"
+},
+"062040": {
+"period": "2026 3분기",
+"sales": 1460,
+"sales0": 1327,
+"op": 445,
+"op0": 426,
+"ok": true,
+"at": "2026-11-27"
+},
+"066570": {
+"period": "2026 3분기",
+"sales": 238241,
+"sales0": 218738,
+"op": 7819,
+"op0": 6889,
+"ok": true,
+"at": "2026-11-27"
+},
+"068270": {
+"period": "2026 3분기",
+"sales": 15755,
+"sales0": 10290,
+"op": 5253,
+"op0": 3014,
+"ok": true,
+"at": "2026-11-27"
+},
+"069620": {
+"period": "2026 3분기",
+"sales": 4594,
+"sales0": 4118,
+"op": 713,
+"op0": 569,
+"ok": true,
+"at": "2026-11-27"
+},
+"071280": {
+"period": "2026 3분기",
+"sales": 514,
+"sales0": 169,
+"op": 89,
+"op0": 20,
+"ok": true,
+"at": "2026-11-27"
+},
+"079370": {
+"period": "2026 3분기",
+"sales": 853,
+"sales0": 868,
+"op": 69,
+"op0": -25,
+"ok": false,
+"at": "2026-11-27"
+},
+"083650": {
+"period": "2026 3분기",
+"sales": 2865,
+"sales0": 2047,
+"op": 403,
+"op0": 184,
+"ok": true,
+"at": "2026-11-27"
+},
+"086280": {
+"period": "2026 3분기",
+"sales": 90536,
+"sales0": 73551,
+"op": 5665,
+"op0": 5240,
+"ok": true,
+"at": "2026-11-27"
+},
+"087010": {
+"period": "2026 3분기",
+"sales": 10,
+"sales0": 16,
+"op": -70,
+"op0": -62,
+"ok": false,
+"at": "2026-11-27"
+},
+"090360": {
+"period": "2026 3분기",
+"sales": 287,
+"sales0": 173,
+"op": 2,
+"op0": -11,
+"ok": true,
+"at": "2026-11-27"
+},
+"090710": {
+"period": "2026 3분기",
+"sales": 226,
+"sales0": 405,
+"op": -39,
+"op0": -32,
+"ok": false,
+"at": "2026-11-27"
+},
+"092200": {
+"period": "2026 3분기",
+"sales": 1720,
+"sales0": 1888,
+"op": 49,
+"op0": 47,
+"ok": false,
+"at": "2026-11-27"
+},
+"098460": {
+"period": "2026 3분기",
+"sales": 1066,
+"sales0": 603,
+"op": 193,
+"op0": 47,
+"ok": true,
+"at": "2026-11-27"
+},
+"099190": {
+"period": "2026 3분기",
+"sales": 865,
+"sales0": 787,
+"op": 38,
+"op0": 9,
+"ok": true,
+"at": "2026-11-27"
+},
+"101170": {
+"period": "2026 3분기",
+"sales": 138,
+"sales0": 158,
+"op": 16,
+"op0": 35,
+"ok": false,
+"at": "2026-11-27"
+},
+"103590": {
+"period": "2026 3분기",
+"sales": 6376,
+"sales0": 4502,
+"op": 700,
+"op0": 353,
+"ok": true,
+"at": "2026-11-27"
+},
+"104460": {
+"period": "2026 3분기",
+"sales": 338,
+"sales0": 1085,
+"op": 29,
+"op0": 111,
+"ok": false,
+"at": "2026-11-27"
+},
+"105840": {
+"period": "2026 3분기",
+"sales": 339,
+"sales0": 476,
+"op": 24,
+"op0": 98,
+"ok": false,
+"at": "2026-11-27"
+},
+"108490": {
+"period": "2026 3분기",
+"sales": 135,
+"sales0": 92,
+"op": -26,
+"op0": 2,
+"ok": false,
+"at": "2026-11-27"
+},
+"108860": {
+"period": "2026 3분기",
+"sales": 339,
+"sales0": 258,
+"op": 19,
+"op0": 10,
+"ok": true,
+"at": "2026-11-27"
+},
+"112610": {
+"period": "2026 3분기",
+"sales": 6775,
+"sales0": 5970,
+"op": 807,
+"op0": 657,
+"ok": true,
+"at": "2026-11-27"
+},
+"117730": {
+"period": "2026 3분기",
+"sales": 208,
+"sales0": 131,
+"op": -26,
+"op0": -1,
+"ok": false,
+"at": "2026-11-27"
+},
+"126700": {
+"period": "2026 3분기",
+"sales": 630,
+"sales0": 587,
+"op": 21,
+"op0": -87,
+"ok": true,
+"at": "2026-11-27"
+},
+"128940": {
+"period": "2026 3분기",
+"sales": 3774,
+"sales0": 3623,
+"op": 378,
+"op0": 551,
+"ok": true,
+"at": "2026-11-27"
+},
+"140670": {
+"period": "2026 3분기",
+"sales": 168,
+"sales0": 174,
+"op": -10,
+"op0": -4,
+"ok": false,
+"at": "2026-11-27"
+},
+"141070": {
+"none": true,
+"at": "2026-11-27"
+},
+"141080": {
+"period": "2026 3분기",
+"sales": 145,
+"sales0": 414,
+"op": -504,
+"op0": -232,
+"ok": false,
+"at": "2026-11-27"
+},
+"145020": {
+"period": "2026 3분기",
+"sales": 975,
+"sales0": 1059,
+"op": 181,
+"op0": 474,
+"ok": false,
+"at": "2026-11-27"
+},
+"145720": {
+"period": "2026 3분기",
+"sales": 783,
+"sales0": 782,
+"op": 159,
+"op0": 125,
+"ok": true,
+"at": "2026-11-27"
+},
+"160190": {
+"period": "2026 3분기",
+"sales": 169,
+"sales0": 159,
+"op": -31,
+"op0": -21,
+"ok": false,
+"at": "2026-11-27"
+},
+"178320": {
+"period": "2026 3분기",
+"sales": 5621,
+"sales0": 1902,
+"op": 387,
+"op0": -351,
+"ok": true,
+"at": "2026-11-27"
+},
+"196170": {
+"period": "2026 3분기",
+"sales": 1198,
+"sales0": 490,
+"op": 789,
+"op0": 267,
+"ok": true,
+"at": "2026-11-27"
+},
+"207940": {
+"period": "2026 3분기",
+"sales": 14903,
+"sales0": 12575,
+"op": 6401,
+"op0": 6335,
+"ok": true,
+"at": "2026-11-27"
+},
+"214150": {
+"period": "2026 3분기",
+"sales": 830,
+"sales0": 830,
+"op": 270,
+"op0": 376,
+"ok": true,
+"at": "2026-11-27"
+},
+"214450": {
+"period": "2026 3분기",
+"sales": 1715,
+"sales0": 1354,
+"op": 626,
+"op0": 619,
+"ok": true,
+"at": "2026-11-27"
+},
+"229640": {
+"period": "2026 3분기",
+"sales": 3515,
+"sales0": 2328,
+"op": 222,
+"op0": 148,
+"ok": true,
+"at": "2026-11-27"
+},
+"237690": {
+"period": "2026 3분기",
+"sales": 976,
+"sales0": 819,
+"op": 157,
+"op0": 147,
+"ok": true,
+"at": "2026-11-27"
+},
+"251630": {
+"period": "2026 3분기",
+"sales": 168,
+"sales0": 104,
+"op": 7,
+"op0": -16,
+"ok": true,
+"at": "2026-11-27"
+},
+"267250": {
+"period": "2026 3분기",
+"sales": 220800,
+"sales0": 182244,
+"op": 29197,
+"op0": 17024,
+"ok": true,
+"at": "2026-11-27"
+},
+"267260": {
+"period": "2026 3분기",
+"sales": 11799,
+"sales0": 9954,
+"op": 2845,
+"op0": 2471,
+"ok": true,
+"at": "2026-11-27"
+},
+"270660": {
+"period": "2026 3분기",
+"sales": 71,
+"sales0": 87,
+"op": -14,
+"op0": -4,
+"ok": false,
+"at": "2026-11-27"
+},
+"277810": {
+"period": "2026 3분기",
+"sales": 139,
+"sales0": 107,
+"op": -18,
+"op0": -7,
+"ok": false,
+"at": "2026-11-27"
+},
+"298040": {
+"period": "2026 3분기",
+"sales": 17406,
+"sales0": 16241,
+"op": 2435,
+"op0": 2198,
+"ok": true,
+"at": "2026-11-27"
+},
+"298380": {
+"period": "2026 3분기",
+"sales": 88,
+"sales0": 14,
+"op": -199,
+"op0": -224,
+"ok": true,
+"at": "2026-11-27"
+},
+"300120": {
+"period": "2026 3분기",
+"sales": 294,
+"sales0": 199,
+"op": -2,
+"op0": -62,
+"ok": true,
+"at": "2026-11-27"
+},
+"304100": {
+"period": "2026 3분기",
+"sales": 172,
+"sales0": 91,
+"op": 1,
+"op0": -27,
+"ok": true,
+"at": "2026-11-27"
+},
+"319400": {
+"period": "2026 3분기",
+"sales": 939,
+"sales0": 1035,
+"op": 43,
+"op0": 67,
+"ok": false,
+"at": "2026-11-27"
+},
+"322180": {
+"period": "2026 3분기",
+"sales": 185,
+"sales0": 130,
+"op": 3,
+"op0": -16,
+"ok": true,
+"at": "2026-11-27"
+},
+"326030": {
+"period": "2026 3분기",
+"sales": 2584,
+"sales0": 1917,
+"op": 1163,
+"op0": 701,
+"ok": true,
+"at": "2026-11-27"
+},
+"328130": {
+"period": "2026 3분기",
+"sales": 222,
+"sales0": 196,
+"op": -107,
+"op0": -216,
+"ok": true,
+"at": "2026-11-27"
+},
+"347850": {
+"period": "2026 3분기",
+"sales": 2,
+"sales0": 10,
+"op": -136,
+"op0": -62,
+"ok": false,
+"at": "2026-11-27"
+},
+"348340": {
+"period": "2026 3분기",
+"sales": 28,
+"sales0": 45,
+"op": -70,
+"op0": -32,
+"ok": false,
+"at": "2026-11-27"
+},
+"373220": {
+"period": "2026 3분기",
+"sales": 96434,
+"sales0": 60654,
+"op": 7560,
+"op0": 6013,
+"ok": true,
+"at": "2026-11-27"
+},
+"377480": {
+"period": "2026 3분기",
+"sales": 22,
+"sales0": 21,
+"op": -10,
+"op0": -16,
+"ok": true,
+"at": "2026-11-27"
+},
+"388050": {
+"period": "2026 3분기",
+"sales": 148,
+"sales0": 156,
+"op": 17,
+"op0": 22,
+"ok": false,
+"at": "2026-11-27"
+},
+"388720": {
+"period": "2026 3분기",
+"sales": 67,
+"sales0": 93,
+"op": -42,
+"op0": -40,
+"ok": false,
+"at": "2026-11-27"
+},
+"389500": {
+"period": "2026 3분기",
+"sales": 49,
+"sales0": 20,
+"op": -17,
+"op0": -21,
+"ok": true,
+"at": "2026-11-27"
+},
+"394280": {
+"period": "2026 3분기",
+"sales": 17,
+"sales0": 53,
+"op": -81,
+"op0": -60,
+"ok": false,
+"at": "2026-11-27"
+},
+"396270": {
+"period": "2026 3분기",
+"sales": 133,
+"sales0": 100,
+"op": -8,
+"op0": -54,
+"ok": true,
+"at": "2026-11-27"
+},
+"437730": {
+"period": "2026 3분기",
+"sales": 234,
+"sales0": 225,
+"op": -61,
+"op0": -13,
+"ok": false,
+"at": "2026-11-27"
+},
+"454910": {
+"period": "2026 3분기",
+"sales": 162,
+"sales0": 102,
+"op": -134,
+"op0": -153,
+"ok": true,
+"at": "2026-11-27"
+},
+"455900": {
+"period": "2026 3분기",
+"sales": 14,
+"sales0": 8,
+"op": -27,
+"op0": -28,
+"ok": true,
+"at": "2026-11-27"
+},
+"466100": {
+"period": "2026 3분기",
+"sales": 217,
+"sales0": 107,
+"op": -21,
+"op0": 8,
+"ok": false,
+"at": "2026-11-27"
+},
+"475400": {
+"period": "2026 3분기",
+"sales": 105,
+"sales0": 37,
+"op": -30,
+"op0": -40,
+"ok": true,
+"at": "2026-11-27"
+}
+},
+"corp": {
+"105840": "00173944",
+"117730": "00867098",
+"108490": "00946030",
+"071280": "00363486",
+"141070": "00678096",
+"058610": "00220686",
+"006260": "00105952",
+"140670": "00858124",
+"092200": "00112165",
+"056080": "00234227",
+"090710": "00540429",
+"033100": "00185356",
+"059120": "00404288",
+"000100": "00145109",
+"108860": "00666064",
+"328130": "01397620",
+"396270": "01515864",
+"326030": "00878696",
+"000500": "00104768",
+"086280": "00360595",
+"099190": "00550994",
+"300120": "01251489",
+"012330": "00164788",
+"041830": "00269922",
+"015760": "00159193",
+"267260": "01205851",
+"389500": "00567897",
+"112610": "00670340",
+"207940": "00877059",
+"012200": "00102618",
+"010120": "00105855",
+"126700": "00825959",
+"104460": "00602136",
+"090360": "00536523",
+"298040": "01316245",
+"052690": "00159209",
+"069620": "00427483",
+"319400": "01358463",
+"237690": "00871833",
+"145720": "00526599",
+"030530": "00216647",
+"229640": "01093007",
+"160190": "00650771",
+"437730": "00262266",
+"011070": "00105961",
+"022100": "00155212",
+"011210": "00106623",
+"034020": "00159616",
+"005380": "00164742",
+"394280": "01571107",
+"062040": "00366438",
+"475400": "01588189",
+"066570": "00401731",
+"103590": "00683469",
+"068270": "00413046",
+"053080": "00304076",
+"214450": "00970453",
+"145020": "00888347",
+"004380": "00127802",
+"006280": "00129679",
+"141080": "00842619",
+"060280": "00356802",
+"006400": "00126362",
+"079370": "00442570",
+"388720": "01152586",
+"304100": "01050738",
+"178320": "00838005",
+"298380": "01256864",
+"347850": "01376715",
+"270660": "01201590",
+"267250": "01205709",
+"377480": "01297898",
+"388050": "01462605",
+"466100": "01784914",
+"005930": "00126380",
+"101170": "00567222",
+"083650": "00409788",
+"322180": "01309388",
+"196170": "00989619",
+"098460": "00579999",
+"000250": "00128546",
+"000150": "00117212",
+"087010": "00415868",
+"251630": "01027794",
+"373220": "01515323",
+"056190": "00358271",
+"051600": "00159218",
+"000880": "00160588",
+"277810": "01261644",
+"214150": "01061327",
+"001440": "00113207",
+"0035S0": "01722066",
+"348340": "01336461",
+"454910": "01105153",
+"455900": "01592049",
+"028300": "00199252",
+"000270": "00106641",
+"128940": "00828497"
+},
+"corpAt": "2026-11-27",
+"signals": []
+}
