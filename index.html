@@ -1496,6 +1496,38 @@ button.bk-mine b{color:var(--text)} button.bk-mine b.up{color:var(--up)} button.
 .ds-bar{height:5px;border-radius:3px;background:var(--bg2);margin-top:auto;overflow:hidden}
 .ds-bar i{display:block;height:100%;background:var(--green);border-radius:3px}
 .ds-bar.low i{background:var(--yellow)}.ds-bar.stop i{background:var(--red)}
+
+/* fix19 산업 지도 · 기여도 · 수급 */
+.tm-tog{display:flex;gap:6px;margin:0 0 8px}
+.tm-tog button{font:inherit;font-size:12.5px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text2)}
+.tm-tog button.on{background:var(--text);color:var(--card);border-color:var(--text)}
+.ts-ind{display:block;margin:2px 0 6px}
+.cb-r{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.cb-l{flex:0 0 100%;font-size:11.5px;color:var(--text3)}
+.cb-r em{font-style:normal;background:var(--card2);padding:3px 8px;border-radius:8px}
+.cb-r em small{color:var(--text3);margin-left:4px}
+.fl-g{display:flex;gap:12px;font-size:13px;padding:4px 0}.fl-g span:first-child{color:var(--text3);width:28px}
+.fl-s{font-size:12.5px;color:var(--text2);padding:4px 0 2px}
+.tl-it small{font-size:11px;margin-left:4px}
+
+/* fix20 관심 테마 */
+.wt-row{display:flex;justify-content:space-between;gap:10px;width:100%;font:inherit;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);padding:10px 0;color:var(--text)}
+.wt-nm{display:flex;flex-direction:column;flex:1;min-width:0}.wt-nm b{font-size:14.5px}.wt-nm small{font-size:11.5px;color:var(--text3);line-height:1.4}
+.wt-st{display:flex;flex-direction:column;align-items:flex-end;gap:2px;white-space:nowrap}.wt-st em{font-style:normal;font-weight:700;font-size:13px}.wt-st small{font-size:11px;color:var(--text3)}
+.wt-on{font-size:13px;margin-top:8px;line-height:1.6}.wt-on b{color:var(--green);margin-right:4px}
+.wt-off,.wt-sc{font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5}
+.wt-sort{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 4px;font-size:12px;color:var(--text3)}
+.wt-sort button{font:inherit;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text2)}
+.wt-sort button.on{background:var(--text);color:var(--card)}.wt-lg{flex-basis:100%;font-size:11px}
+.wt-s{border-bottom:1px solid var(--border)}
+.wt-s summary{display:flex;align-items:center;gap:8px;padding:9px 0;list-style:none;cursor:pointer}.wt-s summary::-webkit-details-marker{display:none}
+.wt-sn{flex:1;min-width:0;font-size:13.5px;font-weight:600}.wt-sn small{display:block;font-size:10.5px;font-weight:400;color:var(--text3)}
+.wt-gr{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:6px;white-space:nowrap}
+.wt-gr.g1{background:var(--green-light);color:var(--green)}.wt-gr.g2{background:var(--blue-light);color:var(--blue)}.wt-gr.g3{background:var(--card2);color:var(--text2)}.wt-gr.g4{background:var(--card2);color:var(--text3)}
+.wt-ck{display:flex;gap:3px}.wc{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:11px;font-weight:800}
+.wc.on{background:var(--green);color:#fff}.wc.off{background:var(--bg2);color:var(--text3)}.wc.na{background:none;border:1px dashed var(--border-hover);color:var(--text3)}
+.wt-sig{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:6px;background:var(--card2);color:var(--text2);white-space:nowrap}.wt-sig.on{background:var(--green);color:#fff}
+.wt-d{padding:0 2px 10px;font-size:12.5px;line-height:1.55}.wt-d p{margin:3px 0}.wt-d a{color:var(--green)}.wt-warn{color:var(--red)}
 </style>
 </head>
 <body>
@@ -4231,7 +4263,7 @@ function ingestScan(js,source){
   if(js.themes)jset('sv4_theme_flow',js.themes);
   if(js.pullbacks)jset('sv4_pullbacks',Object.assign({date:js.baseDate},js.pullbacks));
   if(js.names)jset('sv4_names',Object.assign(jget('sv4_names',{}),js.names));
-  jset('sv4_reviews',js.reviews||[]);jset('sv4_us',js.us||[]);jset('sv4_dart',js.dart||null);jset('sv4_news',js.news||null);
+  jset('sv4_reviews',js.reviews||[]);jset('sv4_us',js.us||[]);jset('sv4_dart',js.dart||null);jset('sv4_news',js.news||null);jset('sv4_flows',js.flows||null);jset('sv4_watch',js.watch||null);
   jset(META_KEY,{baseDate:js.baseDate,generatedAt:js.generatedAt,intraday:!!js.intraday,total:js.hits.length,inRange:hits.length,loadedAt:new Date().toISOString(),source});
   saveScans();return {added,total:js.hits.length,inRange:hits.length};
 }
@@ -4942,6 +4974,7 @@ function renderToday(){
   box.innerHTML='<div class="rd-head"><div class="rd-date">'+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+wd+')</div><div class="rd-phase"><i class="'+(ph==='정규장'?'live':'')+'"></i>'+ph+'</div></div>'
     +deny+(window.rdDashboard?rdDashboard():'')+(window.rdBasketCard?rdBasketCard():'')
     +(window.rdThemeMapCard?rdThemeMapCard():'')
+    +(window.rdWatchCard?rdWatchCard():'')
     +(window.rdNewsCard?rdNewsCard():'')
     +'<section class="rd-card"><div class="rd-h"><h2>챙길 일</h2></div><ul class="rd-todo">'+todo+'</ul></section>'
     +'<section class="rd-card"><div class="rd-h"><h2>보유 종목</h2><span class="rd-hb">'+(active.length&&window.rdWeights?'<button onclick="rdWeights()">비중</button>':'')+'<button onclick="switchTab(\'stocks\')">전체</button></span></div><ul class="rd-pos">'+pos+'</ul>'+upd+'</section>'
@@ -5573,6 +5606,8 @@ function decide(){
   ck.push({ok:!L.halted,t:'멈춤선',v:L.halt?(L.plPct==null?'운영 자금 미입력':'누적 '+pct(L.plPct,1)+' / 멈춤 -'+L.halt+'%'):'꺼짐',say:L.halted?'도달':L.halt?'여유':'꺼짐',g:'halt',neutral:!L.halt||L.plPct==null});
   ck.push({ok:V.st==='pass',t:'검증 단계',v:'끝난 제안 '+V.n+'/'+VER_N+(V.v?' · 제안 '+pct(V.v.cur,1)+' vs 지수 '+pct(V.v.idx,1):''),say:V.say,g:'verdict',neutral:V.st==='test'});
   if(risk)ck.push({ok:false,t:'위험 공시',v:'제안 종목 중 '+risk+'개',say:'원문 확인',g:'dart'});
+  const WT=jget('sv4_watch',null),won_=WT&&WT.themes?WT.themes.flatMap(t=>t.stocks.filter(r=>r.sig==='진입 검토').map(r=>r.name)):[];
+  if(won_.length)ck.push({ok:true,t:'관심 테마 진입 검토',v:won_.slice(0,3).join(', ')+(won_.length>3?' 외 '+(won_.length-3):''),say:won_.length+'개',g:'watch'});
   return {s,L,V,word,tone,text,btns,ck};
 }
 window.rdDecide=decide;
@@ -5792,6 +5827,26 @@ window.rdRoleTag=r=>r&&ROLE[r]&&r!=='mid'?'<span class="role role-'+r+'">'+ROLE[
 function qv(arr,q){const a=arr.slice().sort((x,y)=>x-y);return a.length?a[Math.min(a.length-1,Math.floor(a.length*q))]:0;}
 function baseDom(M){const its=M.items,xs=its.map(i=>Math.abs(i.x)).concat([Math.abs(M.mkt.x)]),ys=its.map(i=>Math.abs(i.y)).concat([Math.abs(M.mkt.y)]);
   const XR=Math.max(8,qv(xs,.96)*1.12),YR=Math.max(6,qv(ys,.96)*1.12);return {x0:-XR,x1:XR,y0:-YR,y1:YR};}
+/* 보기 전환: 산업(기본) · 테마 · 한 산업의 테마 */
+try{window._tmView=window._tmView||localStorage.getItem('sv4_tmview')||'ind';}catch(e){window._tmView=window._tmView||'ind';}
+function realTF(){return jget('sv4_theme_flow',null);}
+function cntOf(it){const c={};it.forEach(i=>c[i.q]=(c[i.q]||0)+1);return c;}
+function viewTF(v){const tf=realTF();if(!tf||!tf.map)return tf;v=v||window._tmView;const M=tf.map;
+  if(v==='theme'||!M.ind||!M.ind.length)return tf;
+  if(v==='ind')return Object.assign({},tf,{map:{asOf:M.asOf,items:M.ind,mkt:M.mkt,count:cntOf(M.ind),total:M.ind.length,unit:'산업',kind:'ind'}});
+  if(v&&typeof v==='object'&&v.sub){const g=M.ind.find(x=>x.theme===v.sub);if(!g)return tf;
+    return Object.assign({},tf,{map:{asOf:M.asOf,items:g.themes,mkt:{x:g.x,y:g.y,tr:g.tr},mkLabel:'산업 평균',count:cntOf(g.themes),total:g.themes.length,unit:'테마',kind:'sub',sub:g.theme}});}
+  return tf;}
+window.rdTmViewTF=viewTF;
+function vkey(v){return v&&typeof v==='object'&&v.sub?'sub:'+v.sub:(v||'ind');}
+function vparse(s){return String(s||'').indexOf('sub:')===0?{sub:String(s).slice(4)}:(s||'ind');}
+function allThemes(){const tf=realTF(),M=(tf&&tf.map)||{},m={};(M.items||[]).forEach(i=>m[i.theme]=i);
+  (M.ind||[]).forEach(g=>(g.themes||[]).forEach(i=>{m[i.theme]=Object.assign({},i,m[i.theme]||{},{c1:i.c1,c5:i.c5,r1:i.r1,r5:i.r5,ind:g.theme});}));return m;}
+window.rdThemeSheetN=function(n){const it=allThemes()[n];if(it)rdThemeSheet(it);else if(typeof toast==='function')toast('이 테마는 지도 데이터에 없어요');};
+window.rdIndSheetN=function(n){const tf=realTF(),g=tf&&tf.map&&(tf.map.ind||[]).find(x=>x.theme===n);if(g)rdIndSheet(g);};
+window.rdTmOpen=function(k){const M=viewTF().map,it=M.items[k];if(!it)return;if(M.kind==='ind')rdIndSheet(it);else rdThemeSheet(it);};
+window.rdTmSetView=function(v){window._tmView=vparse(v);try{localStorage.setItem('sv4_tmview',typeof window._tmView==='string'?window._tmView:'ind');}catch(e){}
+  if(document.getElementById('tm-full')&&document.getElementById('tm-full').classList.contains('open'))rdThemeMapFull();else if(window.renderToday)renderToday();};
 /* 지도 그리기 — opt.dom(보이는 범위, % 단위)을 주면 그 범위만 확대해서 그림 */
 window.rdThemeMap=function(tf,opt){
   opt=opt||{};const M=tf&&tf.map;
@@ -5824,7 +5879,7 @@ window.rdThemeMap=function(tf,opt){
   vis.forEach(([i])=>{g+=trail(i.tr,i.x,i.y,'tm-tr'+(i.pick?' pk':''));});
   g+=trail(M.mkt.tr,M.mkt.x,M.mkt.y,'tm-tr mk')+'</g>';
   const mX=cx(M.mkt.x),mY=cy(M.mkt.y),mIn=!opt.dom||(inX(M.mkt.x)&&inY(M.mkt.y));
-  const boxes=[[W-P-34,P+1,34,14],[P,P+1,30,14],[W-P-62,H-P-17,62,14],[P,H-P-17,30,14]].concat(mIn?[[mX+7,mY-17,60,13]]:[]),LB={};
+  const mkL=M.mkLabel||'시장 평균',boxes=[[W-P-34,P+1,34,14],[P,P+1,30,14],[W-P-62,H-P-17,62,14],[P,H-P-17,30,14]].concat(mIn?[[mX+7,mY-17,mkL.length*10.5+4,13]]:[]),LB={};
   const free=b=>b[0]>=2&&b[0]+b[2]<=W-2&&b[1]>=P-2&&b[1]+b[3]<=H-2&&!boxes.some(o=>b[0]<o[0]+o[2]&&o[0]<b[0]+b[2]&&b[1]<o[1]+o[3]&&o[1]<b[1]+b[3]);
   vis.filter(([i])=>lab.has(i.theme)).sort((a,b)=>(b[0].pick-a[0].pick)||(b[0].amt-a[0].amt)).forEach(([i,k])=>{
     const X=cx(i.x),Y=cy(i.y),r=rad(i),t=shortT(i.theme).slice(0,opt.full?11:9),w=t.length*10.5+4,h=13;
@@ -5835,12 +5890,12 @@ window.rdThemeMap=function(tf,opt){
     g+='<g class="tm-pt '+q.c+(i.pick?' pk':'')+'"'+(opt.full?' onclick="rdTmTap('+k+',event)"':'')+'><circle cx="'+X+'" cy="'+Y+'" r="'+Math.max(r,12)+'" class="hit"/><circle cx="'+X+'" cy="'+Y+'" r="'+r+'" class="dot"/>'
       +(l?'<text x="'+l.x+'" y="'+l.y+'" text-anchor="'+l.an+'" class="tm-lb">'+esc(l.t)+'</text>':'')+'</g>';});
   if(opt.full)window._tmPos=pos;
-  if(mIn)g+='<g class="tm-mk"><rect x="'+(mX-5)+'" y="'+(mY-5)+'" width="10" height="10" transform="rotate(45 '+mX+' '+mY+')"/><text x="'+(mX+9)+'" y="'+(mY-7)+'" class="tm-lb mk">시장 평균</text></g>';
+  if(mIn)g+='<g class="tm-mk"><rect x="'+(mX-5)+'" y="'+(mY-5)+'" width="10" height="10" transform="rotate(45 '+mX+' '+mY+')"/><text x="'+(mX+9)+'" y="'+(mY-7)+'" class="tm-lb mk">'+esc(mkL)+'</text></g>';
   const svg='<svg class="tm-svg'+(opt.full?' full':' tap')+'" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="4분면 테마 지도"'
-    +(opt.full?'':' data-x0="'+D.x0+'" data-x1="'+D.x1+'" data-y0="'+D.y0+'" data-y1="'+D.y1+'" data-w="'+W+'" data-h="'+H+'" onclick="rdTmOpenAt(event,this)"')+'>'+g+'</svg>';
+    +(opt.full?'':' data-v="'+esc(vkey(opt.view))+'" data-x0="'+D.x0+'" data-x1="'+D.x1+'" data-y0="'+D.y0+'" data-y1="'+D.y1+'" data-w="'+W+'" data-h="'+H+'" onclick="rdTmOpenAt(event,this)"')+'>'+g+'</svg>';
   if(opt.svgOnly)return svg;
   const cnt=M.count||{},tot=M.total||0;
-  const cline=tot?'<div class="tm-cnt">전체 '+tot+'개 테마 · '+['주도','부상','과열·눌림','소외'].map(q=>'<span class="'+Q[q].c+'">'+q+' '+(cnt[q]||0)+'</span>').join(' · ')+'</div>':'';
+  const cline=tot?'<div class="tm-cnt">전체 '+tot+'개 '+(M.unit||'테마')+' · '+['주도','부상','과열·눌림','소외'].map(q=>'<span class="'+Q[q].c+'">'+q+' '+(cnt[q]||0)+'</span>').join(' · ')+'</div>':'';
   return '<div class="tm-box">'+(opt.title===false?'':'<div class="tm-h"><b>테마 지도</b><span>'+esc(String(M.asOf||'').slice(5).replace('-','/'))+' · 누르면 크게 보기</span></div>')
     +svg+cline
     +'<div class="tm-leg"><span><i class="dot pk"></i>오늘 제안 테마</span><span><i class="ln"></i><i class="pst"></i>지나온 길(빈 점 → 색 점 = 10일 전 → 지금)</span><span>점 크기 = 거래대금</span></div>'
@@ -5848,23 +5903,29 @@ window.rdThemeMap=function(tf,opt){
 };
 window.rdThemeMapCard=function(){
   const tf=jget('sv4_theme_flow',null);if(!tf||!tf.map)return '';
+  const hasInd=!!(tf.map.ind&&tf.map.ind.length),cv=hasInd&&window._tmView!=='theme'?'ind':'theme';
   const pk=tf.picks||{},mq=tf.map.mkt?quadOf(tf.map.mkt.x,tf.map.mkt.y):'';
-  return '<section class="rd-card tm-card"><div class="rd-h"><h2>테마 지도</h2><span class="rd-hb"><button onclick="rdGuide(\'map\')">?</button><button onclick="rdThemeMapFull()">크게</button></span></div>'
-    +'<div class="tm-sum">시장 평균은 <b class="'+((Q[mq]||{}).c||'')+'">'+mq+'</b> 칸'+(pk.rest?' → 쉬는 구간':' → 공격 구간')+' · 지도를 누르면 그 자리를 확대해요</div>'
-    +rdThemeMap(tf,{small:true,title:false})+'</section>';
+  const tog=hasInd?'<div class="tm-tog">'+[['ind','산업 '+tf.map.ind.length],['theme','테마 '+tf.map.items.length]].map(([k,l])=>'<button class="'+(cv===k?'on':'')+'" onclick="rdTmSetView(\''+k+'\')">'+l+'</button>').join('')+'</div>':'';
+  const fl=jget('sv4_flows',null),m1=fl&&fl.market&&fl.market.length?fl.market[fl.market.length-1]:null;
+  return '<section class="rd-card tm-card"><div class="rd-h"><h2>'+(cv==='ind'?'산업 지도':'테마 지도')+'</h2><span class="rd-hb"><button onclick="rdGuide(\'map\')">?</button><button onclick="rdThemeMapFull()">크게</button></span></div>'
+    +tog+'<div class="tm-sum">시장 평균은 <b class="'+((Q[mq]||{}).c||'')+'">'+mq+'</b> 칸'+(pk.rest?' → 쉬는 구간':' → 공격 구간')+' · '+(cv==='ind'?'산업을 누르면 그 산업의 테마로':'지도를 누르면 그 자리를 확대해요')+'</div>'
+    +(m1?'<div class="tm-sum">'+String(m1.d).slice(5).replace('-','/')+' 대형주 '+fl.mktN+'종목 순매수 · 외국인 <b class="'+(m1.frgn>=0?'up':'down')+'">'+fmtEok(m1.frgn)+'</b> · 기관 <b class="'+(m1.orgn>=0?'up':'down')+'">'+fmtEok(m1.orgn)+'</b> · 개인 '+fmtEok(m1.prsn)+(window.rdGQ?rdGQ('flows'):'')+'</div>':'')
+    +rdThemeMap(viewTF(cv),{small:true,title:false,view:cv})+'</section>';
 };
+function fmtEok(v){if(v==null||isNaN(v))return '—';const a=Math.abs(v);return (v>=0?'+':'-')+(a>=10000?(a/10000).toFixed(1)+'조':Math.round(a).toLocaleString()+'억');}
+window.rdFmtEok=fmtEok;
 /* 작은 지도를 누르면: 누른 자리를 중심으로 2.5배 확대한 큰 지도 */
 window.rdTmOpenAt=function(e,svg){
   const r=svg.getBoundingClientRect(),d=svg.dataset,W=+d.w,H=+d.h,P=26;
   const vx=(e.clientX-r.left)/r.width*W,vy=(e.clientY-r.top)/r.height*H;
   const x=+d.x0+(vx-P)/(W-2*P)*(d.x1-d.x0),y=+d.y1-(vy-P)/(H-2*P)*(d.y1-d.y0);
-  rdThemeMapFull({x,y,z:2.5});
+  window._tmView=vparse(d.v);rdThemeMapFull({x,y,z:2.5});
 };
-function zoomDom(c,z){const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map),hx=(B.x1-B.x0)/z/2,hy=(B.y1-B.y0)/z/2;return {x0:c.x-hx,x1:c.x+hx,y0:c.y-hy,y1:c.y+hy};}
-function drawFull(){const tf=jget('sv4_theme_flow',null),box=$('tm-zbox');if(!tf||!box)return;
+function zoomDom(c,z){const tf=viewTF(),B=baseDom(tf.map),hx=(B.x1-B.x0)/z/2,hy=(B.y1-B.y0)/z/2;return {x0:c.x-hx,x1:c.x+hx,y0:c.y-hy,y1:c.y+hy};}
+function drawFull(){const tf=viewTF(),box=$('tm-zbox');if(!tf||!box)return;
   box.innerHTML=rdThemeMap(tf,{full:true,svgOnly:true,dom:window._tmDom});
   const B=baseDom(tf.map),z=(B.x1-B.x0)/(window._tmDom.x1-window._tmDom.x0),zb=$('tm-zl');if(zb)zb.textContent='×'+z.toFixed(1);}
-window.rdTmZoom=function(k){const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map),D=window._tmDom||B;
+window.rdTmZoom=function(k){const tf=viewTF(),B=baseDom(tf.map),D=window._tmDom||B;
   const m=.08;
   if(k==='all')window._tmDom=Object.assign({},B);
   else if(k==='in'||k==='out'){const f=k==='in'?.6:1/.6,c={x:(D.x0+D.x1)/2,y:(D.y0+D.y1)/2},hx=(D.x1-D.x0)*f/2,hy=(D.y1-D.y0)*f/2;
@@ -5874,18 +5935,21 @@ window.rdTmZoom=function(k){const tf=jget('sv4_theme_flow',null),B=baseDom(tf.ma
   document.querySelectorAll('.tm-zq button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));drawFull();$('tm-near').innerHTML='';};
 /* 큰 지도 · 확대: 두 손가락 벌리기/모으기, 한 손가락 끌기, 칸 버튼, ＋/－ */
 window.rdThemeMapFull=function(at){
-  const tf=jget('sv4_theme_flow',null);if(!tf||!tf.map){toast&&toast('테마 지도는 다음 저녁 스캔 뒤에 나와요');return;}
+  const rt=realTF();if(!rt||!rt.map){toast&&toast('테마 지도는 다음 저녁 스캔 뒤에 나와요');return;}
+  const tf=viewTF(),MK=tf.map.kind||'theme',hasInd=!!(rt.map.ind&&rt.map.ind.length);
   const B=baseDom(tf.map);window._tmDom=at?zoomDom(at,at.z):Object.assign({},B);
   const its=tf.map.items,qs=['주도','부상','과열·눌림','소외'];
   const list=qs.map(q=>{const L=its.map((i,k)=>[i,k]).filter(([i])=>i.q===q).sort((a,b)=>b[0].y-a[0].y);if(!L.length)return '';
-    return '<div class="tl-q '+Q[q].c+'">'+q+' <small>'+L.length+'</small></div>'+L.map(([i,k])=>'<button class="tl-it" onclick="rdThemeSheet('+k+')"><span>'+(i.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(i.theme))+'</span><span class="num"><em class="'+(i.x>=0?'up':'down')+'">'+pct(i.x,0)+'</em> · <em class="'+(i.y>=0?'up':'down')+'">'+pct(i.y,0)+'</em></span></button>').join('');}).join('');
-  sheet('tm-full','<div class="grab"></div><div class="tm-fh"><h3>테마 지도</h3><button class="bk-link" onclick="rdGuide(\'map\')">읽는 법</button></div>'
+    return '<div class="tl-q '+Q[q].c+'">'+q+' <small>'+L.length+'</small></div>'+L.map(([i,k])=>'<button class="tl-it" onclick="rdTmOpen('+k+')"><span>'+(i.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(i.theme))+'</span><span class="num"><em class="'+(i.x>=0?'up':'down')+'">'+pct(i.x,0)+'</em> · <em class="'+(i.y>=0?'up':'down')+'">'+pct(i.y,0)+'</em></span></button>').join('');}).join('');
+  const ttl=MK==='ind'?'산업 지도':MK==='sub'?esc(tf.map.sub)+' · 테마':'테마 지도';
+  const vt=hasInd?'<div class="tm-tog">'+[['ind','산업'],['theme','주요 테마 '+rt.map.items.length]].concat(MK==='sub'?[['sub:'+tf.map.sub,shortT(tf.map.sub)]]:[]).map(([k,l])=>'<button class="'+((MK==='sub'?'sub:'+tf.map.sub:MK)===k?'on':'')+'" onclick="rdTmSetView(\''+esc(k)+'\')">'+esc(l)+'</button>').join('')+'</div>':'';
+  sheet('tm-full','<div class="grab"></div><div class="tm-fh"><h3>'+ttl+'</h3><button class="bk-link" onclick="rdGuide(\'map\')">읽는 법</button></div>'+vt
     +'<div class="tm-zq">'+['all'].concat(qs).map(k=>'<button data-k="'+k+'" class="'+(!at&&k==='all'?'on':'')+'" onclick="rdTmZoom(\''+k+'\')">'+(k==='all'?'전체':k)+'</button>').join('')
     +'<span class="tm-zpm"><button onclick="rdTmZoom(\'out\')" aria-label="축소">－</button><b id="tm-zl">×1.0</b><button onclick="rdTmZoom(\'in\')" aria-label="확대">＋</button></span></div>'
     +'<div id="tm-zbox" class="tm-zbox"></div>'
     +'<div id="tm-near" class="tm-near"></div>'
     +'<div class="tm-hint">두 손가락으로 벌리면 확대, 끌면 이동. 점이 겹치면 누른 자리 근처 테마를 아래에 모아 보여 줘요.</div>'
-    +'<div class="set-gt">지도에 있는 테마 '+its.length+'개 <small>60일 · 20일 수익률, 누르면 설명</small></div><div class="tl">'+list+'</div>'
+    +'<div class="set-gt">지도에 있는 '+(MK==='ind'?'산업':'테마')+' '+its.length+'개 <small>60일 · 20일 수익률, 누르면 '+(MK==='ind'?'그 산업의 테마':'설명')+'</small></div><div class="tl">'+list+'</div>'
     +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-full\')">닫기</button></div>');
   drawFull();bindPinch($('tm-zbox'));
 };
@@ -5898,7 +5962,7 @@ function bindPinch(el){
   const begin=()=>{const sv=svgEl();if(!sv)return;const r=sv.getBoundingClientRect(),a=[...pts.values()];
     const vb=cur||{x:0,y:0,w:W,h:H};
     st={r,vb:Object.assign({},vb),a:a.map(p=>Object.assign({},p)),moved:st?st.moved:false};};
-  const limits=()=>{const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map),D=window._tmDom,Dw=D.x1-D.x0,Bw=B.x1-B.x0;
+  const limits=()=>{const tf=viewTF(),B=baseDom(tf.map),D=window._tmDom,Dw=D.x1-D.x0,Bw=B.x1-B.x0;
     return [W*(Bw/8)/Dw,W*(Bw*1.5)/Dw];};
   el.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});begin();},{passive:true});
   el.addEventListener('pointermove',e=>{
@@ -5913,7 +5977,7 @@ function bindPinch(el){
       const sx=v0.x+m0.x/r.width*v0.w,sy=v0.y+m0.y/r.height*v0.h;
       vb={x:sx-m1.x/r.width*w,y:sy-m1.y/r.height*h,w,h};}
     if(vb){if(e.cancelable)e.preventDefault();cur=vb;const sv=svgEl();if(sv)sv.setAttribute('viewBox',vb.x+' '+vb.y+' '+vb.w+' '+vb.h);
-      const zl=$('tm-zl'),tf=jget('sv4_theme_flow',null);if(zl&&tf){const B=baseDom(tf.map),D=window._tmDom;zl.textContent='×'+((B.x1-B.x0)/((D.x1-D.x0)*vb.w/W)).toFixed(1);}}
+      const zl=$('tm-zl'),tf=viewTF();if(zl&&tf){const B=baseDom(tf.map),D=window._tmDom;zl.textContent='×'+((B.x1-B.x0)/((D.x1-D.x0)*vb.w/W)).toFixed(1);}}
   },{passive:false});
   const commit=()=>{if(!cur)return;const D=window._tmDom,Dw=D.x1-D.x0,Dh=D.y1-D.y0,v=cur;
     const nw=Dw*v.w/W,nh=Dh*v.h/H;
@@ -5930,22 +5994,48 @@ function bindPinch(el){
 /* 겹친 점 처리: 누른 점 근처(18px) 테마가 여럿이면 목록으로 */
 window.rdTmTap=function(k,e){
   if(e)e.stopPropagation();if(window._tmDragged&&Date.now()-window._tmDragged<350)return;
-  const P=window._tmPos||{},me=P[k],its=window._tmItems||[];if(!me){rdThemeSheet(k);return;}
+  const P=window._tmPos||{},me=P[k],its=viewTF().map.items;if(!me){rdTmOpen(k);return;}
   const svg=document.querySelector('#tm-zbox svg'),sc=svg?340/svg.getBoundingClientRect().width:1,R=18*sc;
   const near=Object.keys(P).map(Number).filter(j=>Math.hypot(P[j][0]-me[0],P[j][1]-me[1])<=R).sort((a,b)=>Math.hypot(P[a][0]-me[0],P[a][1]-me[1])-Math.hypot(P[b][0]-me[0],P[b][1]-me[1]));
-  if(near.length<=1){rdThemeSheet(k);return;}
-  const nb=$('tm-near');if(!nb){rdThemeSheet(k);return;}
+  if(near.length<=1){rdTmOpen(k);return;}
+  const nb=$('tm-near');if(!nb){rdTmOpen(k);return;}
   nb.innerHTML='<div class="tm-nh">이 근처 테마 '+near.length+'개 <button class="bk-link" onclick="rdTmZoomAt('+k+')">이 자리 확대 ›</button></div>'
-    +near.map(j=>{const i=its[j];return '<button class="tl-it" onclick="rdThemeSheet('+j+')"><span>'+(i.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(i.theme))+'</span><span class="num"><em class="'+(i.x>=0?'up':'down')+'">'+pct(i.x,0)+'</em> · <em class="'+(i.y>=0?'up':'down')+'">'+pct(i.y,0)+'</em></span></button>';}).join('');
+    +near.map(j=>{const i=its[j];return '<button class="tl-it" onclick="rdTmOpen('+j+')"><span>'+(i.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(i.theme))+'</span><span class="num"><em class="'+(i.x>=0?'up':'down')+'">'+pct(i.x,0)+'</em> · <em class="'+(i.y>=0?'up':'down')+'">'+pct(i.y,0)+'</em></span></button>';}).join('');
   nb.scrollIntoView({block:'nearest',behavior:'smooth'});
 };
-window.rdTmZoomAt=function(k){const i=(window._tmItems||[])[k],D=window._tmDom;if(!i||!D)return;const tf=jget('sv4_theme_flow',null),B=baseDom(tf.map);
+window.rdTmZoomAt=function(k){const tf=viewTF(),i=tf.map.items[k],D=window._tmDom;if(!i||!D)return;const B=baseDom(tf.map);
   const z=Math.min(8,(B.x1-B.x0)/(D.x1-D.x0)*2.5);window._tmDom=zoomDom({x:i.x,y:i.y},z);drawFull();$('tm-near').innerHTML='';
   document.querySelectorAll('.tm-zq button').forEach(b=>b.classList.remove('on'));};
 function sheet(id,html){let el=$(id);if(!el){el=document.createElement('div');el.id=id;el.className='bk-sheet';}document.body.appendChild(el);
   el.innerHTML='<div class="bg" onclick="rdCloseBk(\''+id+'\')"></div><div class="pn" role="dialog">'+html+'</div>';el.classList.add('open');return el;}
+function contribHtml(i){
+  if(!i.c1&&!i.c5)return '';
+  const row=(lab,L,tot)=>L&&L.length?'<div class="cb-r"><span class="cb-l">'+lab+(tot!=null?' <b class="'+(tot>=0?'up':'down')+'">'+pct(tot,1)+'</b>':'')+'</span>'
+    +L.map(([c,cp,r])=>'<em>'+(typeof stLink==='function'?stLink(c,esc(nameOf(c))):esc(nameOf(c)))+' <b class="'+(cp>=0?'up':'down')+'">'+(cp>=0?'+':'')+cp.toFixed(2)+'%p</b><small>종목 '+pct(r,1)+'</small></em>').join('')+'</div>':'';
+  return '<div class="set-gt">움직임을 만든 종목 <small>기여도 = 종목 수익률 ÷ 테마 종목 수</small>'+(window.rdGQ?rdGQ('contrib'):'')+'</div>'+row('1일',i.c1,i.r1)+row('5일',i.c5,i.r5);
+}
+function flowHtml(theme){
+  const f=jget('sv4_flows',null),t=f&&f.themes&&f.themes[theme];if(!t)return '';
+  return '<div class="set-gt">외국인·기관 순매수 <small>거래대금 상위 '+t.n+'종목 · '+String(f.asOf||'').slice(5).replace('-','/')+'</small>'+(window.rdGQ?rdGQ('flows'):'')+'</div>'
+    +'<div class="fl-g"><span>1일</span><span>외국인 <b class="'+(t.f1>=0?'up':'down')+'">'+fmtEok(t.f1)+'</b></span><span>기관 <b class="'+(t.o1>=0?'up':'down')+'">'+fmtEok(t.o1)+'</b></span></div>'
+    +'<div class="fl-g"><span>5일</span><span>외국인 <b class="'+(t.f5>=0?'up':'down')+'">'+fmtEok(t.f5)+'</b></span><span>기관 <b class="'+(t.o5>=0?'up':'down')+'">'+fmtEok(t.o5)+'</b></span></div>'
+    +'<div class="fl-s">2일 연속 순매수(외국인 또는 기관): '+(t.streak&&t.streak.length?t.streak.map(c=>typeof stLink==='function'?stLink(c,esc(nameOf(c))):esc(nameOf(c))).join(', '):'없음')+'</div>';
+}
+window.rdIndSheet=function(g){
+  const q=Q[g.q]||Q['소외'],ths=(g.themes||[]).slice().sort((a,b)=>b.y-a.y);
+  const tr=(g.tr||[]).map(p=>quadOf(p[0],p[1]));
+  sheet('tm-ind','<div class="grab"></div><h3>'+esc(g.theme)+'</h3>'+(g.desc?'<div class="ts-desc">'+esc(g.desc)+'</div>':'')
+    +'<div class="ts-q '+q.c+'"><b>'+g.q+'</b> · '+q.say+'</div>'
+    +'<div class="ts-num"><span>60일 <b class="'+(g.x>=0?'up':'down')+'">'+pct(g.x)+'</b></span><span>20일 <b class="'+(g.y>=0?'up':'down')+'">'+pct(g.y)+'</b></span><span>5일 '+pct(g.r5)+'</span><span>오늘 '+pct(g.r1)+'</span><span>테마 '+g.nt+'개 · 종목 '+g.n+'개</span></div>'
+    +'<div class="ts-move">'+(tr.length&&tr[0]!==g.q?tr[0]+' → '+g.q+' 칸으로 이동':g.q+' 칸에 머무는 중')+'</div>'
+    +'<button class="bk-btn" style="width:100%;margin:6px 0 4px" onclick="window._tmView={sub:\''+esc(g.theme)+'\'};rdThemeMapFull()">이 산업의 테마 지도 크게 보기</button>'
+    +'<div class="set-gt">소속 테마 '+ths.length+'개 <small>20일 수익률 순 · 누르면 테마 설명</small></div>'
+    +ths.map(t=>'<button class="tl-it" onclick="rdThemeSheetN(\''+esc(t.theme)+'\')"><span>'+(t.pick?'<b class="tl-pk">제안</b>':'')+esc(shortT(t.theme))+' <small class="'+(Q[t.q]||{}).c+'">'+t.q+'</small></span><span class="num"><em class="'+(t.x>=0?'up':'down')+'">'+pct(t.x,0)+'</em> · <em class="'+(t.y>=0?'up':'down')+'">'+pct(t.y,0)+'</em></span></button>').join('')
+    +'<div class="bk-note">산업 수익률 = 소속 테마 종목(중복 제거)의 하루 수익률 평균. 산업 묶음은 트래커가 정한 분류라 제안 규칙에는 쓰지 않아요.</div>'
+    +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'tm-ind\')">닫기</button></div>');
+};
 window.rdThemeSheet=function(k){
-  const i=(window._tmItems||[])[k];if(!i)return;const q=Q[i.q]||Q['소외'];
+  const i=typeof k==='object'?k:(window._tmItems||[])[k];if(!i)return;const q=Q[i.q]||Q['소외'];
   const tf=jget('sv4_theme_flow',null),pk=tf&&tf.picks||{},tx=(pk.today||[]).find(x=>x.theme===i.theme);
   const tr=(i.tr||[]).map(p=>quadOf(p[0],p[1])),move=(tr.length&&tr[0]!==i.q?tr[0]+' → '+i.q+' 칸으로 이동':i.q+' 칸에 머무는 중')
     +((i.tr||[]).length===2?'<br><span class="dim">지나온 길(60일·20일): 10일 전 '+pct(i.tr[0][0],0)+'·'+pct(i.tr[0][1],0)+' → 5일 전 '+pct(i.tr[1][0],0)+'·'+pct(i.tr[1][1],0)+' → 지금 '+pct(i.x,0)+'·'+pct(i.y,0)+'. 앞으로의 방향을 예측하는 선이 아니에요.</span>':'');
@@ -5957,6 +6047,8 @@ window.rdThemeSheet=function(k){
     +'<div class="ts-num"><span>60일 <b class="'+(i.x>=0?'up':'down')+'">'+pct(i.x)+'</b></span><span>20일 <b class="'+(i.y>=0?'up':'down')+'">'+pct(i.y)+'</b></span><span>하루 거래대금 '+(i.amt||0).toLocaleString()+'억</span><span>'+i.n+'종목</span></div>'
     +'<div class="ts-move">'+move+'</div>'
     +'<div class="ts-stat">3년 검증: 이 칸 테마를 다음날 사서 10거래일 들고 있었을 때 평균 '+q.stat+'. '+q.tip+'</div>'
+    +(i.ind?'<button class="bk-link ts-ind" onclick="rdIndSheetN(\''+esc(i.ind)+'\')">산업: '+esc(i.ind)+' ›</button>':'')
+    +contribHtml(i)+flowHtml(i.theme)
     +(tx?'<div class="set-gt">오늘 제안 종목 · 거래대금 상위 5</div>'+tx.top.map(sl).join('')
       +(tx.lag&&tx.lag.length?'<div class="set-gt">그림자 묶음 · 후발 3 <small>거래대금 상위 10 중 20일 덜 오른 3</small></div>'+tx.lag.map(sl).join(''):''):'')
     +(window.rdNewsForTheme?rdNewsForTheme(i.theme):'')
@@ -6002,8 +6094,17 @@ const G=[
   how:['맨 위: 운영 자금 · 투자 중 · 현금(추정) · 평가손익','종목마다 비중 막대와 "한 종목 25% 넘음 / 묶음 평균보다 무거움" 표시','[+ 더 사기] [− 일부 팔기]로 수량과 가격을 넣으면 평단과 손익이 다시 계산돼요. 판 손익은 운영 자금에 더해져요.'],
   warn:'검증된 규칙은 처음에 고르게 사고 10거래일 동안 건드리지 않는 방식이에요. 중간에 손대면 그 회차는 규칙 밖 거래가 되니 이유를 적어 두세요.'},
  {id:'map',t:'테마 지도 (4분면)',what:'테마 24개 정도를 60일(가로)·20일(세로) 수익률로 찍은 지도예요. 지금 돈이 어디에 몰려 있는지 한눈에 봐요.',
-  how:['오른쪽 위 주도: 60일·20일 모두 강함 → 제안은 이 칸에서만 나와요.','왼쪽 위 부상: 길게는 약했지만 최근 반등 · 오른쪽 아래 과열·눌림: 강했다가 쉬는 중 · 왼쪽 아래 소외: 둘 다 약함','◆ 시장 평균이 주도 칸 밖이면 쉬는 구간이에요.','초록 테두리 = 오늘 제안 테마 · 점 크기 = 거래대금','선(꼬리)은 지나온 길이에요: 빈 점(10일 전) → 빈 점(5일 전) → 색 점(지금). 선 끝이 뾰족해 보여도 앞으로 갈 방향이 아니라 과거 위치예요.','오늘 화면의 작은 지도를 누르면 그 자리를 확대한 큰 지도가 열려요. 큰 지도에서는 두 손가락으로 벌려 확대, 끌어서 이동, 위의 칸 버튼으로 칸별 확대가 돼요.','점이 겹친 곳을 누르면 근처 테마가 아래에 목록으로 나와요. 맨 아래 전체 목록에서도 바로 고를 수 있어요.'],
+  how:['첫 화면은 산업 지도(19개)예요. 산업을 누르면 소속 테마 목록과 [이 산업의 테마 지도 크게 보기]가 나와요. 위쪽 [산업 · 테마] 버튼으로 바꿔 볼 수 있어요.','오른쪽 위 주도: 60일·20일 모두 강함 → 제안은 이 칸(테마 기준)에서만 나와요.','왼쪽 위 부상: 길게는 약했지만 최근 반등 · 오른쪽 아래 과열·눌림: 강했다가 쉬는 중 · 왼쪽 아래 소외: 둘 다 약함','◆ 시장 평균이 주도 칸 밖이면 쉬는 구간이에요.','초록 테두리 = 오늘 제안 테마 · 점 크기 = 거래대금','선(꼬리)은 지나온 길이에요: 빈 점(10일 전) → 빈 점(5일 전) → 색 점(지금). 선 끝이 뾰족해 보여도 앞으로 갈 방향이 아니라 과거 위치예요.','오늘 화면의 작은 지도를 누르면 그 자리를 확대한 큰 지도가 열려요. 큰 지도에서는 두 손가락으로 벌려 확대, 끌어서 이동, 위의 칸 버튼으로 칸별 확대가 돼요.','점이 겹친 곳을 누르면 근처 테마가 아래에 목록으로 나와요. 맨 아래 전체 목록에서도 바로 고를 수 있어요.'],
   warn:'지나온 방향으로 계속 간다는 보장은 없어요. 3년 데이터로 확인해 보니 주도 칸에서 최근 위로 올라온 테마는 뒤 절반(2025~26)엔 10일 뒤 평균 +1.8%(테마 지수 기준)였지만 앞 절반(2023~25)엔 -0.5%로 오히려 나빴어요. 그리고 10거래일 뒤 평균이 플러스였던 건 주도 칸(+0.4%)뿐이었어요. 다른 칸 테마를 따로 사라는 뜻은 없어요. 지도는 위치를 보여 줄 뿐, 언제 사야 하는지는 알려 주지 않아요.'},
+ {id:'watch',t:'관심 테마 워치리스트',what:'오래 갈 성장 테마 3개(로봇 · 전력망·전력기기 · 고령화 헬스케어)의 종목을 등급으로 나누고, 매일 저녁 체크 ①②③과 테마 시점을 자동으로 채워 "진입 검토"를 띄워요. 테마 묶음(매일 제안)과는 따로 돌아가는 두 번째 방식이에요.',
+  how:['등급: 관찰 우선(성장성 6↑·연결도 5↑) · 간접 수혜(성장성 6↑·연결도 5↓) · 조건부(성장성 4~5) · 편승·보류(3↓)','성장성 = 그 사업이 커질 가능성, 연결도 = 그 사업이 회사 실적·주가에서 차지하는 비중 (Claude 판단, 분기마다 재채점). 시장 연결도 = 실제로 테마와 같이 움직인 정도(자동)','① 수주: 최근 90일 DART 공급계약 공시 · ② 실적: 최근 분기 매출 증가 + 영업이익 증가 또는 흑자(DART 재무) · ③ 수급: 외국인이나 기관 2일 연속 순매수(한국투자증권)','진입 검토 = 체크 2개 이상 + 그 관심 테마가 지도에서 주도 칸(60일·20일 모두 플러스). 체크만 충족하면 "시점 대기"','진입 검토가 켜진 날은 자동으로 기록돼서 10거래일 뒤 결과를 지수와 비교해 카드 아래에 보여 줘요.'],
+  warn:'성장성 점수와 이 체크 조합은 아직 검증되지 않았어요. 진입 검토는 "살 차례"가 아니라 "자세히 볼 차례"예요. 기록이 20번쯤 쌓여 지수보다 나은지 확인되기 전까지는 소액으로만 다루는 걸 권해요.'},
+ {id:'contrib',t:'기여도 (움직임을 만든 종목)',what:'테마가 오늘(또는 5일 동안) 오르내린 것이 어느 종목 때문인지 보여 줘요. 테마 수익률은 소속 종목을 똑같은 비중으로 평균한 값이라, 종목 기여도 = 그 종목 수익률 ÷ 테마 종목 수예요.',
+  how:['테마 지도에서 테마를 누르면 "움직임을 만든 종목"에 1일·5일 상위 3개가 나와요.','예: 종목 25개 테마에서 한 종목이 +30%면 기여도 +1.2%p — 테마 전체가 +1.5%였다면 거의 그 종목 혼자 끌어올린 것','뉴스 연결과 같이 보면 "이 테마가 오른 이유 = 이 종목 + 이 기사"가 보여요.'],
+  warn:'한두 종목이 끌어올린 테마는 테마 전체가 강한 게 아닐 수 있어요. 기여도가 고르게 퍼져 있을수록 테마 전체의 흐름에 가까워요.'},
+ {id:'flows',t:'외국인·기관 순매수',what:'저녁 스캔이 한국투자증권 API로 종목별 투자자 동향을 받아 억 원으로 바꿔 보여 줘요(수량 × 그날 종가).',
+  how:['산업·테마 지도 카드 위: 거래대금 상위 40종목을 합친 외국인·기관·개인 순매수 — 시장 전체가 아니라 대형주 흐름의 근사예요.','테마를 누르면: 그 테마 거래대금 상위 5종목의 1일·5일 외국인·기관 순매수와, 외국인이나 기관이 2일 연속 순매수한 종목','로봇주 계획의 "③ 외인·기관 2일+" 체크를 테마마다 자동으로 채운 것과 같아요.'],
+  warn:'수급과 이후 주가의 관계는 아직 검증하지 않았어요. 참고 정보로만 보세요. 한국투자증권 키가 없거나 조회가 실패하면 이 칸은 비어요.'},
  {id:'role',t:'대장 · 후발 표시',what:'같은 테마에서 거래대금 상위 10종목을 20일 수익률로 셋으로 나눈 표시예요.',
   how:['대장(빨강): 20일 동안 가장 많이 오른 쪽 · 후발(초록): 가장 덜 오른 쪽 · 가운데는 표시 없음'],
   warn:'3년 시뮬레이션에서는 대장만 사면 낙폭이 -55%로 가장 컸고, 후발 3이 -23%로 가장 작았어요. 다만 아직 실전 검증 전이에요.'},
@@ -6114,6 +6215,62 @@ window.rdNewsPrompt=function(themes){
   (N.themes||[]).filter(x=>themes.includes(x.theme)).forEach(x=>(x.items||[]).slice(0,2).forEach(a=>L.push('- ['+shortT(x.theme)+'] '+a.t+' ('+(a.src||'')+' '+(a.d||'')+')')));
   Object.keys(N.stocks||{}).forEach(c=>(N.stocks[c]||[]).slice(0,1).forEach(a=>L.push('- ['+nm(c)+'] '+a.t+' ('+(a.src||'')+' '+(a.d||'')+')')));
   return L.length?'\n[트래커가 찾은 최근 3일 뉴스 제목]\n'+L.slice(0,16).join('\n')+'\n':'';
+};
+})();
+</script>
+<script>
+/* ══════════════════════════════════════════════════════
+   관심 테마 워치리스트 (fix20) — 로봇 · 전력망·전력기기 · 고령화 헬스케어
+   ══════════════════════════════════════════════════════ */
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const jget=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const pct=(n,d=1)=>n==null||isNaN(n)?'—':(n>0?'+':'')+Number(n).toFixed(d)+'%';
+const GR=['관찰 우선','간접 수혜','조건부','편승·보류'],GC={'관찰 우선':'g1','간접 수혜':'g2','조건부':'g3','편승·보류':'g4'};
+const QC={'주도':'q-up','부상':'q-rise','과열·눌림':'q-cool','소외':'q-down'};
+const lk=(c,n)=>typeof stLink==='function'?stLink(c,esc(n)):esc(n);
+const ck=(v,t)=>'<i class="wc '+(v===true?'on':v===false?'off':'na')+'" title="'+esc(t||'')+'">'+(v===true?'✓':v===false?'·':'?')+'</i>';
+function sheet(id,html){let el=$(id);if(!el){el=document.createElement('div');el.id=id;el.className='bk-sheet';}document.body.appendChild(el);
+  el.innerHTML='<div class="bg" onclick="rdCloseBk(\''+id+'\')"></div><div class="pn" role="dialog">'+html+'</div>';el.classList.add('open');return el;}
+window.rdWatchCard=function(){
+  const W=jget('sv4_watch',null),q=window.rdGQ?rdGQ('watch'):'';
+  if(!W||!W.themes)return '<section class="rd-card wt-card"><div class="rd-h"><h2>관심 테마'+q+'</h2></div><div class="bk-sub">다음 저녁 스캔 뒤에 나와요. 로봇 · 전력망·전력기기 · 고령화 헬스케어 종목의 체크 ①②③과 진입 신호를 매일 채워요.</div></section>';
+  const on=W.themes.flatMap(t=>t.stocks.filter(r=>r.sig==='진입 검토').map(r=>Object.assign({t:t.name},r)));
+  const wait=W.themes.flatMap(t=>t.stocks.filter(r=>r.sig==='체크 충족 · 시점 대기'));
+  const sc=W.score;
+  return '<section class="rd-card wt-card"><div class="rd-h"><h2>관심 테마'+q+'</h2><span class="rd-hs">'+esc(String(W.asOf||'').slice(5).replace('-','/'))+' 종가</span></div>'
+    +W.themes.map((t,i)=>{const og=t.stocks.filter(r=>r.grade==='관찰 우선').length,n2=t.stocks.filter(r=>(r.n||0)>=2).length,sg=t.stocks.filter(r=>r.sig==='진입 검토').length;
+      return '<button class="wt-row" onclick="rdWatchSheet('+i+')"><span class="wt-nm"><b>'+esc(t.name)+'</b><small>'+esc(t.desc)+'</small></span>'
+        +'<span class="wt-st"><em class="'+(QC[t.q]||'')+'">'+(t.q||'—')+'</em><small>60일 '+pct(t.x,0)+' · 20일 '+pct(t.y,0)+'</small><small>관찰 우선 '+og+' · 체크 2+ '+n2+(sg?' · <b class="up">진입 검토 '+sg+'</b>':'')+'</small></span></button>';}).join('')
+    +(on.length?'<div class="wt-on"><b>진입 검토</b> '+on.map(r=>lk(r.code,r.name)+' <small>'+esc(r.t)+'</small>').join(' · ')+'</div>'
+      :'<div class="wt-off">진입 검토 없음'+(wait.length?' · 체크는 충족했지만 테마가 주도 칸이 아닌 종목 '+wait.length+'개':'')+'</div>')
+    +(sc?'<div class="wt-sc">지난 진입 검토 '+sc.n+'번: 10거래일 뒤 평균 <b class="'+(sc.avg10>=0?'up':'down')+'">'+pct(sc.avg10,1)+'</b>'+(sc.idx10!=null?' vs 지수 '+pct(sc.idx10,1)+' · 지수를 이긴 비율 '+sc.beat10+'%':'')+'</div>':'')
+    +(!W.dart?'<div class="wt-off">DART 키가 없어 ①·② 체크는 비어 있어요.</div>':'')
+    +'</section>';
+};
+window.rdWatchSheet=function(i,sort){
+  const W=jget('sv4_watch',null);if(!W)return;const t=W.themes[i];if(!t)return;
+  const by=sort||window._wtSort||'grade';window._wtSort=by;
+  const L=t.stocks.slice().sort(by==='n'?(a,b)=>(b.n||0)-(a.n||0)||b.g-a.g:(a,b)=>GR.indexOf(a.grade)-GR.indexOf(b.grade)||b.g-a.g||b.l-a.l);
+  const row=r=>'<details class="wt-s"><summary><span class="wt-sn">'+lk(r.code,r.name)+'<small>'+esc(r.cat)+'</small></span>'
+      +'<span class="wt-gr '+GC[r.grade]+'">'+r.grade+'</span>'
+      +'<span class="wt-ck">'+ck(r.c1,r.c1t)+ck(r.c2,r.c2t)+ck(r.c3,r.c3t)+'</span>'
+      +(r.sig==='진입 검토'?'<span class="wt-sig on">진입 검토</span>':r.sig&&r.sig!=='대기'?'<span class="wt-sig">시점 대기</span>':'')+'</summary>'
+    +'<div class="wt-d">'+(r.nodata?'<p class="dim">시세 데이터 없음 (거래정지·상장폐지·코드 확인 필요)</p>':'')
+    +'<p>성장성 <b>'+r.g+'</b> · 연결도 <b>'+r.l+'</b>'+(r.corr!=null?' · 시장 연결도(자동) <b>'+r.corr.toFixed(2)+'</b>':'')+(r.r5!=null?' · 5일 '+pct(r.r5,1):'')+'</p>'
+    +'<p><b>근거</b> '+esc(r.why)+'</p><p><b>걸림돌</b> '+esc(r.risk)+'</p>'
+    +'<p>① 고객·수주: '+(r.c1?(r.c1u?'<a href="'+esc(r.c1u)+'" target="_blank" rel="noopener">'+esc(r.c1t)+'</a>':esc(r.c1t)):r.c1===false?'최근 90일 공급계약 공시 없음':'확인 불가')+'</p>'
+    +'<p>② 실적: '+(r.c2t?esc(r.c2t)+(r.c2?' → 개선':' → 개선 아님'):'확인 불가(DART 재무 없음)')+'</p>'
+    +'<p>③ 수급: '+(r.c3?esc(r.c3t):r.c3===false?'2일 연속 순매수 없음':'확인 불가')+'</p>'
+    +(r.warn?'<p class="wt-warn">⚠ 최근 위험 공시: '+esc(r.warn)+'</p>':'')+'</div></details>';
+  sheet('wt-sheet','<div class="grab"></div><h3>'+esc(t.name)+'</h3><div class="ts-desc">'+esc(t.desc)+'</div>'
+    +'<div class="ts-q '+(QC[t.q]||'')+'"><b>'+(t.q||'—')+'</b> · 테마 시점 '+(t.timing?'<b class="up">맞음</b>':'아님')+' · 60일 '+pct(t.x,1)+' · 20일 '+pct(t.y,1)+' · 5일 '+pct(t.r5,1)+'</div>'
+    +'<div class="bk-hint">테마 시점 = 연결된 트래커 테마 종목 '+t.nmem+'개 평균이 60일·20일 모두 플러스(주도 칸). 진입 검토 = 체크 ①②③ 중 2개 이상 + 테마 시점.</div>'
+    +'<div class="wt-sort"><span>정렬</span><button class="'+(by==='grade'?'on':'')+'" onclick="rdWatchSheet('+i+',\'grade\')">등급순</button><button class="'+(by==='n'?'on':'')+'" onclick="rdWatchSheet('+i+',\'n\')">체크 많은 순</button><span class="wt-lg">① 수주 ② 실적 ③ 수급 · ✓ 충족 · 미충족 ? 확인 불가</span></div>'
+    +L.map(row).join('')
+    +'<div class="bk-note">성장성·연결도는 '+esc(W.by||'')+' ('+esc(W.scoredAt||'')+' 채점). 시장 연결도는 최근 120거래일 종목 수익률과 테마 평균의 상관계수예요. ①은 DART 공시만 봐서 기사로 확인되는 대기업 고객은 빠질 수 있어요.</div>'
+    +'<div class="bk-acts"><button class="bk-btn" onclick="rdCloseBk(\'wt-sheet\')">닫기</button></div>');
 };
 })();
 </script>
