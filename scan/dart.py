@@ -10,7 +10,7 @@ OpenDART 공시 경고 (무료 · 키 필요)
   risk  : 유상증자, 전환사채·신주인수권부사채·교환사채 발행, 감자, 관리종목, 상장폐지 심사, 거래정지,
           투자경고·위험, 불성실공시, 횡령·배임, 회생, 최대주주 변경, 소송
   good  : 자사주 매입, 공급계약, 무상증자
-  info  : 잠정실적, 실적 변동(30% 이상), IR 개최, 배당
+  info  : 잠정실적, 실적 변동(30% 이상), IR 개최, 배당, 5% 대량보유(지분공시 · 누가 샀는지 who)
 risk 는 전 종목, good/info 는 관심 종목(오늘 제안 · 최근 제안 · 신호 종목)만 남김.
 분류는 제목 기준이라 내용(조건·규모)까지는 보지 않음 → 앱에서 원문 링크로 확인.
 """
@@ -51,6 +51,7 @@ RULES = [  # (제목에 포함된 말 — 공백 제거 후, 종류, 짧은 이�
     ("기업설명회(IR)개최", "info", "IR 개최"),
     ("현금ㆍ현물배당결정", "info", "배당"),
     ("현금·현물배당결정", "info", "배당"),
+    ("주식등의대량보유상황보고서", "info", "5% 대량보유"),   # 지분공시(D) — 관심 종목만 (v2 일정 › 기관 × 기업)
 ]
 
 
@@ -85,9 +86,12 @@ def fetch(interest=(), days=10, key=None, max_pages=60):
     now = datetime.now(KST)
     bgn, end = (now - timedelta(days=days)).strftime("%Y%m%d"), now.strftime("%Y%m%d")
     items, seen, calls, err = {}, set(), 0, None
-    for ty in ("B", "I"):
+    for ty in ("B", "I", "D"):
         page, total = 1, 1
-        while page <= total and page <= max_pages:
+        lim = 30 if ty == "D" else max_pages      # 지분공시는 양이 많아 최근 3,000건까지만
+        if ty == "D" and not interest:
+            continue
+        while page <= total and page <= lim:
             js = _get({"bgn_de": bgn, "end_de": end, "pblntf_ty": ty, "page_no": page, "page_count": 100}, key)
             calls += 1
             st = js.get("status")
@@ -113,6 +117,8 @@ def fetch(interest=(), days=10, key=None, max_pages=60):
                     "d": f"{d[:4]}-{d[4:6]}-{d[6:8]}" if len(d) == 8 else d,
                     "k": kind, "lab": lab, "t": str(x.get("report_nm") or "").strip()[:60],
                     "url": VIEW + str(x.get("rcept_no")), "fix": "정정" in str(x.get("report_nm") or "")})
+                if lab == "5% 대량보유" and x.get("flr_nm"):
+                    items[code][-1]["who"] = str(x.get("flr_nm")).strip()[:30]
             page += 1
             time.sleep(0.15)
         if err and err.startswith(("010", "011", "012", "020", "021")):   # 키 오류·한도 초과면 중단
