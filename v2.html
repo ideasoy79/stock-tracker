@@ -6,7 +6,8 @@
 <meta name="theme-color" content="#FFFFFF">
 <meta name="robots" content="noindex">
 <title>생각콩 트래커</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
 <style>
 :root{--p:#7132F5;--p2:#5741D8;--pt:#ECE5FE;--ink:#101114;--ink2:#2E3040;--g7:#484B5E;--g6:#686B82;--g5:#9497A9;--g4:#B4B6C4;--g3:#CFD0DA;--line:#DEDEE5;--s2:#F0F0F4;--s1:#F6F7F8;
 --up:#F04452;--dn:#3182F6;--ok:#149E61;--okt:#D9F0E6;--okd:#026B3F;--warn:#FB8800;--warnt:#FFF4E5;--warnd:#8A5300;--sh:0 4px 24px rgba(0,0,0,.03)}
@@ -112,7 +113,7 @@ pre.pv{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:13px;li
    · 쓰는 곳은 세 군데뿐: 오늘 제안 패스(sv4_app.dec) · 관심 종목(sv4_app.fav) · Claude 브리핑 기록(sv4_app.claude)
    · 주문 기능은 없어요. 시세 서버 주소는 기존 화면 설정값(sv4_scan_cfg.worker)을 그대로 써요
    ═══════════════════════════════════════════════════════════ */
-const SCAN_URL='scan/latest.json', LIST_URL='scan/watchlist.json', V1='./';
+const SCAN_URL='scan/latest.json', LIST_URL='scan/watchlist.json', THEMES_URL='scan/themes.json', V1='./';
 const VER_N=20;
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -144,18 +145,18 @@ const isAct=r=>r.status==='buy'||r.status==='hold';
 const codeIn=s=>{const m=String(s||'').match(/[0-9A-Z]{6}/);return m?m[0]:null;};
 function app(){const a=LS.get('sv4_app',{})||{};a.prefs=Object.assign({acct:0,pct:50,stop:15,maxB:2,topn:5,halt:10,testPct:25},a.prefs);a.dec=Object.assign({},a.dec);if(!Array.isArray(a.fav))a.fav=[];if(!Array.isArray(a.claude))a.claude=[];return a;}
 function saveApp(a){LS.set('sv4_app',a);}
-function nameOf(c){if(!c)return '';const n=(D&&D.names&&D.names[c]);if(n)return n;const w=watchRow(c);if(w)return w.name;const r=recs().find(x=>codeIn(x.stock)===c);if(r)return String(r.stock).replace(/[0-9A-Z]{6}/,'').replace(/[()]/g,'').trim()||c;return c;}
+function nameOf(c){if(!c)return '';if(D&&D.stocks&&D.stocks[c])return D.stocks[c][0];const n=(D&&D.names&&D.names[c]);if(n)return n;const w=watchRow(c);if(w)return w.name;const r=recs().find(x=>codeIn(x.stock)===c);if(r)return String(r.stock).replace(/[0-9A-Z]{6}/,'').replace(/[()]/g,'').trim()||c;return c;}
 function watchRow(c){const w=D&&D.watch;if(w)for(const t of w.themes||[])for(const s of t.stocks||[])if(s.code===c)return Object.assign({theme:t.name,tq:t.q},s);
   if(WL)for(const t of WL.themes||[])for(const s of t.stocks||[])if(s.code===c)return Object.assign({theme:t.name},s);return null;}
 async function load(){
-  try{const r=await fetch(SCAN_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('스캔 결과 '+r.status);D=await r.json();
-    if(!D||D.kind!=='sv4-volume-scan')throw new Error('스캔 결과 모양이 달라요');
-    LS.set('sv4_v2_cache',slim(D));}
-  catch(e){LOAD_ERR=e.message||String(e);D=LS.get('sv4_v2_cache',null);}
-  if(!D||!D.watch){try{const r=await fetch(LIST_URL+'?t='+Date.now(),{cache:'no-store'});if(r.ok)WL=await r.json();}catch(e){}}
+  const c=LS.get('sv4_v2_cache',null);if(c&&c.kind==='sv4-volume-scan'&&!D){D=c;render();}   // 1) 지난번 결과로 바로 그리기
+  try{const r=await fetch(SCAN_URL,{cache:'no-cache'});if(!r.ok)throw new Error('스캔 결과 '+r.status);const js=await r.json();   // 2) 바뀐 게 있을 때만 새로 받음(304)
+    if(!js||js.kind!=='sv4-volume-scan')throw new Error('스캔 결과 모양이 달라요');D=js;LOAD_ERR='';setTimeout(()=>LS.set('sv4_v2_cache',slim(js)),0);}
+  catch(e){LOAD_ERR=e.message||String(e);}
+  if(!D||!D.watch){try{const r=await fetch(LIST_URL,{cache:'no-cache'});if(r.ok)WL=await r.json();}catch(e){}}
 }
 function slim(d){ // 오프라인용 축약본 (용량 보호: 신호 목록·종목별 뉴스는 뺌)
-  const o={kind:d.kind,generatedAt:d.generatedAt,baseDate:d.baseDate,intraday:d.intraday,themes:d.themes,us:d.us,flows:d.flows,watch:d.watch,reviews:d.reviews,names:d.names,pullbacks:{trigger:(d.pullbacks||{}).trigger||[]},
+  const o={kind:d.kind,stocks:d.stocks,generatedAt:d.generatedAt,baseDate:d.baseDate,intraday:d.intraday,themes:d.themes,us:d.us,flows:d.flows,watch:d.watch,reviews:d.reviews,names:d.names,pullbacks:{trigger:(d.pullbacks||{}).trigger||[]},
     news:d.news?{asOf:d.news.asOf,themes:d.news.themes}:null,dart:d.dart,cached:true};
   if(o.themes&&o.themes.ranks)o.themes=Object.assign({},o.themes,{ranks:undefined});return o;}
 
@@ -271,7 +272,7 @@ function tabs(cur){const T=[['home','홈','#/home',IC.home],['map','지도','#/m
   document.getElementById('tabs').style.display=cur?'grid':'none';}
 function banner(){
   if(!D)return '<div class="warnbox">스캔 결과를 불러오지 못했어요'+(LOAD_ERR?' ('+esc(LOAD_ERR)+')':'')+'. 인터넷 연결을 확인하고 다시 열어 주세요.</div>';
-  const out=[];if(D.cached)out.push('인터넷이 안 돼서 마지막으로 받은 결과를 보여 줘요 ('+md(D.baseDate)+' 종가).');
+  const out=[];if(D.cached&&LOAD_ERR)out.push('인터넷이 안 돼서 마지막으로 받은 결과를 보여 줘요 ('+md(D.baseDate)+' 종가).');
   if(D.intraday)out.push('장중에 돌린 스캔이라 오늘 봉은 빼고 계산했어요.');
   return out.length?'<div class="warnbox">'+out.map(esc).join('<br>')+'</div>':'';}
 
@@ -329,7 +330,7 @@ function vHome(){
       +th.map(t=>{const it=t.items[0],st=(it.st||[]).concat((t.stocks||[]).map(x=>x[0])).filter((c,i,a)=>a.indexOf(c)===i).slice(0,3);
         return '<div class="row" style="align-items:flex-start"><span class="it" style="width:auto;min-width:44px;padding:0 8px;font-size:12px;background:var(--s2);color:var(--ink2);height:28px;border-radius:8px">'+esc(shortT(t.theme))+'</span><span class="grow"><a href="'+esc(it.url)+'" target="_blank" rel="noopener" style="color:inherit;font-size:15px;font-weight:600;line-height:1.45">'+esc(it.t)+'</a><span class="meta">'+esc(it.src)+' · '+esc(it.d)+'</span>'
           +(st.length?'<span class="chips" style="margin-top:4px">'+st.map(c=>'<a class="chip" href="#/stock/'+c+'">'+esc(nameOf(c))+'</a>').join('')+'</span>':'')+'</span></div>';}).join('')+'</section>';}
-  const top='<header class="top"><div style="display:flex;flex-direction:column;gap:2px"><span class="t1">생각콩 트래커</span><span class="t2">'+dLabel(k.iso)+'</span></div><div style="display:flex"><button class="ib" data-act="search" aria-label="종목 찾기">'+svg(IC.search)+'</button><a class="ib" href="'+V1+'" aria-label="기존 화면으로">'+svg(IC.old)+'</a></div></header>';
+  const top='<header class="top"><div style="display:flex;flex-direction:column;gap:2px"><span class="t1">생각콩 트래커</span><span class="t2">'+dLabel(k.iso)+'</span></div><div style="display:flex;align-items:center"><button class="ib" data-act="search" aria-label="종목 찾기">'+svg(IC.search)+'</button><a class="fc" href="'+V1+'" style="margin-left:4px">기존 화면</a></div></header>';
   return top+'<div class="stack">'+banner()+mkt+dec+ask+tiles+mv+week+news+'<p class="note" style="padding:0 8px">숫자는 저녁 스캔('+esc(String(D.generatedAt||'').slice(5,16).replace('T',' '))+') 기준이에요. 판단을 돕는 자료이고, 사고팔지는 대표님이 정해요.</p></div>';
 }
 const shortT=t=>String(t||'').replace(/\s*\(.*\)\s*$/,'');
@@ -395,7 +396,6 @@ function vMap(){
     +(S.view==='map'?'<div class="mapbox" id="mapbox">'+scatter(items,m.mkt,S)+'</div>':heat(items,S))
     +'<div class="num meta" style="margin-top:10px">'+(md_.ind?'산업':'테마')+' '+items.length+'개 · <b style="color:#C5283A">주도 '+cnt['주도']+'</b> · 부상 '+cnt['부상']+' · 과열·눌림 '+cnt['과열·눌림']+' · <b style="color:#1F5FD6">소외 '+cnt['소외']+'</b> · '+md(m.asOf)+' 기준</div>'
     +(S.view==='map'?'<div class="note" style="margin-top:4px">점 크기는 20일 평균 거래대금이에요. 점을 누르면 아래에 자세히 보여요'+(S.big?' · 옆으로 밀어서 보세요':'')+'.</div>':'')+'</section>';
-  if(sel)h+=detail(sel,md_.ind);
   const list=items.slice().sort((a,b)=>b.y-a.y),lim=S.more?list.length:25;
   h+='<section class="card flush"><div class="hd"><span class="h2">'+(md_.ind?'산업':'테마')+' 목록</span><span class="meta">20일 수익률 순</span></div>'
     +list.slice(0,lim).map(it=>'<button class="row" data-th="'+esc(it.theme)+'"><span class="dot" style="width:10px;height:10px;background:'+QC[it.q]+'"></span><span class="grow"><span style="font-size:15px;font-weight:600" class="ell">'+esc(shortT(it.theme))+' <span class="q q-'+it.q+'">'+it.q+'</span>'+(it.pick?' <span class="chip p">'+(D.themes.picks&&D.themes.picks.rest?'상위 테마':'오늘 묶음')+'</span>':'')+'</span><span class="meta num">60일 '+pct(it.x)+' · 20일 '+pct(it.y)+(it.nt?' · 테마 '+it.nt+'개':it.n?' · '+it.n+'종목':'')+'</span></span>'+(it.r1!=null?'<span class="num '+cls(it.r1)+'" style="font-size:15px;font-weight:700">'+pct(it.r1)+'</span>':'')+'</button>').join('')
@@ -404,12 +404,25 @@ function vMap(){
 function detail(it,isInd){
   const nw=D.news&&D.news.themes&&D.news.themes.find(t=>t.theme===it.theme),fl=D.flows&&D.flows.themes&&D.flows.themes[it.theme];
   const ct=(arr,lab)=>arr&&arr.length?'<div class="stack" style="gap:6px"><span class="lab">'+lab+'</span>'+arr.map(c=>'<a href="#/stock/'+c[0]+'" style="display:flex;justify-content:space-between;color:inherit;font-size:14px"><span>'+esc(nameOf(c[0]))+'</span><span class="num"><b class="'+cls(c[2])+'">'+pct(c[2])+'</b> <span class="meta">기여 '+(c[1]>0?'+':'')+c[1]+'%p</span></span></a>').join('')+'</div>':'';
-  return '<section class="card stack"><div class="hd"><span class="h2">'+esc(shortT(it.theme))+'</span><span class="q q-'+it.q+'">'+it.q+'</span></div>'+(it.desc?'<span class="sub">'+esc(it.desc)+'</span>':'')
+  return '<div class="stack"><div class="hd"><span class="h2" style="font-size:20px;font-weight:700">'+esc(shortT(it.theme))+'</span><span class="q q-'+it.q+'">'+it.q+'</span></div>'+(it.desc?'<span class="sub">'+esc(it.desc)+'</span>':'')
     +'<div class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr))">'+[['60일',it.x],['20일',it.y],['5일',it.r5],['하루',it.r1]].map(a=>'<div class="tile" style="padding:10px"><span class="meta">'+a[0]+'</span><b class="num '+cls(a[1])+'" style="font-size:15px">'+pct(a[1])+'</b></div>').join('')+'</div>'
     +(fl?'<div class="meta num">수급(거래대금 상위 '+fl.n+'종목) · 하루 외국인 '+eok(fl.f1)+' · 기관 '+eok(fl.o1)+' · 5일 외국인 '+eok(fl.f5)+' · 기관 '+eok(fl.o5)+(fl.streak&&fl.streak.length?' · 2일 연속 순매수 '+fl.streak.map(nameOf).join(', '):'')+'</div>':'')
-    +ct(it.c1,'오늘 많이 움직인 종목')+ct(it.c5,'5일 동안 많이 움직인 종목')
+    +(isInd?'<button class="btn" data-act="drill" data-v="'+esc(it.theme)+'">이 산업의 테마 '+((it.themes||[]).length)+'개 지도로 보기</button>':'')
+    +'<div id="mem" class="stack" style="gap:0"><span class="sub">종목을 불러오는 중이에요</span></div>'
+    +ct(it.c1,'오늘 테마를 가장 많이 움직인 종목')+ct(it.c5,'5일 동안 테마를 가장 많이 움직인 종목')
     +(nw&&nw.items&&nw.items.length?'<div class="stack" style="gap:6px"><span class="lab">관련 기사</span>'+nw.items.slice(0,3).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener" style="color:inherit;font-size:14px;line-height:1.45">'+esc(x.t)+' <span class="meta">'+esc(x.src)+'</span></a>').join('')+'</div>':'')
-    +(isInd?'<button class="btn s" data-act="drill" data-v="'+esc(it.theme)+'">이 산업의 테마 '+((it.themes||[]).length)+'개 보기</button>':'')+'</section>';}
+    +'</div>';}
+let TH=null,MEM={it:null,ind:false,all:false};
+async function themeMap(){if(TH)return TH;try{const r=await fetch(THEMES_URL,{cache:'force-cache'});TH=r.ok?await r.json():{};}catch(e){TH={};}return TH;}
+function themeSheet(it,isInd){MEM={it,ind:isInd,all:false};sheet(detail(it,isInd));members();}
+async function members(){const it=MEM.it,th=await themeMap(),el=document.getElementById('mem');if(!el||!it)return;
+  const names=MEM.ind?(it.themes||[]).map(x=>x.theme):[it.theme],S=(D&&D.stocks)||{};const codes=[...new Set(names.flatMap(n=>th[n]||[]))];
+  if(!codes.length){el.innerHTML='<span class="sub">이 테마의 종목 목록을 찾지 못했어요.</span>';return;}
+  codes.sort((a,b)=>((S[b]||[])[5]||0)-((S[a]||[])[5]||0));const show=MEM.all?codes:codes.slice(0,MEM.ind?15:12);
+  el.innerHTML='<div class="hd" style="padding:4px 0 6px"><span class="lab">소속 종목 '+codes.length+'개'+(D.stocks?' · 거래대금 큰 순':'')+'</span><span class="meta">'+(D.stocks?'오늘 · 20일':'')+'</span></div>'
+    +show.map(c=>{const s=S[c];return '<a class="row" href="#/stock/'+c+'" data-act="close" style="padding:10px 0"><span class="av" style="width:32px;height:32px;font-size:13px">'+esc(nameOf(c).slice(0,1))+'</span><span class="grow"><span style="font-size:15px;font-weight:600" class="ell">'+esc(nameOf(c))+'</span><span class="meta num">'+(s?Math.round(s[1]).toLocaleString('ko-KR')+'원 · 거래대금 '+s[5]+'억':c)+'</span></span>'+(s?'<span style="display:flex;flex-direction:column;align-items:flex-end"><b class="num '+cls(s[2])+'" style="font-size:15px">'+pct(s[2])+'</b><span class="meta num '+cls(s[4])+'">20일 '+pct(s[4])+'</span></span>':'')+'</a>';}).join('')
+    +(codes.length>show.length?'<button class="btn s" style="margin-top:8px" data-act="memall">'+codes.length+'종목 모두 보기</button>':'')
+    +(D.stocks?'':'<p class="note" style="margin:8px 0 0">종목별 값과 이름 전체는 오늘 저녁 스캔부터 보여요.</p>');}
 
 /* ── 관심 ── */
 function vWatch(){
@@ -443,22 +456,23 @@ function knownPx(c){const pk=D&&D.themes&&D.themes.picks;let out=null;
   if(!out){const w=watchRow(c);if(w&&w.close)out={px:w.close,d:D.baseDate};}
   if(!out){const p=((D&&D.pullbacks&&D.pullbacks.trigger)||[]).find(x=>x.code===c);if(p)out={px:p.close,d:p.date};}
   if(!out&&D&&D.hits){const h=D.hits.find(x=>x.code===c);if(h)out={px:h.lastClose,d:h.lastDate,hit:h};}
+  const s=D&&D.stocks&&D.stocks[c];if(s){out=out||{px:s[1],d:D.baseDate};out.st=s;}
   return out;}
 function vStock(c){
   const a=app(),fav=a.fav.includes(c),w=watchRow(c),k=knownPx(c),dt=(D&&D.dart&&D.dart.items&&D.dart.items[c])||[],nws=(D&&D.news&&D.news.stocks&&D.news.stocks[c])||[];
   const themes=[];if(k&&k.theme)themes.push(k.theme);if(w)themes.push(w.theme);if(k&&k.hit&&k.hit.themes)k.hit.themes.slice(0,3).forEach(t=>themes.push(t.t));
   const st=k&&k.m;let h='<header class="top" style="padding-left:0"><a class="ib" href="javascript:history.back()" aria-label="뒤로">'+svg(IC.back,24,'var(--ink)')+'</a><span style="flex:1;font-size:17px;font-weight:600">종목</span></header><div class="stack">';
   h+='<div style="padding:0 8px;display:flex;flex-direction:column;gap:2px"><span style="display:flex;align-items:center;gap:8px"><span class="av" style="width:36px;height:36px">'+esc(nameOf(c).slice(0,1))+'</span><span style="font-size:17px;font-weight:700">'+esc(nameOf(c))+'</span><span class="meta">'+esc(c)+'</span></span>'
-    +'<span id="px" class="num" style="font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:6px">'+(k&&k.px?won(k.px):'—')+'</span><span id="pxs" class="meta num">'+(k?md(k.d)+' 종가':'시세 서버를 연결하면 값이 보여요')+'</span>'
+    +'<span id="px" class="num" style="font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:6px">'+(k&&k.px?won(k.px):'—')+'</span><span id="pxs" class="meta num">'+(k&&k.st&&k.st[2]!=null?'<b class="'+cls(k.st[2])+'">'+pct(k.st[2])+'</b> · ':'')+(k?md(k.d)+' 종가':'시세 서버를 연결하면 값이 보여요')+'</span>'
     +(w&&w.why?'<span class="sub" style="margin-top:6px">'+esc(w.why)+'</span>':'')+'</div>';
   h+='<section class="card" style="padding:14px"><div id="chart" class="cand"><div class="empty">'+(worker()?'차트를 불러오는 중이에요':'시세 서버(기존 화면 설정)를 연결하면 60일 차트가 보여요')+'</div></div></section>';
   const facts=[];
   if(st)facts.push(['차트 상태',st.state,st.note]);
   if(w)facts.push(['관심 등급',w.grade||gradeOf(w),'성장 '+w.g+' · 연결 '+w.l+(w.risk?' · 위험: '+w.risk:'')]);
   if(themes.length)facts.push(['속한 테마',[...new Set(themes)].map(shortT).slice(0,3).join(' · '),'']);
-  facts.push(['5일 · 60일','<span id="r560">—</span>','<span id="r560s"></span>']);
+  facts.push(['수익률','<span id="r560">'+(k&&k.st?'5일 <span class="'+cls(k.st[3])+'">'+pct(k.st[3])+'</span> · 20일 <span class="'+cls(k.st[4])+'">'+pct(k.st[4])+'</span>':'—')+'</span>','<span id="r560s">'+(k&&k.st?'거래대금 하루 평균 '+k.st[5]+'억 (20일)':'')+'</span>']);
   if(st&&st.stop)facts.push(['손절 기준',won(st.stop),'20일선 근처 · 규칙 손절']);
-  h+='<section class="card flush"><div class="hd"><span class="h2">한눈에</span></div>'+facts.map(f=>'<div class="row" style="align-items:flex-start"><span class="meta" style="width:76px;flex:0 0 auto;padding-top:2px">'+f[0]+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+(f[0]==='5일 · 60일'?f[1]:esc(f[1]))+'</span>'+(f[2]?'<span class="sub">'+(f[0]==='5일 · 60일'?f[2]:esc(f[2]))+'</span>':'')+'</span></div>').join('')+'</section>';
+  h+='<section class="card flush"><div class="hd"><span class="h2">한눈에</span></div>'+facts.map(f=>'<div class="row" style="align-items:flex-start"><span class="meta" style="width:76px;flex:0 0 auto;padding-top:2px">'+f[0]+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+(f[0]==='수익률'?f[1]:esc(f[1]))+'</span>'+(f[2]?'<span class="sub">'+(f[0]==='수익률'?f[2]:esc(f[2]))+'</span>':'')+'</span></div>').join('')+'</section>';
   if(w)h+='<section class="card flush"><div class="hd"><span class="h2">체크 ①②③</span>'+gq('watch')+'</div>'+[['① 고객·수주','c1','c1t','최근 90일 공급계약 공시가 없어요'],['② 실적 개선','c2','c2t','재무 자료를 아직 못 받았어요'],['③ 수급','c3','c3t','외국인·기관 연속 순매수가 아니에요']].map(x=>'<div class="row"><span class="grow"><span style="font-size:15px;font-weight:600">'+x[0]+'</span><span class="sub">'+esc(w[x[2]]||(w[x[1]]==null?'아직 확인하지 못했어요':x[3]))+'</span></span>'+ck(w[x[1]],x[0])+'</div>').join('')+'</section>';
   h+='<section class="card flush"><div class="hd"><span class="h2">외국인 · 기관</span><span class="meta">최근 20거래일 순매수(주)</span></div><div id="flow" style="padding:0 20px 14px"><div class="sub">'+(worker()?'불러오는 중이에요':'한국투자증권이 연결된 시세 서버가 있으면 보여요')+'</div></div></section>';
   h+='<section class="card flush"><div class="hd"><span class="h2">공시 · 뉴스</span><span class="meta">최근 10일 · 3일</span></div>'
@@ -473,7 +487,7 @@ async function stockAsync(c){
     const px=document.getElementById('px'),ps=document.getElementById('pxs');if(px)px.textContent=won(last.c);
     if(ps){const ch=last.c-prev.c;ps.innerHTML='<b class="'+cls(ch)+'">'+(ch>0?'+':'')+Math.round(ch).toLocaleString('ko-KR')+' ('+pct(ch/prev.c*100)+')</b> · '+md(last.d)+' 시세';}
     const r5=R.length>6?(last.c/R[R.length-6].c-1)*100:null,r60=R.length>61?(last.c/R[R.length-61].c-1)*100:null;
-    const a=document.getElementById('r560'),b=document.getElementById('r560s');if(a)a.innerHTML='<span class="'+cls(r5)+'">'+pct(r5)+'</span> · <span class="'+cls(r60)+'">'+pct(r60)+'</span>';if(b&&r60!=null)b.textContent='60거래일 전 '+won(R[R.length-61].c)+' 대비';
+    const a=document.getElementById('r560'),b=document.getElementById('r560s');if(a)a.innerHTML='5일 <span class="'+cls(r5)+'">'+pct(r5)+'</span> · 60일 <span class="'+cls(r60)+'">'+pct(r60)+'</span>';if(b&&r60!=null)b.textContent='60거래일 전 '+won(R[R.length-61].c)+' 대비';
     const W=el.clientWidth||340,H=180,hi=Math.max(...r.map(x=>x.h)),lo=Math.min(...r.map(x=>x.l)),bw=W/r.length,Y=v=>6+(hi-v)/((hi-lo)||1)*(H-24);
     const ma=r.map((x,i)=>{const j=R.length-r.length+i;if(j<19)return null;let s=0;for(let q=j-19;q<=j;q++)s+=R[q].c;return s/20;});
     let g='';r.forEach((x,i)=>{const up=x.c>=x.o,col=up?'#F04452':'#3182F6',cx=i*bw+bw/2;g+='<line x1="'+cx+'" y1="'+Y(x.h)+'" x2="'+cx+'" y2="'+Y(x.l)+'" stroke="'+col+'"/><rect x="'+(cx-bw*.35)+'" y="'+Y(Math.max(x.o,x.c))+'" width="'+(bw*.7)+'" height="'+Math.max(1,Math.abs(Y(x.o)-Y(x.c)))+'" fill="'+col+'"/>';});
@@ -639,7 +653,7 @@ function sheet(html){const L=document.getElementById('layer');L.innerHTML='<div 
 let _tt;function toast(m){clearTimeout(_tt);let el=document.querySelector('.toast');if(!el){el=document.createElement('div');el.className='toast';el.setAttribute('role','status');document.body.appendChild(el);}el.textContent=m;el.style.display='block';_tt=setTimeout(()=>{el.style.display='none';},2600);}
 function searchSheet(){sheet('<h3>종목 찾기</h3><input type="text" id="q" placeholder="종목명이나 코드" autocomplete="off"><div id="qr" style="margin:8px -20px 0"></div>');
   const q=document.getElementById('q');setTimeout(()=>q.focus(),50);
-  q.addEventListener('input',()=>{const v=q.value.trim().replace(/\s/g,'');const out=[];if(v){const all=Object.assign({},D&&D.names);((D&&D.watch&&D.watch.themes)||(WL&&WL.themes)||[]).forEach(t=>t.stocks.forEach(s=>all[s.code]=s.name));
+  q.addEventListener('input',()=>{const v=q.value.trim().replace(/\s/g,'');const out=[];if(v){const all=Object.assign({},D&&D.names);if(D&&D.stocks)Object.keys(D.stocks).forEach(c=>all[c]=D.stocks[c][0]);((D&&D.watch&&D.watch.themes)||(WL&&WL.themes)||[]).forEach(t=>t.stocks.forEach(s=>all[s.code]=s.name));
       Object.keys(all).forEach(c=>{if(out.length<20&&(c.startsWith(v)||String(all[c]).replace(/\s/g,'').includes(v)))out.push(c);});}
     document.getElementById('qr').innerHTML=out.map(c=>'<a class="row" href="#/stock/'+c+'" data-act="close"><span class="grow"><b>'+esc(nameOf(c))+'</b><span class="meta">'+c+'</span></span></a>').join('')||(v?'<div class="empty">트래커가 아는 종목 중에는 없어요. 스캔·관심·공시·뉴스에 나온 종목만 찾을 수 있어요.</div>':'');});}
 
@@ -647,20 +661,21 @@ function searchSheet(){sheet('<h3>종목 찾기</h3><input type="text" id="q" pl
 function route(){const h=location.hash.replace(/^#\/?/,'')||'home',[p,qs]=h.split('?'),seg=p.split('/'),q={};(qs||'').split('&').forEach(x=>{const [a,b]=x.split('=');if(a)q[a]=decodeURIComponent(b||'');});return {v:seg[0]||'home',arg:seg[1],q};}
 function render(){
   const r=route(),el=document.getElementById('app');let h='';
-  if(r.v==='map'&&r.q.ind){UI.map.mode='ind';UI.map.sel=r.q.ind;}
+  let openInd=null;if(r.v==='map'&&r.q.ind){UI.map.mode='ind';UI.map.drill=null;UI.map.sel=r.q.ind;openInd=r.q.ind;try{history.replaceState(null,'','#/map');}catch(e){}}
   if(r.v==='watch'&&r.q.tab)UI.watch.tab=r.q.tab;
   if(r.v==='ask'){if(r.q.code&&UI.ask.code!==r.q.code){UI.ask.code=r.q.code;UI.ask.mode='stock';}}
   const tab={home:'home',map:'map',watch:'watch',cal:'cal',rec:'rec'}[r.v]||'';
   try{h=r.v==='map'?vMap():r.v==='watch'?vWatch():r.v==='cal'?vCal():r.v==='rec'?vRec():r.v==='ask'?vAsk():r.v==='stock'&&r.arg?vStock(r.arg):vHome();}
   catch(e){console.error(e);h='<div class="warnbox" style="margin-top:24px">화면을 그리다 문제가 생겼어요: '+esc(e.message)+'. 기존 화면은 그대로 쓸 수 있어요.</div><a class="btn s" style="margin-top:12px" href="'+V1+'">기존 화면으로</a>';}
   el.innerHTML=h;tabs(r.v==='stock'||r.v==='ask'?'':tab||'home');
+  if(openInd){const md_=mapData(),it=md_.items.find(x=>x.theme===openInd);if(it)themeSheet(it,md_.ind);}
   if(r.v==='home'||r.v==='')spark();if(r.v==='stock'&&r.arg)stockAsync(r.arg);
 }
 let _lastHash='';
 window.addEventListener('hashchange',()=>{const r=route();if(r.v!==(_lastHash.split('/')[0]||''))window.scrollTo(0,0);_lastHash=r.v;document.getElementById('layer').innerHTML='';render();});
 document.addEventListener('click',e=>{
-  const th=e.target.closest('[data-th]');if(th){const S=UI.map;S.sel=S.sel===th.dataset.th?null:th.dataset.th;render();return;}
-  const pt=e.target.closest('circle[data-i]');if(pt){const it=mapData().items[+pt.dataset.i];if(it){UI.map.sel=UI.map.sel===it.theme?null:it.theme;render();}return;}
+  const th=e.target.closest('[data-th]');if(th){const md_=mapData(),it=md_.items.find(x=>x.theme===th.dataset.th);if(it){UI.map.sel=it.theme;render();themeSheet(it,md_.ind);}return;}
+  const pt=e.target.closest('circle[data-i]');if(pt){const md_=mapData(),it=md_.items[+pt.dataset.i];if(it){UI.map.sel=it.theme;render();themeSheet(it,md_.ind);}return;}
   const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act,v=b.dataset.v;
   if(act==='close'){if(e.target===b||b.tagName==='BUTTON'||b.tagName==='A'){document.getElementById('layer').innerHTML='';}return;}
   if(b.tagName==='A')return;
@@ -676,9 +691,10 @@ document.addEventListener('click',e=>{
     case 'mapview':S.map.view=v;render();break;
     case 'trail':S.map.trail=!S.map.trail;render();break;
     case 'big':S.map.big=!S.map.big;render();break;
-    case 'drill':S.map.drill=v;S.map.sel=null;S.map.more=false;render();window.scrollTo(0,0);break;
+    case 'drill':document.getElementById('layer').innerHTML='';S.map.drill=v;S.map.sel=null;S.map.more=false;render();window.scrollTo(0,0);break;
     case 'undrill':S.map.sel=S.map.drill;S.map.drill=null;render();break;
     case 'more':S.map.more=true;render();break;
+    case 'memall':MEM.all=true;members();break;
     case 'wtab':S.watch.tab=v;render();break;
     case 'wopen':{const cur=S.watch.open[v];const list=((D&&D.watch&&D.watch.themes)||(WL&&WL.themes)||[]);const idx=list.findIndex(t=>t.id===v);S.watch.open[v]=!(cur!=null?cur:idx===0);render();break;}
     case 'wall':S.watch['all_'+v]=true;render();break;
@@ -697,7 +713,7 @@ document.addEventListener('click',e=>{
   }
 });
 document.addEventListener('input',e=>{if(e.target.id==='paste')UI.ask.paste=e.target.value;});
-(async function(){await load();_lastHash=route().v;render();scoreAll();})();
+(async function(){_lastHash=route().v;await load();render();scoreAll();})();
 </script>
 </body>
 </html>
