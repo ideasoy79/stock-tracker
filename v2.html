@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="robots" content="noindex">
+<title>생각콩 트래커</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--p:#7132F5;--p2:#5741D8;--pt:#ECE5FE;--ink:#101114;--ink2:#2E3040;--g7:#484B5E;--g6:#686B82;--g5:#9497A9;--g4:#B4B6C4;--g3:#CFD0DA;--line:#DEDEE5;--s2:#F0F0F4;--s1:#F6F7F8;
+--up:#F04452;--dn:#3182F6;--ok:#149E61;--okt:#D9F0E6;--okd:#026B3F;--warn:#FB8800;--warnt:#FFF4E5;--warnd:#8A5300;--sh:0 4px 24px rgba(0,0,0,.03)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:15px;line-height:1.5;letter-spacing:-.005em;-webkit-tap-highlight-color:transparent;word-break:keep-all}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--p);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:480px;margin:0 auto;padding:0 16px calc(112px + env(safe-area-inset-bottom))}
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px 8px}
+.top .t1{font-size:13px;font-weight:600;color:var(--g6)}
+.top .t2{font-size:22px;font-weight:700;letter-spacing:-.015em}
+.top h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em}
+.ib{width:44px;height:44px;border:0;background:none;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:var(--g7)}
+.ib:active{background:var(--s2)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:20px;background:#fff}
+.card.flush{padding:18px 0 6px}
+.card.flush>.hd{padding:0 20px 8px}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.h2{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.lab{font-size:13px;font-weight:600;color:var(--g7)}
+.meta{font-size:12px;font-weight:500;color:var(--g6)}
+.sub{font-size:13px;color:var(--g7);line-height:1.5}
+.big{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.up{color:var(--up)}.dn{color:var(--dn)}.okc{color:var(--ok)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--s2);color:var(--g7);white-space:nowrap}
+.chip.p{background:var(--pt);color:var(--p)}.chip.ok{background:var(--okt);color:var(--okd)}.chip.w{background:var(--warnt);color:var(--warnd)}.chip.r{background:#FDECEE;color:#C5283A}.chip.b{background:#EAF1FE;color:#1F5FD6}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.tile{background:var(--s1);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.t{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:4px;min-height:118px;background:#fff;text-align:left;color:inherit}
+.t b{font-size:18px;font-weight:700}
+.bar{height:6px;border-radius:3px;background:var(--s2);margin-top:auto;overflow:hidden}.bar i{display:block;height:100%;background:var(--g7)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid var(--s2);color:inherit;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left}
+.row:active,.t:active{background:var(--s1)}
+.av{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--g7);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.it{flex:0 0 auto;width:44px;height:44px;border-radius:12px;background:var(--pt);color:var(--p);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{height:52px;border:0;border-radius:12px;background:var(--p);color:#fff;font-size:16px;font-weight:600;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%}
+.btn:active{background:var(--p2)}
+.btn.s{background:var(--s1);color:var(--ink)}.btn.s:active{background:var(--s2)}
+.btn.o{background:#fff;color:var(--p2);border:1px solid var(--p2)}
+.btn.sm{height:40px;font-size:15px;width:auto}
+.link{border:0;background:none;color:var(--p);font-size:15px;font-weight:600;padding:10px 0;align-self:flex-start}
+.seg{display:flex;background:var(--s2);border-radius:12px;padding:3px}
+.seg button{flex:1;border:0;background:transparent;font-size:13px;font-weight:600;padding:9px 6px;border-radius:10px;color:var(--g7)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.08)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.fc{border:1px solid var(--line);background:#fff;border-radius:8px;font-size:13px;font-weight:600;padding:7px 12px;color:var(--g7);display:inline-flex;align-items:center;gap:6px}
+.fc.on{background:var(--pt);border-color:var(--pt);color:var(--p)}
+.note{font-size:12px;font-weight:500;color:var(--g6);line-height:1.5}
+.box{background:var(--s1);border-radius:12px;padding:12px 14px}
+.empty{padding:20px;text-align:center;color:var(--g6);font-size:13px;line-height:1.6}
+.q{font-size:12px;font-weight:700;padding:2px 6px;border-radius:6px;white-space:nowrap}
+.q-주도{background:#FDECEE;color:#C5283A}.q-부상{background:var(--warnt);color:var(--warnd)}.q-과열·눌림{background:var(--s2);color:var(--g7)}.q-소외{background:#EAF1FE;color:#1F5FD6}
+.ck{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}
+.ck.y{background:var(--okt);color:var(--okd)}.ck.n{background:var(--s2);color:var(--g5)}.ck.u{border:1px dashed var(--g4);color:var(--g6)}
+.hs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
+.hs::-webkit-scrollbar{display:none}
+.mv{flex:0 0 auto;background:var(--s1);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:104px;border:0;text-align:left}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center}
+.wk .d{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;margin:4px auto}
+.wk .d.on{background:var(--p);color:#fff}
+.wk .ds{display:flex;gap:3px;justify-content:center;height:6px}
+.wk .ds i{width:6px;height:6px;border-radius:50%}
+.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:calc(100% - 32px);max-width:448px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.06);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px;z-index:20}
+.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;min-height:44px;color:var(--g6);font-size:11px;font-weight:600}
+.tabs a.on{color:var(--p)}
+.cta{position:fixed;left:0;right:0;bottom:0;padding:28px 16px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(to top,#fff 70%,rgba(255,255,255,0));z-index:21}
+.cta>div{max-width:448px;margin:0 auto;display:flex;gap:8px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.56);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:480px;max-height:86vh;overflow:auto;padding:20px 20px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+.sheet h3{margin:0 0 8px;font-size:18px;font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;font-size:14px;font-weight:500;padding:12px 16px;border-radius:12px;z-index:50;max-width:calc(100% - 32px);text-align:center}
+textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var(--s1);border-radius:12px;padding:12px 14px;font:inherit;font-size:15px;color:var(--ink);resize:vertical}
+textarea:focus,input:focus{outline:none;border-color:var(--p);background:#fff}
+pre.pv{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:13px;line-height:1.6;color:var(--ink2);margin:0;max-height:260px;overflow:auto}
+.mapbox{position:relative;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:12px;background:#fff}
+.mapbox svg{display:block}
+.heat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.heat button{border:0;border-radius:8px;padding:10px 8px;min-height:64px;text-align:left;display:flex;flex-direction:column;justify-content:space-between}
+.tl{display:flex;gap:10px;padding:0 0 12px}
+.cand{position:relative;height:180px}
+.warnbox{background:var(--warnt);color:var(--warnd);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.5}
+.ctr{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 56px;gap:6px;align-items:center;padding:11px 20px;border-top:1px solid var(--s2);font-size:13px}
+.ctr.h{font-size:12px;color:var(--g6);border-top:0;border-bottom:1px solid var(--line);padding:6px 20px}
+.ctr>span:not(:first-child){text-align:right}
+@media (min-width:600px){.wrap{padding-top:12px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="empty" style="padding-top:120px">불러오는 중이에요</div></div>
+<nav class="tabs" id="tabs" aria-label="하단 탭"></nav>
+<div id="layer"></div>
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════
+   생각콩 트래커 v2
+   · 저녁 스캔(../scan/latest.json)을 직접 읽고, 기존 화면(v1)이 이 기기에 저장한 내 기록을 함께 읽어요
+   · 쓰는 곳은 세 군데뿐: 오늘 제안 패스(sv4_app.dec) · 관심 종목(sv4_app.fav) · Claude 브리핑 기록(sv4_app.claude)
+   · 주문 기능은 없어요. 시세 서버 주소는 기존 화면 설정값(sv4_scan_cfg.worker)을 그대로 써요
+   ═══════════════════════════════════════════════════════════ */
+const SCAN_URL='scan/latest.json', LIST_URL='scan/watchlist.json', V1='./';
+const VER_N=20;
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=(n,d=1)=>n==null||isNaN(n)?'—':(n>0?'+':'')+Number(n).toFixed(d)+'%';
+const won=n=>Math.round(n||0).toLocaleString('ko-KR')+'원';
+const eok=n=>n==null?'—':(n>0?'+':'')+Math.round(n).toLocaleString('ko-KR')+'억';
+const md=d=>d?String(d).slice(5).replace('-','/'):'';
+const cls=n=>n>0?'up':n<0?'dn':'';
+const pad=n=>String(n).padStart(2,'0');
+const isoL=x=>x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate());
+function kst(){const n=new Date(Date.now()+9*3600e3);return {iso:n.getUTCFullYear()+'-'+pad(n.getUTCMonth()+1)+'-'+pad(n.getUTCDate()),min:n.getUTCHours()*60+n.getUTCMinutes(),dow:n.getUTCDay(),m:n.getUTCMonth()+1,d:n.getUTCDate(),y:n.getUTCFullYear()};}
+const WD=['일','월','화','수','목','금','토'];
+const dObj=s=>new Date(s+'T00:00:00');
+function dLabel(s){const x=dObj(s);return (x.getMonth()+1)+'월 '+x.getDate()+'일 '+WD[x.getDay()]+'요일';}
+
+/* 거래일 (주말·휴장일 제외) — 기존 화면과 같은 표 */
+const KRX_HOLI=new Set(['2026-10-09','2026-12-25','2026-12-31','2027-01-01','2027-02-08','2027-02-09','2027-03-01','2027-05-05','2027-05-13','2027-08-16','2027-09-14','2027-09-15','2027-09-16','2027-10-04','2027-10-11','2027-12-27','2027-12-31']);
+const isTD=x=>{const w=x.getDay();return w!==0&&w!==6&&!KRX_HOLI.has(isoL(x));};
+function tdBetween(a,b){if(!a||!b||b<=a)return 0;let k=0;const x=dObj(a);while(isoL(x)<b){x.setDate(x.getDate()+1);if(isTD(x)&&isoL(x)<=b)k++;}return k;}
+function nextTD(d,n){const x=dObj(d);let k=0;while(k<n){x.setDate(x.getDate()+1);if(isTD(x))k++;}return isoL(x);}
+function prevTD(d,n){const x=dObj(d);let k=0;while(k<n){x.setDate(x.getDate()-1);if(isTD(x))k++;}return isoL(x);}
+
+/* ── 데이터 ── */
+let D=null, LOAD_ERR='', WL=null;
+const cfg=()=>LS.get('sv4_scan_cfg',{})||{};
+const worker=()=>String(cfg().worker||'').trim().replace(/\/+$/,'');
+function recs(){const r=LS.get('sv4_records',[]);return Array.isArray(r)?r:[];}
+const isAct=r=>r.status==='buy'||r.status==='hold';
+const codeIn=s=>{const m=String(s||'').match(/[0-9A-Z]{6}/);return m?m[0]:null;};
+function app(){const a=LS.get('sv4_app',{})||{};a.prefs=Object.assign({acct:0,pct:50,stop:15,maxB:2,topn:5,halt:10,testPct:25},a.prefs);a.dec=Object.assign({},a.dec);if(!Array.isArray(a.fav))a.fav=[];if(!Array.isArray(a.claude))a.claude=[];return a;}
+function saveApp(a){LS.set('sv4_app',a);}
+function nameOf(c){if(!c)return '';const n=(D&&D.names&&D.names[c]);if(n)return n;const w=watchRow(c);if(w)return w.name;const r=recs().find(x=>codeIn(x.stock)===c);if(r)return String(r.stock).replace(/[0-9A-Z]{6}/,'').replace(/[()]/g,'').trim()||c;return c;}
+function watchRow(c){const w=D&&D.watch;if(w)for(const t of w.themes||[])for(const s of t.stocks||[])if(s.code===c)return Object.assign({theme:t.name,tq:t.q},s);
+  if(WL)for(const t of WL.themes||[])for(const s of t.stocks||[])if(s.code===c)return Object.assign({theme:t.name},s);return null;}
+async function load(){
+  try{const r=await fetch(SCAN_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('스캔 결과 '+r.status);D=await r.json();
+    if(!D||D.kind!=='sv4-volume-scan')throw new Error('스캔 결과 모양이 달라요');
+    LS.set('sv4_v2_cache',slim(D));}
+  catch(e){LOAD_ERR=e.message||String(e);D=LS.get('sv4_v2_cache',null);}
+  if(!D||!D.watch){try{const r=await fetch(LIST_URL+'?t='+Date.now(),{cache:'no-store'});if(r.ok)WL=await r.json();}catch(e){}}
+}
+function slim(d){ // 오프라인용 축약본 (용량 보호: 신호 목록·종목별 뉴스는 뺌)
+  const o={kind:d.kind,generatedAt:d.generatedAt,baseDate:d.baseDate,intraday:d.intraday,themes:d.themes,us:d.us,flows:d.flows,watch:d.watch,reviews:d.reviews,names:d.names,pullbacks:{trigger:(d.pullbacks||{}).trigger||[]},
+    news:d.news?{asOf:d.news.asOf,themes:d.news.themes}:null,dart:d.dart,cached:true};
+  if(o.themes&&o.themes.ranks)o.themes=Object.assign({},o.themes,{ranks:undefined});return o;}
+
+/* ── 규칙: 묶음 · 손익 · 검증 · 오늘의 결정 (기존 화면과 같은 계산) ── */
+function myBaskets(pk,asOf,hold){
+  const R=recs(),all=(pk.open||[]).concat(pk.closed||[]);
+  return [...new Set(R.filter(r=>r.basket&&isAct(r)).map(r=>r.basket))].sort().map(d=>{
+    const rs=R.filter(r=>r.basket===d&&isAct(r)),inv=rs.reduce((x,r)=>x+(r.entry||0)*(r.qty||0),0),val=rs.reduce((x,r)=>x+(r.current||r.entry||0)*(r.qty||0),0);
+    const p=all.find(x=>x.date===d);
+    return {date:d,days:tdBetween(d,asOf),end:nextTD(d,hold),n:rs.length,inv,val,themes:p?p.themes:[...new Set(rs.map(r=>r.theme).filter(Boolean))]};});
+}
+function bstate(){
+  const tf=D&&D.themes,pk=tf&&tf.picks;if(!pk)return null;
+  const a=app(),hold=pk.hold||10,asOf=pk.asOf||tf.date,maxB=a.prefs.maxB||2;
+  const my=myBaskets(pk,asOf,hold),live=my.filter(b=>b.days<hold),stale=my.filter(b=>b.days>=hold),soon=live.filter(b=>b.days===hold-1);
+  const prop=!pk.rest&&(pk.today||[]).length?{date:asOf,themes:pk.today.map(x=>x.theme)}:null;
+  const dec=a.dec[asOf],held=live.some(b=>b.date===asOf),free=maxB-live.filter(b=>b.date!==asOf).length;
+  let kind='hold';
+  if(stale.length)kind='clear';else if(soon.length)kind='soon';
+  if(prop&&!dec&&!held&&kind!=='clear'){if(kind==='hold')kind=free>0?'prop':'full';}
+  else if(prop&&(dec||held)&&kind==='hold')kind='done';
+  else if(pk.rest&&kind==='hold')kind='rest';
+  return {tf,pk,hold,asOf,maxB,my,live,stale,soon,prop,dec,free,kind};
+}
+function ledger(){
+  const a=app(),from=a.prefs.haltFrom||'';let real=0,unr=0,realAll=0,unrAll=0,inv=0,val=0,n=0;
+  recs().forEach(r=>{if(!r.basket)return;const act=isAct(r),rp=act?(r.pnlPart||0):(r.pnl||0),sc=!from||(r.date||'')>=from;
+    realAll+=rp;if(sc)real+=rp;n++;
+    if(act){const c=(r.entry||0)*(r.qty||0),v=(r.current||r.entry||0)*(r.qty||0);inv+=c;val+=v;unrAll+=v-c;if(sc)unr+=v-c;}});
+  const acct=a.prefs.acct||0,base=Math.max(acct-real,0),halt=a.prefs.halt||0,pl=real+unr;
+  const plPct=base?pl/base*100:null,halted=!!(halt&&base&&plPct<=-halt);
+  return {acct,inv,val,real,unr,unrAll,total:realAll+unrAll,base,halt,pl,plPct,halted,n};
+}
+function verdict(pk){
+  const v=(pk&&pk.summary&&pk.summary.vsIdx)||null,n=v?v.n:0;let st='test',say='검증 중';
+  if(n>=VER_N){if(v.cur>v.idx&&v.beat>=50){st='pass';say='기준 통과';}else{st='fail';say='기준 미달';}}
+  return {v,n,st,say};
+}
+function decide(){
+  const s=bstate();if(!s)return null;
+  const L=ledger(),V=verdict(s.pk),pk=s.pk,a=app();let word,text,btns=[],tone='calm';
+  const live=s.live.length;
+  if(s.kind==='clear'){word='정리하기';tone='warn';text=md(s.stale[0].date)+' 묶음이 10거래일을 채웠어요. 팔았다면 정리 기록을 남기고, 아직이면 다음 거래일에 팔아요.';btns=[{l:'기존 화면에서 정리 기록하기',href:V1}];}
+  else if(s.kind==='soon'){word='내일 정리';tone='warn';text=md(s.soon[0].date)+' 묶음이 내일 10거래일째예요. 내일 장 마감 전에 정리해요. 예약 매도를 걸어 두면 편해요.';}
+  else if(L.halted){word='멈춤';tone='stop';text='묶음 거래 누적 손익이 멈춤선(-'+L.halt+'%)에 닿았어요. 새로 사지 않고, 무엇이 달랐는지 복기한 뒤 다시 정해요.'+(live?' 가진 묶음은 정리일까지 규칙대로 두세요.':'');
+    btns=[{l:'복기 보기',href:'#/rec'},{l:'재검토했어요 · 멈춤 풀기',act:'unhalt',q:1}];}
+  else if(s.kind==='prop'){word='살지 결정';tone='go';text='규칙으로는 살 차례예요. 다음 거래일에 살지 오늘 정해 주세요.'+(V.st!=='pass'?' 아직 검증 전이라 금액은 평소의 '+(a.prefs.testPct||25)+'%로 잡아요.':'');
+    btns=[{l:'기존 화면에서 사기 기록',href:V1},{l:'이번 제안은 패스',act:'pass',q:1}];}
+  else if(s.kind==='full'){word='유지';text='오늘 제안이 있지만 묶음 자리가 다 찼어요('+s.maxB+'/'+s.maxB+'). 가진 묶음이 정리되면 다시 살 수 있어요.';btns=[{l:'자리 없음 · 패스로 기록',act:'pass',q:1}];}
+  else if(s.kind==='done'){word=s.dec==='pass'?'패스함':'기록 완료';text=s.dec==='pass'?'오늘 제안은 패스했어요. 내일 저녁 새 제안을 봐요.':'오늘 제안을 기록했어요. 다음 거래일에 기록한 수량대로 사요.';}
+  else if(s.kind==='rest'){word='쉬기';text='테마 평균이 시장 필터('+(pk.restWhy||'약세')+')를 통과하지 못해 오늘은 새로 살 것이 없어요. '+(live?'가진 묶음은 정리일까지 그대로 두세요.':'가진 묶음도 없어서 할 일이 없어요.');}
+  else{word='유지';text='할 일이 없어요. 내일 저녁 새 제안을 봐요.';}
+  const ck=[
+    {k:'시장 필터',say:pk.rest?'쉬는 구간':'통과',v:'60일 '+pct(pk.mkt60)+' · 20일 '+pct(pk.mkt20),st:pk.rest?'no':'ok',g:'filter'},
+    {k:'묶음 자리',say:s.free>0?'자리 있음':'가득',v:live+'/'+s.maxB+' 사용',st:s.free>0?'ok':'nt',g:'slot'},
+    {k:'멈춤선',say:L.halted?'도달':L.halt?(L.plPct==null?'자금 미입력':'여유 있음'):'꺼짐',v:L.halt?(L.plPct==null?'운영 자금을 넣으면 계산해요':'누적 '+pct(L.plPct)+' / -'+L.halt+'%'):'멈춤선 꺼짐',st:L.halted?'no':(!L.halt||L.plPct==null)?'nt':'ok',g:'halt'},
+    {k:'검증 단계',say:V.say,v:'끝난 제안 '+V.n+'/'+VER_N,st:V.st==='pass'?'ok':V.st==='fail'?'no':'nt',g:'verdict'}];
+  return {s,L,V,word,text,btns,tone,ck};
+}
+
+/* ── 설명 (각 칸의 ?) ── */
+const GUIDE={
+  filter:['시장 필터','테마 262개의 평균 수익률이 60일·20일 모두 플러스일 때만 새 묶음을 사요. 3년 시뮬레이션에서 약한 시장에 사면 손해가 커서 넣은 규칙이에요. 쉬는 구간에도 지도와 관심 테마는 계속 지켜봐요.'],
+  slot:['묶음 자리','한 번에 들고 있는 묶음은 최대 2개예요(기존 화면 설정). 한 묶음은 산 날부터 10거래일 동안 들고 있다가 정리해요.'],
+  halt:['멈춤선','묶음 거래 누적 손익이 운영 자금의 -10%에 닿으면 새로 사지 않고 복기부터 해요. 운영 자금과 멈춤 비율은 기존 화면 설정에서 바꿔요.'],
+  verdict:['검증 단계','끝난 제안 20개가 쌓이면, 같은 기간 KODEX 200(코스피 대표 ETF)을 그냥 들고 있었을 때보다 나았는지 봐요. 평균이 지수보다 높고 이긴 비율이 50% 이상이면 통과예요. 통과 전에는 금액을 줄여서 사요.'],
+  map:['지도 읽는 법','가로는 60일, 세로는 20일 수익률이에요. 오른쪽 위(주도)는 오래도 최근에도 오른 곳, 왼쪽 위(부상)는 최근에 살아나는 곳, 오른쪽 아래(과열·눌림)는 많이 오른 뒤 쉬는 곳, 왼쪽 아래(소외)는 둘 다 약한 곳이에요. 3년 검증에서는 주도 칸만 다음 10일 평균이 플러스였어요. 10일 흐름을 켜면 10일 전·5일 전 위치에서 지금까지 어떻게 움직였는지 선으로 보여 줘요. 방향을 예측하는 화살표는 아니에요.'],
+  watch:['관심 테마','로봇·전력망·헬스케어처럼 길게 볼 테마의 종목을 매일 세 가지로 점검해요. ① 공급계약 공시(90일) ② 최근 분기 실적이 전년보다 좋아졌는지 ③ 외국인이나 기관이 2일 연속 샀는지. 2개 이상이 켜지고 그 테마가 지도에서 주도 칸이면 진입 검토로 바뀌어요. 성장성·연결도 점수는 Claude가 매긴 판단이라 분기마다 다시 매겨요.'],
+  flows:['수급','거래대금 상위 40종목의 외국인·기관 순매수를 합친 값이에요(시장 전체가 아니라 대형주 흐름). 한국투자증권 연결이 있어야 채워져요.'],
+  ask:['Claude에게 묻기','트래커가 계산한 숫자를 질문에 담아서 Claude에게 넘겨요. 답 끝의 트래커 기록 블록을 붙여 넣으면 10거래일 뒤 결과를 지수와 비교해 채점해요. Claude의 답은 판단을 돕는 자료예요.'],
+  sim:['3년 시뮬레이션','2023.10~2026.11 KRX 전 종목으로 계산했어요. 다음 날 시가에 사고 비용을 뺐어요. 과거 계산이라 앞으로도 같다는 보장은 없어요.']
+};
+const gq=k=>'<button class="ib" style="width:28px;height:28px;color:var(--g5)" data-act="guide" data-k="'+k+'" aria-label="설명 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.3"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg></button>';
+
+/* ── 아이콘 ── */
+const IC={home:'M4 11l8-7 8 7v9h-5v-6h-6v6H4z',map:'M9 4l6 2 5-2v14l-5 2-6-2-5 2V6zM9 4v14M15 6v14',star:'M12 4l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8z',cal:'M5 6h14v14H5zM5 10h14M9 4v4M15 4v4',rec:'M5 20V10M12 20V4M19 20v-7',
+  back:'M15 5l-7 7 7 7',search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-3.5-3.5',chat:'M5 5h14v10H9l-4 4zM9 10h6',chev:'M9 5l7 7-7 7',ext:'M14 4h6v6M20 4l-9 9M18 14v6H4V6h6',heart:'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',old:'M4 12a8 8 0 1 0 3-6.2M4 4v4h4'};
+const svg=(p,s=22,c='currentColor',w=2)=>'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+p+'"/></svg>';
+
+/* ── 시장 시계 ── */
+function session(){const k=kst(),x=dObj(k.iso);if(!isTD(x))return {t:'휴장일이에요',live:false};
+  if(k.min<480)return {t:'장 시작 전',live:false};if(k.min<540)return {t:'장 시작 전 · 프리마켓',live:false};if(k.min<930)return {t:'정규장 · 오후 3시 30분까지',live:true};if(k.min<1200)return {t:'장 마감 · 애프터마켓',live:false};return {t:'장 마감',live:false};}
+
+/* ── 일정 ── */
+function secondThu(y,m){const x=new Date(y,m-1,1);let k=0;while(true){if(x.getDay()===4){k++;if(k===2)break;}x.setDate(x.getDate()+1);}while(!isTD(x))x.setDate(x.getDate()-1);return isoL(x);}
+function lastTD(y){const x=new Date(y,11,31);while(!isTD(x))x.setDate(x.getDate()-1);return isoL(x);}
+function interestCodes(){const s=new Set(),a=app();recs().filter(isAct).forEach(r=>{const c=codeIn(r.stock);if(c)s.add(c);});a.fav.forEach(c=>s.add(c));
+  const w=(D&&D.watch)||WL;if(w)(w.themes||[]).forEach(t=>(t.stocks||[]).forEach(x=>s.add(x.code)));
+  ((D&&D.themes&&D.themes.picks&&D.themes.picks.today)||[]).forEach(t=>(t.top||[]).forEach(m=>s.add(m.code)));return s;}
+function events(){
+  const k=kst(),ev=[],from=prevTD(k.iso,12),to=isoL(new Date(dObj(k.iso).getTime()+50*864e5));
+  for(let i=0;i<3;i++){const y=k.y+Math.floor((k.m-1+i)/12),m=(k.m-1+i)%12+1,d=secondThu(y,m);
+    ev.push({d,ty:'mkt',t:[3,6,9,12].includes(m)?'선물·옵션 동시 만기':'코스피200 옵션 만기',s:'만기일 전후로 대형주 변동이 커질 수 있어요'});}
+  const ly=lastTD(k.y);ev.push({d:prevTD(ly,2),ty:'mkt',t:'12월 결산 배당 매수 마감',s:'배당을 받으려면 이날까지 사야 해요 · '+md(ly)+' 배당 기준일'});
+  KRX_HOLI.forEach(h=>ev.push({d:h,ty:'mkt',t:'휴장',s:'증시가 쉬는 날이에요'}));
+  const s=bstate();if(s){s.my.forEach(b=>{ev.push({d:b.end,ty:'mine',t:md(b.date)+' 묶음 정리일',s:'산 날부터 10거래일째 · 장 마감 전에 정리해요'});});}
+  app().claude.forEach(r=>{if(!r.score)ev.push({d:nextTD(r.d,10),ty:'mine',t:'Claude 브리핑 채점일',s:md(r.d)+' 기록 · '+(r.concl||'')});});
+  const dt=D&&D.dart&&D.dart.items,ic=interestCodes();
+  if(dt)Object.keys(dt).forEach(c=>{if(!ic.has(c))return;(dt[c]||[]).forEach(z=>{const earn=/실적/.test(z.lab);ev.push({d:z.d,ty:earn?'earn':'disc',t:nameOf(c)+' · '+z.lab,s:(z.who?z.who+' · ':'')+z.t,url:z.url,code:c,k:z.k});});});
+  return ev.filter(e=>e.d>=from&&e.d<=to).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
+}
+const EVC={mkt:'#686B82',mine:'#7132F5',earn:'#149E61',disc:'#FB8800'};
+
+/* ── 시즌 달력 (기존 화면과 같음) ── */
+const SEASON_CAL={1:['CES·전자 신제품','실적 시즌 개막','난방·도시가스','겨울 의류·방한'],2:['설 연휴 소비·선물','신학기 교육·문구','미세먼지 초입'],3:['주총 시즌·배당락','황사·미세먼지','봄 화장품·의류'],4:['황사 절정','벚꽃·여행·항공','1분기 실적'],5:['가정의달 소비','여름 선반영 시작(빙과·음료)','모기·방충 초입'],6:['장마 선반영','폭염 선반영','여름 휴가·여행 예약'],7:['장마 절정→폭염 전환','빙과·음료 성수기','전력·에너지','태풍 초입'],8:['폭염 절정','태풍(복구·농산물)','2분기 실적','추석 선반영 시작'],9:['추석(택배·선물세트)','가을 여행·항공','환절기 감기·제약'],10:['국정감사 테마 변동','겨울 선반영(난방·의류)','3분기 실적','수능 선반영'],11:['수능(교육)','김장(농산물·양념)','블랙프라이데이·소비','겨울 본격화'],12:['배당주 시즌','난방 절정','연말 소비·선물','내년 정책 테마 선반영']};
+const ANGLES=['이번 주 전체 시나리오와 주요 이벤트 일정','외국인·기관 수급 흐름과 순매수 상위 섹터','거래량 급증 종목과 신규 등장 재료','정책·공시·실적 발표 이슈','다음 주로 이어질 모멘텀과 주말 변수','한 주 복기 — 이번 주 가장 강했던 테마의 지속 가능성','다음 주 프리뷰 — 캘린더 이벤트와 선반영 후보'];
+const angle=()=>{const w=kst().dow;return {w:WD[w],t:ANGLES[w===0?6:w-1]};};
+
+/* ═══════════ 화면 ═══════════ */
+const UI={map:{mode:'ind',view:'map',trail:false,big:false,sel:null,drill:null,more:false},watch:{tab:'theme',open:{}},cal:{f:'all',earn:'up'},ask:{mode:'swing',code:null,off:{},full:false,paste:''}};
+function tabs(cur){const T=[['home','홈','#/home',IC.home],['map','지도','#/map',IC.map],['watch','관심','#/watch',IC.star],['cal','일정','#/cal',IC.cal],['rec','기록','#/rec',IC.rec]];
+  document.getElementById('tabs').innerHTML=T.map(t=>'<a href="'+t[2]+'" class="'+(t[0]===cur?'on':'')+'"'+(t[0]===cur?' aria-current="page"':'')+'>'+svg(t[3],24)+'<span>'+t[1]+'</span></a>').join('');
+  document.getElementById('tabs').style.display=cur?'grid':'none';}
+function banner(){
+  if(!D)return '<div class="warnbox">스캔 결과를 불러오지 못했어요'+(LOAD_ERR?' ('+esc(LOAD_ERR)+')':'')+'. 인터넷 연결을 확인하고 다시 열어 주세요.</div>';
+  const out=[];if(D.cached)out.push('인터넷이 안 돼서 마지막으로 받은 결과를 보여 줘요 ('+md(D.baseDate)+' 종가).');
+  if(D.intraday)out.push('장중에 돌린 스캔이라 오늘 봉은 빼고 계산했어요.');
+  return out.length?'<div class="warnbox">'+out.map(esc).join('<br>')+'</div>':'';}
+
+/* ── 홈 ── */
+function vHome(){
+  const k=kst(),d=decide(),ss=session();
+  if(!D)return head('생각콩 트래커',dLabel(k.iso))+banner();
+  const tf=D.themes||{},pk=tf.picks||{},bn=tf.bench,fl=D.flows,us=D.us||[];
+  // 시장
+  let flow='';
+  if(fl&&fl.market&&fl.market.length){const l=fl.market[fl.market.length-1],f5=fl.market.reduce((x,r)=>x+r.frgn,0),o5=fl.market.reduce((x,r)=>x+r.orgn,0);
+    const t=l.frgn>0&&l.orgn>0?['사는 쪽이 세요','외국인과 기관이 대형주를 함께 샀어요']:l.frgn<0&&l.orgn<0?['파는 쪽이 세요','외국인과 기관이 대형주를 함께 팔았어요']:l.frgn>0?['외국인은 사고 기관은 팔았어요','방향이 갈렸어요']:['기관은 사고 외국인은 팔았어요','방향이 갈렸어요'];
+    flow='<button class="box" data-act="guide" data-k="flows" style="border:0;text-align:left;display:flex;flex-direction:column;gap:2px;width:100%"><span style="font-size:15px;font-weight:600">'+t[0]+'</span><span class="sub">'+t[1]+' · '+md(l.d)+'</span><span class="meta num">대형주 '+(fl.mktN||40)+'종목 · 외국인 '+eok(l.frgn)+' · 기관 '+eok(l.orgn)+' · 5일 외국인 '+eok(f5)+' · 기관 '+eok(o5)+'</span></button>';}
+  else flow='<div class="box"><span class="sub">외국인·기관 수급은 저녁 스캔에서 한국투자증권 연결이 되면 채워져요.</span></div>';
+  const usRow=us.length?'<div class="meta num">어젯밤 미국 '+us.slice(0,3).map(u=>esc(u.name)+' <b class="'+cls(u.chg)+'">'+pct(u.chg,2)+'</b>').join(' · ')+'</div>':'';
+  const mkt='<section class="card stack" style="gap:10px" aria-label="시장">'
+    +'<div class="hd"><span class="lab" style="display:flex;align-items:center;gap:6px"><span class="dot" style="width:7px;height:7px;background:'+(ss.live?'var(--up)':'var(--g4)')+'"></span>'+ss.t+'</span><span class="chip num">'+md(D.baseDate)+' 종가 기준</span></div>'
+    +(bn?'<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600;color:var(--g7)">'+esc(bn.name)+'</span><span class="num" style="font-size:28px;font-weight:700;letter-spacing:-.02em">'+Math.round(bn.close).toLocaleString('ko-KR')+'</span><span class="num '+cls(bn.ret5)+'" style="font-size:15px;font-weight:700">5일 '+pct(bn.ret5)+'</span></div>'
+      +'<div id="spark" style="height:64px"></div>'
+      +'<div class="num" style="display:flex;justify-content:space-between;font-size:13px;color:var(--g7)"><span>20일 <b class="'+cls(bn.ret20)+'">'+pct(bn.ret20)+'</b> · 60일 <b class="'+cls(bn.ret60)+'">'+pct(bn.ret60)+'</b></span><span>테마 평균 20일 <b class="'+cls(pk.mkt20)+'">'+pct(pk.mkt20)+'</b></span></div>':'<div class="sub">지수 ETF 값은 저녁 스캔부터 채워져요.</div>')
+    +usRow+flow+'</section>';
+  // 결정
+  let dec='';
+  if(d){const col={ok:'var(--ok)',no:'var(--up)',nt:'var(--g4)'};
+    dec='<section class="card stack" style="gap:6px" aria-label="오늘의 결정"><div class="hd"><span class="lab">오늘의 결정</span><span class="meta num">'+md(D.baseDate)+' 종가 기준</span></div>'
+      +'<div class="big" style="'+(d.tone==='stop'?'color:var(--up)':d.tone==='warn'?'color:var(--warnd)':'')+'">'+d.word+'</div><p style="margin:0;font-size:15px;line-height:1.5;color:var(--ink2)">'+esc(d.text)+'</p>'
+      +(d.btns.length?'<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'+d.btns.map(b=>b.href?'<a class="btn '+(b.q?'s':'')+'" href="'+b.href+'">'+esc(b.l)+'</a>':'<button class="btn '+(b.q?'s':'')+'" data-act="'+b.act+'">'+esc(b.l)+'</button>').join('')+'</div>':'')
+      +'<div class="grid2" style="margin-top:10px">'+d.ck.map(c=>'<button class="tile" data-act="guide" data-k="'+c.g+'" style="border:0;text-align:left"><span style="display:flex;align-items:center;gap:6px"><span class="dot" style="background:'+col[c.st]+'"></span><span style="font-size:12px;font-weight:500;color:var(--g7)">'+c.k+'</span></span><span class="num" style="font-size:15px;font-weight:700;'+(c.st==='no'?'color:var(--up)':'')+'">'+esc(c.say)+'</span><span class="num meta">'+esc(c.v)+'</span></button>').join('')+'</div>'
+      +'<button class="link" data-act="why">왜 이렇게 정했는지 보기</button></section>';}
+  // Claude
+  const ask='<a href="#/ask" class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px;color:inherit;border-radius:14px"><span class="it">'+svg(IC.chat,22,'var(--p)')+'</span><span class="grow"><span style="font-size:15px;font-weight:600">Claude에게 스윙 종목 묻기</span><span class="sub">오늘 트래커 숫자를 담아서 물어봐요</span></span>'+svg(IC.chev,20,'var(--g4)')+'</a>';
+  // 타일
+  let tiles='';
+  if(d){const L=d.L,V=d.V,v=V.v,room=L.halt&&L.plPct!=null?Math.max(0,Math.min(100,(1+L.plPct/L.halt)*100)):null,w=D.watch;
+    const on=w?w.themes.reduce((x,t)=>x+t.stocks.filter(s=>s.sig==='진입 검토').length,0):null,lead=w?w.themes.filter(t=>t.q==='주도').length:0;
+    tiles='<div class="grid2">'
+      +'<a class="t" href="#/watch?tab=mine"><span class="lab">내 돈</span><b class="num">'+(L.inv?won(L.val):'투자 없음')+'</b><span class="meta num">'+(L.acct?'운영 자금 '+won(L.acct):'운영 자금은 기존 화면 설정에서')+'</span>'+(L.inv?'<span class="meta num '+cls(L.unrAll)+'">평가손익 '+(L.unrAll>=0?'+':'')+won(L.unrAll)+'</span>':L.acct?'<span class="meta">현금 100%</span>':'')+'</a>'
+      +'<button class="t" data-act="guide" data-k="halt"><span class="lab">누적 손익 · 멈춤선</span><b class="num '+cls(L.total)+'">'+(L.n?(L.total>=0?'+':'')+won(L.total):'0원')+'</b><span class="meta num">'+(L.halt?(L.plPct==null?'멈춤 -'+L.halt+'%':'지금 '+pct(L.plPct)+' · 멈춤 -'+L.halt+'%'):'멈춤선 꺼짐')+'</span>'+(room!=null?'<div class="bar"><i style="width:'+room+'%;background:'+(L.halted?'var(--up)':room<34?'var(--warn)':'var(--ok)')+'"></i></div>':'')+'</button>'
+      +'<a class="t" href="#/rec"><span class="lab">검증 · 지수 대비</span><b class="num">'+V.n+'<span style="font-size:13px;color:var(--g6)">/'+VER_N+'</span> <span class="chip '+(V.st==='pass'?'ok':V.st==='fail'?'r':'')+'" style="vertical-align:3px">'+V.say+'</span></b><span class="meta num">'+(v?'제안 '+pct(v.cur)+' · 지수 '+pct(v.idx):'끝난 제안이 쌓이면 비교해요')+'</span><div class="bar"><i style="width:'+Math.min(100,V.n/VER_N*100)+'%"></i></div></a>'
+      +'<a class="t" href="#/watch"><span class="lab">관심 테마</span><b class="num">'+(on==null?'점검 대기':'진입 검토 '+on)+'</b><span class="meta ell">'+esc(((w&&w.themes)||(WL&&WL.themes)||[]).map(t=>t.name).join(' · '))+'</span><span class="meta">'+(w?(lead?'주도 칸 '+lead+'개':'모두 주도 칸이 아니에요'):'저녁 스캔부터 채워져요')+'</span></a></div>';}
+  // 많이 오른 곳
+  const m=tf.map||{};let mv='';
+  if(m.ind&&m.ind.length){const top=m.ind.slice().sort((a,b)=>(b.r1||0)-(a.r1||0)).slice(0,6);
+    mv=moverCard('오늘 많이 오른 산업',top.map(x=>({n:x.theme,r:x.r1,q:x.q+' 칸',href:'#/map?ind='+encodeURIComponent(x.theme)})),md(m.asOf)+' 하루 수익률 · 칸은 60일·20일 기준이에요');}
+  else if(tf.leaders&&tf.leaders.length){const top=tf.leaders.slice().sort((a,b)=>b.ret5-a.ret5).slice(0,6);
+    mv=moverCard('최근 5일 강한 테마',top.map(x=>({n:x.theme,r:x.ret5,q:x.phase,href:'#/map'})),'5일 수익률 · 산업별 하루 수익률은 저녁 스캔부터 보여요');}
+  // 이번 주
+  const ev=events(),wk=weekStrip(ev,k.iso),up=ev.filter(e=>e.d>=k.iso&&e.ty!=='disc'&&e.ty!=='earn').slice(0,3);
+  const week='<section class="card stack" aria-label="이번 주"><div class="hd"><span class="h2">이번 주</span><a href="#/cal" class="meta" style="padding:10px 0;font-weight:600">일정 보기</a></div>'+wk
+    +'<div class="stack" style="gap:8px">'+(up.length?up.map(e=>'<div style="display:flex;gap:12px;font-size:15px"><span class="num" style="color:var(--g6);width:48px;flex:0 0 auto">'+md(e.d)+'</span><span>'+esc(e.t)+'</span></div>').join(''):'<span class="sub">다가오는 일정이 없어요.</span>')+'</div></section>';
+  // 뉴스
+  const nw=D.news;let news='';
+  if(nw&&nw.themes&&nw.themes.length){const th=nw.themes.filter(t=>t.items&&t.items.length).slice(0,3);
+    news='<section class="card flush" aria-label="뉴스 연결"><div class="hd"><span class="h2">뉴스 연결</span><span class="meta">'+esc(String(nw.asOf||'').slice(5,10).replace('-','/'))+' · 테마 → 기사 → 종목</span></div>'
+      +th.map(t=>{const it=t.items[0],st=(it.st||[]).concat((t.stocks||[]).map(x=>x[0])).filter((c,i,a)=>a.indexOf(c)===i).slice(0,3);
+        return '<div class="row" style="align-items:flex-start"><span class="it" style="width:auto;min-width:44px;padding:0 8px;font-size:12px;background:var(--s2);color:var(--ink2);height:28px;border-radius:8px">'+esc(shortT(t.theme))+'</span><span class="grow"><a href="'+esc(it.url)+'" target="_blank" rel="noopener" style="color:inherit;font-size:15px;font-weight:600;line-height:1.45">'+esc(it.t)+'</a><span class="meta">'+esc(it.src)+' · '+esc(it.d)+'</span>'
+          +(st.length?'<span class="chips" style="margin-top:4px">'+st.map(c=>'<a class="chip" href="#/stock/'+c+'">'+esc(nameOf(c))+'</a>').join('')+'</span>':'')+'</span></div>';}).join('')+'</section>';}
+  const top='<header class="top"><div style="display:flex;flex-direction:column;gap:2px"><span class="t1">생각콩 트래커</span><span class="t2">'+dLabel(k.iso)+'</span></div><div style="display:flex"><button class="ib" data-act="search" aria-label="종목 찾기">'+svg(IC.search)+'</button><a class="ib" href="'+V1+'" aria-label="기존 화면으로">'+svg(IC.old)+'</a></div></header>';
+  return top+'<div class="stack">'+banner()+mkt+dec+ask+tiles+mv+week+news+'<p class="note" style="padding:0 8px">숫자는 저녁 스캔('+esc(String(D.generatedAt||'').slice(5,16).replace('T',' '))+') 기준이에요. 판단을 돕는 자료이고, 사고팔지는 대표님이 정해요.</p></div>';
+}
+const shortT=t=>String(t||'').replace(/\s*\(.*\)\s*$/,'');
+function moverCard(title,list,note){
+  return '<section class="card stack" aria-label="'+title+'"><div class="hd"><span class="h2">'+title+'</span><a href="#/map" class="meta" style="padding:10px 0;font-weight:600">지도 보기</a></div><div class="hs">'
+    +list.map(x=>'<a class="mv" href="'+x.href+'" style="color:inherit"><span style="font-size:13px;font-weight:600" class="ell">'+esc(shortT(x.n))+'</span><span class="num '+cls(x.r)+'" style="font-size:17px;font-weight:700">'+pct(x.r)+'</span><span class="meta">'+esc(x.q||'')+'</span></a>').join('')+'</div><span class="note num">'+esc(note)+'</span></section>';}
+function weekStrip(ev,today){
+  const t=dObj(today),s=new Date(t);s.setDate(t.getDate()-t.getDay());let h='<div class="wk">';
+  for(let i=0;i<7;i++){const x=new Date(s);x.setDate(s.getDate()+i);const id=isoL(x),es=ev.filter(e=>e.d===id),tys=[...new Set(es.map(e=>e.ty))].slice(0,3);
+    h+='<div><span style="font-size:12px;font-weight:500;color:'+(i===0?'var(--up)':'var(--g6)')+'">'+WD[i]+'</span><span class="d num '+(id===today?'on':'')+'" style="'+(!isTD(x)&&id!==today?'color:var(--g5)':'')+'">'+x.getDate()+'</span><span class="ds">'+tys.map(ty=>'<i style="background:'+EVC[ty]+'"></i>').join('')+'</span></div>';}
+  return h+'</div>';}
+function head(t1,t2){return '<header class="top"><div style="display:flex;flex-direction:column;gap:2px"><span class="t1">'+t1+'</span><span class="t2">'+t2+'</span></div></header>';}
+
+/* KODEX 200 작은 선 그래프 (시세 서버가 있을 때만) */
+const ROWS={};
+async function rows(code,count){const w=worker();if(!w)return null;const key=code+':'+count;if(ROWS[key])return ROWS[key];
+  try{const r=await fetch(w+'/ohlc?code='+code+'&count='+count);if(!r.ok)throw 0;const js=await r.json();ROWS[key]=js.rows||[];return ROWS[key];}catch(e){return null;}}
+async function spark(){const el=document.getElementById('spark');if(!el)return;const R=await rows('069500',60);
+  if(!R||R.length<5){el.innerHTML='';el.style.height='0';return;}
+  const c=R.map(r=>r.c),lo=Math.min(...c),hi=Math.max(...c),W=el.clientWidth||340,H=60,x=i=>i/(c.length-1)*W,y=v=>H-4-(v-lo)/((hi-lo)||1)*(H-8);
+  const up=c[c.length-1]>=c[0],col=up?'#F04452':'#3182F6';
+  el.innerHTML='<svg width="'+W+'" height="'+H+'" role="img" aria-label="KODEX 200 최근 60거래일 흐름"><path d="'+c.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round"/><circle cx="'+x(c.length-1)+'" cy="'+y(c[c.length-1])+'" r="3.5" fill="'+col+'"/><text x="0" y="'+(H-2)+'" font-size="11" fill="#686B82">60거래일 전</text></svg>';}
+
+/* ── 지도 ── */
+function mapData(){const m=(D&&D.themes&&D.themes.map)||{},S=UI.map;
+  if(S.drill&&m.ind){const g=m.ind.find(x=>x.theme===S.drill);if(g)return {items:g.themes||[],title:g.theme,desc:g.desc,ind:false,mkt:m.mkt};}
+  if(S.mode==='ind'&&m.ind&&m.ind.length)return {items:m.ind,ind:true,mkt:m.mkt};
+  const all=m.ind&&m.ind.length?m.ind.flatMap(g=>g.themes||[]):(m.items||[]);return {items:all,ind:false,mkt:m.mkt};}
+const QC={'주도':'#F04452','부상':'#FB8800','과열·눌림':'#9497A9','소외':'#3182F6'};
+function scatter(items,mkt,S){
+  const W=S.big?720:Math.min(window.innerWidth-74,420),H=S.big?560:Math.round(W*0.86),P=22;
+  const xs=items.map(i=>i.x).concat([0,mkt?mkt.x:0]),ys=items.map(i=>i.y).concat([0,mkt?mkt.y:0]);
+  let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const mx=(x1-x0)*.08||5,my=(y1-y0)*.08||5;x0-=mx;x1+=mx;y0-=my;y1+=my;
+  const X=v=>P+(v-x0)/(x1-x0)*(W-2*P),Y=v=>H-P-(v-y0)/(y1-y0)*(H-2*P),zx=X(0),zy=Y(0);
+  const amax=Math.max(1,...items.map(i=>i.amt||1)),R=a=>4+Math.sqrt((a||1)/amax)*(S.big?14:10);
+  let g='<rect x="'+zx+'" y="0" width="'+(W-zx)+'" height="'+zy+'" fill="#FDECEE" opacity=".55"/><rect x="0" y="0" width="'+zx+'" height="'+zy+'" fill="#FFF4E5" opacity=".6"/><rect x="'+zx+'" y="'+zy+'" width="'+(W-zx)+'" height="'+(H-zy)+'" fill="#F0F0F4" opacity=".6"/><rect x="0" y="'+zy+'" width="'+zx+'" height="'+(H-zy)+'" fill="#EAF1FE" opacity=".6"/>'
+    +'<line x1="'+zx+'" y1="0" x2="'+zx+'" y2="'+H+'" stroke="#CFD0DA"/><line x1="0" y1="'+zy+'" x2="'+W+'" y2="'+zy+'" stroke="#CFD0DA"/>'
+    +'<text x="'+(W-8)+'" y="16" text-anchor="end" font-size="12" font-weight="700" fill="#C5283A">주도</text><text x="8" y="16" font-size="12" font-weight="700" fill="#8A5300">부상</text><text x="'+(W-8)+'" y="'+(H-8)+'" text-anchor="end" font-size="12" font-weight="700" fill="#686B82">과열·눌림</text><text x="8" y="'+(H-8)+'" font-size="12" font-weight="700" fill="#1F5FD6">소외</text>';
+  if(S.trail)items.forEach(it=>{if(!it.tr||!it.tr.length)return;const pts=it.tr.concat([[it.x,it.y]]);g+='<polyline points="'+pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')+'" fill="none" stroke="'+QC[it.q]+'" stroke-opacity=".45" stroke-width="1.5"/>';
+    it.tr.forEach(p=>{g+='<circle cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="2" fill="'+QC[it.q]+'" opacity=".45"/>';});});
+  const order=items.map((it,i)=>i).sort((a,b)=>(items[b].amt||0)-(items[a].amt||0));
+  order.slice().reverse().forEach(i=>{const it=items[i],sel=S.sel===it.theme;g+='<circle data-i="'+i+'" cx="'+X(it.x).toFixed(1)+'" cy="'+Y(it.y).toFixed(1)+'" r="'+R(it.amt).toFixed(1)+'" fill="'+QC[it.q]+'" fill-opacity=".8" stroke="'+(sel?'#7132F5':'#fff')+'" stroke-width="'+(sel?3:1.5)+'"/>';});
+  if(mkt){const mx_=X(mkt.x),my_=Y(mkt.y);g+='<rect x="'+(mx_-6)+'" y="'+(my_-6)+'" width="12" height="12" transform="rotate(45 '+mx_+' '+my_+')" fill="#101114"/><text x="'+(mx_+10)+'" y="'+(my_+4)+'" font-size="11" font-weight="700" fill="#101114">시장 평균</text>';}
+  const boxes=[],lim=S.big?40:(items.length>40?10:14);let n=0;
+  for(const i of order){if(n>=lim)break;const it=items[i],sel=S.sel===it.theme,t=shortT(it.theme).slice(0,10),w=t.length*11.5+4,y=Y(it.y)+4;let x=X(it.x)+R(it.amt)+3;if(x+w>W-2)x=X(it.x)-R(it.amt)-3-w;if(x<2)continue;const bx=[x,y-12,x+w,y+3];if(!sel&&boxes.some(b=>!(bx[2]<b[0]||bx[0]>b[2]||bx[3]<b[1]||bx[1]>b[3])))continue;boxes.push(bx);n++;
+    g+='<text x="'+x+'" y="'+y+'" font-size="12" font-weight="'+(sel?700:600)+'" fill="'+(sel?'#7132F5':'#2E3040')+'" stroke="#fff" stroke-width="3" paint-order="stroke">'+esc(t)+'</text>';}
+  return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="60일·20일 수익률 지도" id="mapsvg">'+g+'</svg>';}
+function heat(items,S){const ys=items.map(i=>Math.abs(i.y)),mx=Math.max(1,...ys);
+  return '<div class="heat">'+items.slice().sort((a,b)=>b.y-a.y).slice(0,S.more?999:45).map((it,i)=>{const a=Math.min(1,Math.abs(it.y)/mx),bg=it.y>=0?'rgba(240,68,82,'+(.12+a*.75)+')':'rgba(49,130,246,'+(.12+a*.75)+')',fg=a>.55?'#fff':'#101114';
+    return '<button data-th="'+esc(it.theme)+'" style="background:'+bg+';color:'+fg+'"><span style="font-size:13px;font-weight:600;line-height:1.3" class="ell">'+esc(shortT(it.theme))+'</span><span class="num" style="font-size:12px;font-weight:600">20일 '+pct(it.y)+'</span></button>';}).join('')+'</div>';}
+function vMap(){
+  if(!D)return head('지도','')+banner();
+  const m=D.themes.map||{},S=UI.map,md_=mapData(),items=md_.items,hasInd=!!(m.ind&&m.ind.length);
+  const nTheme=hasInd?m.ind.reduce((x,g)=>x+(g.themes||[]).length,0):(m.items||[]).length;
+  const cnt={주도:0,부상:0,'과열·눌림':0,소외:0};items.forEach(i=>cnt[i.q]=(cnt[i.q]||0)+1);
+  const sel=items.find(i=>i.theme===S.sel);
+  let h='<header class="top"><h1>지도</h1>'+gq('map')+'</header><div class="stack">'+banner();
+  if(hasInd&&!S.drill)h+='<div class="seg"><button data-act="mapmode" data-v="ind" class="'+(S.mode==='ind'?'on':'')+'">산업 '+m.ind.length+'</button><button data-act="mapmode" data-v="theme" class="'+(S.mode==='theme'?'on':'')+'">테마 '+nTheme+'</button></div>';
+  if(S.drill)h+='<div style="display:flex;align-items:center;gap:8px"><button class="fc" data-act="undrill">'+svg(IC.back,16)+' 산업으로</button><span class="h2">'+esc(md_.title)+'</span></div><span class="sub" style="margin-top:-6px">'+esc(md_.desc||'')+' · 테마 '+items.length+'개</span>';
+  if(!hasInd)h+='<div class="box sub">지금은 거래대금이 큰 테마 '+items.length+'개만 보여요. 산업 지도와 테마 전체는 오늘 저녁 스캔부터 채워져요.</div>';
+  h+='<section class="card" style="padding:14px"><div class="hd" style="margin-bottom:10px"><div class="seg" style="width:150px"><button data-act="mapview" data-v="map" class="'+(S.view==='map'?'on':'')+'">지도</button><button data-act="mapview" data-v="heat" class="'+(S.view==='heat'?'on':'')+'">히트맵</button></div>'
+    +(S.view==='map'?'<div style="display:flex;gap:6px"><button class="fc '+(S.trail?'on':'')+'" data-act="trail">10일 흐름</button><button class="fc '+(S.big?'on':'')+'" data-act="big">'+(S.big?'작게':'크게')+'</button></div>':'')+'</div>'
+    +(S.view==='map'?'<div class="mapbox" id="mapbox">'+scatter(items,m.mkt,S)+'</div>':heat(items,S))
+    +'<div class="num meta" style="margin-top:10px">'+(md_.ind?'산업':'테마')+' '+items.length+'개 · <b style="color:#C5283A">주도 '+cnt['주도']+'</b> · 부상 '+cnt['부상']+' · 과열·눌림 '+cnt['과열·눌림']+' · <b style="color:#1F5FD6">소외 '+cnt['소외']+'</b> · '+md(m.asOf)+' 기준</div>'
+    +(S.view==='map'?'<div class="note" style="margin-top:4px">점 크기는 20일 평균 거래대금이에요. 점을 누르면 아래에 자세히 보여요'+(S.big?' · 옆으로 밀어서 보세요':'')+'.</div>':'')+'</section>';
+  if(sel)h+=detail(sel,md_.ind);
+  const list=items.slice().sort((a,b)=>b.y-a.y),lim=S.more?list.length:25;
+  h+='<section class="card flush"><div class="hd"><span class="h2">'+(md_.ind?'산업':'테마')+' 목록</span><span class="meta">20일 수익률 순</span></div>'
+    +list.slice(0,lim).map(it=>'<button class="row" data-th="'+esc(it.theme)+'"><span class="dot" style="width:10px;height:10px;background:'+QC[it.q]+'"></span><span class="grow"><span style="font-size:15px;font-weight:600" class="ell">'+esc(shortT(it.theme))+' <span class="q q-'+it.q+'">'+it.q+'</span>'+(it.pick?' <span class="chip p">'+(D.themes.picks&&D.themes.picks.rest?'상위 테마':'오늘 묶음')+'</span>':'')+'</span><span class="meta num">60일 '+pct(it.x)+' · 20일 '+pct(it.y)+(it.nt?' · 테마 '+it.nt+'개':it.n?' · '+it.n+'종목':'')+'</span></span>'+(it.r1!=null?'<span class="num '+cls(it.r1)+'" style="font-size:15px;font-weight:700">'+pct(it.r1)+'</span>':'')+'</button>').join('')
+    +(list.length>lim?'<button class="row" data-act="more" style="justify-content:center;color:var(--g7);font-size:13px">'+(list.length-lim)+'개 더 보기</button>':'')+'</section>';
+  return h+'</div>';}
+function detail(it,isInd){
+  const nw=D.news&&D.news.themes&&D.news.themes.find(t=>t.theme===it.theme),fl=D.flows&&D.flows.themes&&D.flows.themes[it.theme];
+  const ct=(arr,lab)=>arr&&arr.length?'<div class="stack" style="gap:6px"><span class="lab">'+lab+'</span>'+arr.map(c=>'<a href="#/stock/'+c[0]+'" style="display:flex;justify-content:space-between;color:inherit;font-size:14px"><span>'+esc(nameOf(c[0]))+'</span><span class="num"><b class="'+cls(c[2])+'">'+pct(c[2])+'</b> <span class="meta">기여 '+(c[1]>0?'+':'')+c[1]+'%p</span></span></a>').join('')+'</div>':'';
+  return '<section class="card stack"><div class="hd"><span class="h2">'+esc(shortT(it.theme))+'</span><span class="q q-'+it.q+'">'+it.q+'</span></div>'+(it.desc?'<span class="sub">'+esc(it.desc)+'</span>':'')
+    +'<div class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr))">'+[['60일',it.x],['20일',it.y],['5일',it.r5],['하루',it.r1]].map(a=>'<div class="tile" style="padding:10px"><span class="meta">'+a[0]+'</span><b class="num '+cls(a[1])+'" style="font-size:15px">'+pct(a[1])+'</b></div>').join('')+'</div>'
+    +(fl?'<div class="meta num">수급(거래대금 상위 '+fl.n+'종목) · 하루 외국인 '+eok(fl.f1)+' · 기관 '+eok(fl.o1)+' · 5일 외국인 '+eok(fl.f5)+' · 기관 '+eok(fl.o5)+(fl.streak&&fl.streak.length?' · 2일 연속 순매수 '+fl.streak.map(nameOf).join(', '):'')+'</div>':'')
+    +ct(it.c1,'오늘 많이 움직인 종목')+ct(it.c5,'5일 동안 많이 움직인 종목')
+    +(nw&&nw.items&&nw.items.length?'<div class="stack" style="gap:6px"><span class="lab">관련 기사</span>'+nw.items.slice(0,3).map(x=>'<a href="'+esc(x.url)+'" target="_blank" rel="noopener" style="color:inherit;font-size:14px;line-height:1.45">'+esc(x.t)+' <span class="meta">'+esc(x.src)+'</span></a>').join('')+'</div>':'')
+    +(isInd?'<button class="btn s" data-act="drill" data-v="'+esc(it.theme)+'">이 산업의 테마 '+((it.themes||[]).length)+'개 보기</button>':'')+'</section>';}
+
+/* ── 관심 ── */
+function vWatch(){
+  const S=UI.watch,w=D&&D.watch,list=(w&&w.themes)||(WL&&WL.themes)||[],a=app(),mine=recs().filter(isAct);
+  let h='<header class="top"><h1>관심</h1>'+gq('watch')+'</header><div class="stack">'+banner()
+    +'<div class="seg"><button data-act="wtab" data-v="theme" class="'+(S.tab==='theme'?'on':'')+'">관심 테마 '+list.length+'</button><button data-act="wtab" data-v="mine" class="'+(S.tab==='mine'?'on':'')+'">내 보유 '+mine.length+'</button><button data-act="wtab" data-v="fav" class="'+(S.tab==='fav'?'on':'')+'">관심 종목 '+a.fav.length+'</button></div>';
+  if(S.tab==='mine'){
+    if(!mine.length)return h+'<div class="card empty">가진 종목이 없어요. 사고 나서 기존 화면에 기록하면 여기에도 보여요.</div></div>';
+    return h+'<section class="card flush"><div class="hd"><span class="h2">내 보유</span><span class="meta">기존 화면 기록 기준</span></div>'+mine.map(r=>{const c=codeIn(r.stock),p=r.entry?((r.current||r.entry)/r.entry-1)*100:null;
+      return '<a class="row" href="'+(c?'#/stock/'+c:V1)+'"><span class="av">'+esc(nameOf(c||'').slice(0,1)||'?')+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+esc(c?nameOf(c):r.stock)+'</span><span class="meta num">'+(r.basket?md(r.basket)+' 묶음 · ':'')+(r.qty||0)+'주 · 산 값 '+won(r.entry)+'</span></span><span class="num '+cls(p)+'" style="font-size:15px;font-weight:700">'+pct(p)+'</span></a>';}).join('')+'</section></div>';}
+  if(S.tab==='fav'){
+    if(!a.fav.length)return h+'<div class="card empty">종목 화면에서 ♡를 누르면 여기에 모여요.</div></div>';
+    return h+'<section class="card flush"><div class="hd"><span class="h2">관심 종목</span><span class="meta">이 기기에 저장</span></div>'+a.fav.map(c=>{const w_=watchRow(c);return '<a class="row" href="#/stock/'+c+'"><span class="av">'+esc(nameOf(c).slice(0,1))+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+esc(nameOf(c))+'</span><span class="meta">'+esc(c)+(w_?' · '+esc(w_.theme):'')+'</span></span>'+svg(IC.chev,20,'var(--g4)')+'</a>';}).join('')+'</section></div>';}
+  if(!list.length)return h+'<div class="card empty">관심 테마 목록을 불러오지 못했어요.</div></div>';
+  const on=w?list.reduce((x,t)=>x+t.stocks.filter(s=>s.sig==='진입 검토').length,0):0;
+  h+='<div class="box sub"><b style="color:var(--ink)">진입 검토 '+on+'</b> · 체크 ①수주 ②실적 ③수급 중 2개 이상이 켜지고 그 테마가 지도에서 주도 칸일 때만 켜져요.'+(w?'':' 체크는 오늘 저녁 스캔부터 채워져요.')+'</div>';
+  list.forEach((t,ti)=>{const open=S.open[t.id]!=null?S.open[t.id]:ti===0,st=t.stocks||[],nObs=st.filter(s=>(s.grade||gradeOf(s))==='관찰 우선').length;
+    const xy=t.x!=null?'60일 '+pct(t.x)+' · 20일 '+pct(t.y):'';
+    h+='<section class="card '+(open?'flush':'')+'"><button data-act="wopen" data-v="'+esc(t.id)+'" style="border:0;background:none;width:100%;text-align:left;padding:'+(open?'0 20px 10px':'0')+';display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><span class="grow"><span style="font-size:18px;font-weight:700">'+esc(t.name)+'</span><span class="sub">'+esc(t.desc||'')+'</span><span class="meta num">'+st.length+'종목 · 관찰 우선 '+nObs+(xy?' · '+xy:'')+'</span></span>'+(t.q?'<span class="q q-'+t.q+'">'+t.q+'</span>':'')+'</button>';
+    if(open){const rows_=st.slice().sort((a,b)=>(b.n||0)-(a.n||0)||(b.g+b.l)-(a.g+a.l));
+      h+=rows_.slice(0,S['all_'+t.id]?99:8).map(s=>{const g=s.grade||gradeOf(s);return '<a class="row" href="#/stock/'+s.code+'"><span class="av">'+esc(s.name.slice(0,1))+'</span><span class="grow"><span style="display:flex;align-items:center;gap:6px;min-width:0"><b style="font-size:15px" class="ell">'+esc(s.name)+'</b><span class="chip '+(g==='관찰 우선'?'ok':'')+'">'+esc(g)+'</span>'+(s.sig==='진입 검토'?'<span class="chip p">진입 검토</span>':'')+'</span><span class="sub ell">'+esc(s.why||'')+'</span><span class="meta num">성장 '+s.g+' · 연결 '+s.l+(s.corr!=null?' · 시장 연결 '+s.corr:'')+(s.warn?' · <b style="color:var(--up)">'+esc(s.warn)+'</b>':'')+'</span></span><span style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto">'+(s.r5!=null?'<span class="num '+cls(s.r5)+'" style="font-size:14px;font-weight:700">5일 '+pct(s.r5)+'</span>':'')+'<span style="display:flex;gap:3px">'+['c1','c2','c3'].map((k,i)=>ck(s[k],'①②③'[i])).join('')+'</span></span></a>';}).join('')
+        +(rows_.length>8&&!S['all_'+t.id]?'<button class="row" data-act="wall" data-v="'+esc(t.id)+'" style="justify-content:center;color:var(--g7);font-size:13px">'+rows_.length+'종목 모두 보기</button>':'');}
+    h+='</section>';});
+  return h+'<p class="note" style="padding:0 8px">성장성·연결도는 Claude 판단('+esc(md((w&&w.scoredAt)||(WL&&WL.scoredAt)||''))+' 채점), 시장 연결도는 최근 120거래일 상관계수예요. ✓ 켜짐 · – 꺼짐 · ? 아직 확인 못 함.</p></div>';}
+const gradeOf=s=>s.g>=6&&s.l>=5?'관찰 우선':s.g>=6?'간접 수혜':s.g>=4?'조건부':'편승·보류';
+const ck=(v,l)=>'<span class="ck '+(v===true?'y':v===false?'n':'u')+'" aria-label="'+l+(v===true?' 켜짐':v===false?' 꺼짐':' 확인 못 함')+'">'+(v===true?'✓':v===false?'–':'?')+'</span>';
+
+/* ── 종목 ── */
+function knownPx(c){const pk=D&&D.themes&&D.themes.picks;let out=null;
+  ((pk&&pk.today)||[]).forEach(t=>(t.top||[]).forEach(m=>{if(m.code===c)out={px:m.close,d:D.baseDate,m,theme:t.theme};}));
+  if(!out){const w=watchRow(c);if(w&&w.close)out={px:w.close,d:D.baseDate};}
+  if(!out){const p=((D&&D.pullbacks&&D.pullbacks.trigger)||[]).find(x=>x.code===c);if(p)out={px:p.close,d:p.date};}
+  if(!out&&D&&D.hits){const h=D.hits.find(x=>x.code===c);if(h)out={px:h.lastClose,d:h.lastDate,hit:h};}
+  return out;}
+function vStock(c){
+  const a=app(),fav=a.fav.includes(c),w=watchRow(c),k=knownPx(c),dt=(D&&D.dart&&D.dart.items&&D.dart.items[c])||[],nws=(D&&D.news&&D.news.stocks&&D.news.stocks[c])||[];
+  const themes=[];if(k&&k.theme)themes.push(k.theme);if(w)themes.push(w.theme);if(k&&k.hit&&k.hit.themes)k.hit.themes.slice(0,3).forEach(t=>themes.push(t.t));
+  const st=k&&k.m;let h='<header class="top" style="padding-left:0"><a class="ib" href="javascript:history.back()" aria-label="뒤로">'+svg(IC.back,24,'var(--ink)')+'</a><span style="flex:1;font-size:17px;font-weight:600">종목</span></header><div class="stack">';
+  h+='<div style="padding:0 8px;display:flex;flex-direction:column;gap:2px"><span style="display:flex;align-items:center;gap:8px"><span class="av" style="width:36px;height:36px">'+esc(nameOf(c).slice(0,1))+'</span><span style="font-size:17px;font-weight:700">'+esc(nameOf(c))+'</span><span class="meta">'+esc(c)+'</span></span>'
+    +'<span id="px" class="num" style="font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:6px">'+(k&&k.px?won(k.px):'—')+'</span><span id="pxs" class="meta num">'+(k?md(k.d)+' 종가':'시세 서버를 연결하면 값이 보여요')+'</span>'
+    +(w&&w.why?'<span class="sub" style="margin-top:6px">'+esc(w.why)+'</span>':'')+'</div>';
+  h+='<section class="card" style="padding:14px"><div id="chart" class="cand"><div class="empty">'+(worker()?'차트를 불러오는 중이에요':'시세 서버(기존 화면 설정)를 연결하면 60일 차트가 보여요')+'</div></div></section>';
+  const facts=[];
+  if(st)facts.push(['차트 상태',st.state,st.note]);
+  if(w)facts.push(['관심 등급',w.grade||gradeOf(w),'성장 '+w.g+' · 연결 '+w.l+(w.risk?' · 위험: '+w.risk:'')]);
+  if(themes.length)facts.push(['속한 테마',[...new Set(themes)].map(shortT).slice(0,3).join(' · '),'']);
+  facts.push(['5일 · 60일','<span id="r560">—</span>','<span id="r560s"></span>']);
+  if(st&&st.stop)facts.push(['손절 기준',won(st.stop),'20일선 근처 · 규칙 손절']);
+  h+='<section class="card flush"><div class="hd"><span class="h2">한눈에</span></div>'+facts.map(f=>'<div class="row" style="align-items:flex-start"><span class="meta" style="width:76px;flex:0 0 auto;padding-top:2px">'+f[0]+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+(f[0]==='5일 · 60일'?f[1]:esc(f[1]))+'</span>'+(f[2]?'<span class="sub">'+(f[0]==='5일 · 60일'?f[2]:esc(f[2]))+'</span>':'')+'</span></div>').join('')+'</section>';
+  if(w)h+='<section class="card flush"><div class="hd"><span class="h2">체크 ①②③</span>'+gq('watch')+'</div>'+[['① 고객·수주','c1','c1t','최근 90일 공급계약 공시가 없어요'],['② 실적 개선','c2','c2t','재무 자료를 아직 못 받았어요'],['③ 수급','c3','c3t','외국인·기관 연속 순매수가 아니에요']].map(x=>'<div class="row"><span class="grow"><span style="font-size:15px;font-weight:600">'+x[0]+'</span><span class="sub">'+esc(w[x[2]]||(w[x[1]]==null?'아직 확인하지 못했어요':x[3]))+'</span></span>'+ck(w[x[1]],x[0])+'</div>').join('')+'</section>';
+  h+='<section class="card flush"><div class="hd"><span class="h2">외국인 · 기관</span><span class="meta">최근 20거래일 순매수(주)</span></div><div id="flow" style="padding:0 20px 14px"><div class="sub">'+(worker()?'불러오는 중이에요':'한국투자증권이 연결된 시세 서버가 있으면 보여요')+'</div></div></section>';
+  h+='<section class="card flush"><div class="hd"><span class="h2">공시 · 뉴스</span><span class="meta">최근 10일 · 3일</span></div>'
+    +(dt.length||nws.length?dt.map(z=>'<a class="row" href="'+esc(z.url)+'" target="_blank" rel="noopener"><span class="chip '+(z.k==='risk'?'r':z.k==='good'?'ok':'')+'">'+esc(z.lab)+'</span><span class="grow"><span style="font-size:14px;line-height:1.4">'+esc(z.t)+'</span><span class="meta">DART · '+md(z.d)+(z.who?' · '+esc(z.who):'')+'</span></span></a>').join('')
+      +nws.slice(0,5).map(x=>'<a class="row" href="'+esc(x.url)+'" target="_blank" rel="noopener"><span class="chip">뉴스</span><span class="grow"><span style="font-size:14px;line-height:1.4;color:var(--ink)">'+esc(x.t)+'</span><span class="meta">'+esc(x.src)+' · '+esc(x.d)+'</span></span></a>').join(''):'<div class="empty">최근 공시와 기사가 없어요.</div>')+'</section>';
+  h+='<p class="note" style="padding:0 8px">공시는 제목으로만 분류해요. 조건과 규모는 원문에서 확인해 주세요.</p></div>';
+  h+='<div class="cta"><div><button class="btn s" style="width:56px;flex:0 0 auto" data-act="fav" data-v="'+c+'" aria-label="'+(fav?'관심 종목에서 빼기':'관심 종목에 넣기')+'">'+svg(IC.heart,22,fav?'#F04452':'#484B5E').replace('fill="none"',fav?'fill="#F04452"':'fill="none"')+'</button><a class="btn" href="#/ask?code='+c+'">Claude에게 이 종목 묻기</a></div></div>';
+  return h;}
+async function stockAsync(c){
+  const R=await rows(c,140),el=document.getElementById('chart');if(!el)return;
+  if(R&&R.length>5){const r=R.slice(-60),last=R[R.length-1],prev=R[R.length-2];
+    const px=document.getElementById('px'),ps=document.getElementById('pxs');if(px)px.textContent=won(last.c);
+    if(ps){const ch=last.c-prev.c;ps.innerHTML='<b class="'+cls(ch)+'">'+(ch>0?'+':'')+Math.round(ch).toLocaleString('ko-KR')+' ('+pct(ch/prev.c*100)+')</b> · '+md(last.d)+' 시세';}
+    const r5=R.length>6?(last.c/R[R.length-6].c-1)*100:null,r60=R.length>61?(last.c/R[R.length-61].c-1)*100:null;
+    const a=document.getElementById('r560'),b=document.getElementById('r560s');if(a)a.innerHTML='<span class="'+cls(r5)+'">'+pct(r5)+'</span> · <span class="'+cls(r60)+'">'+pct(r60)+'</span>';if(b&&r60!=null)b.textContent='60거래일 전 '+won(R[R.length-61].c)+' 대비';
+    const W=el.clientWidth||340,H=180,hi=Math.max(...r.map(x=>x.h)),lo=Math.min(...r.map(x=>x.l)),bw=W/r.length,Y=v=>6+(hi-v)/((hi-lo)||1)*(H-24);
+    const ma=r.map((x,i)=>{const j=R.length-r.length+i;if(j<19)return null;let s=0;for(let q=j-19;q<=j;q++)s+=R[q].c;return s/20;});
+    let g='';r.forEach((x,i)=>{const up=x.c>=x.o,col=up?'#F04452':'#3182F6',cx=i*bw+bw/2;g+='<line x1="'+cx+'" y1="'+Y(x.h)+'" x2="'+cx+'" y2="'+Y(x.l)+'" stroke="'+col+'"/><rect x="'+(cx-bw*.35)+'" y="'+Y(Math.max(x.o,x.c))+'" width="'+(bw*.7)+'" height="'+Math.max(1,Math.abs(Y(x.o)-Y(x.c)))+'" fill="'+col+'"/>';});
+    const mp=ma.map((v,i)=>v==null?null:(i*bw+bw/2).toFixed(1)+','+Y(v).toFixed(1)).filter(Boolean);
+    el.innerHTML='<svg width="'+W+'" height="'+H+'" role="img" aria-label="최근 60거래일 일봉">'+g+(mp.length?'<polyline points="'+mp.join(' ')+'" fill="none" stroke="#7132F5" stroke-width="1.5"/>':'')+'<text x="0" y="'+(H-4)+'" font-size="11" fill="#686B82">'+md(r[0].d)+'</text><text x="'+W+'" y="'+(H-4)+'" text-anchor="end" font-size="11" fill="#686B82">'+md(last.d)+' · 보라 선 20일 평균</text></svg>';}
+  else if(worker())el.innerHTML='<div class="empty">차트를 불러오지 못했어요. 시세 서버 상태를 확인해 주세요.</div>';
+  const fe=document.getElementById('flow');if(!fe||!worker())return;
+  try{const r=await fetch(worker()+'/investor?code='+c);if(!r.ok)throw 0;const js=await r.json(),rs=(js.rows||[]).slice(-20);if(!rs.length)throw 0;
+    const mx=Math.max(1,...rs.map(x=>Math.max(Math.abs(x.frgn),Math.abs(x.orgn)))),W=fe.clientWidth||300,bw=W/rs.length;
+    const bars=(k,col)=>rs.map((x,i)=>{const v=x[k],hh=Math.abs(v)/mx*36;return '<rect x="'+(i*bw+bw*.15)+'" y="'+(v>=0?40-hh:40)+'" width="'+(bw*.7)+'" height="'+Math.max(1,hh)+'" fill="'+col+'" rx="1"/>';}).join('');
+    const sum=k=>rs.slice(-5).reduce((x,r)=>x+r[k],0);
+    fe.innerHTML='<div class="lab" style="margin-bottom:4px">외국인 · 5일 '+(sum('frgn')>0?'+':'')+sum('frgn').toLocaleString('ko-KR')+'주</div><svg width="'+W+'" height="80">'+bars('frgn','#7132F5')+'<line x1="0" y1="40" x2="'+W+'" y2="40" stroke="#DEDEE5"/></svg><div class="lab" style="margin:8px 0 4px">기관 · 5일 '+(sum('orgn')>0?'+':'')+sum('orgn').toLocaleString('ko-KR')+'주</div><svg width="'+W+'" height="80">'+bars('orgn','#686B82')+'<line x1="0" y1="40" x2="'+W+'" y2="40" stroke="#DEDEE5"/></svg>';}
+  catch(e){fe.innerHTML='<div class="sub">수급을 불러오지 못했어요. 한국투자증권 키가 시세 서버에 있어야 보여요.</div>';}}
+
+/* ── 일정 ── */
+function vCal(){
+  const k=kst(),S=UI.cal,ev=events(),F={all:'전체',earn:'실적',disc:'공시',mine:'내 일정',mkt:'시장'};
+  const f=ev.filter(e=>S.f==='all'||e.ty===S.f),up=f.filter(e=>e.d>=k.iso),past=f.filter(e=>e.d<k.iso).reverse();
+  const x=dObj(k.iso);let h='<header class="top"><h1>일정 · 실적</h1></header><div class="stack">'+banner()
+    +'<section class="card stack"><div class="hd"><span class="h2">'+x.getFullYear()+'년 '+(x.getMonth()+1)+'월</span><span class="meta">내 종목 · 관심 종목 · 시장</span></div>'+weekStrip(ev,k.iso)
+    +'<div class="chips">'+Object.keys(F).map(q=>'<button class="fc '+(S.f===q?'on':'')+'" data-act="calf" data-v="'+q+'">'+(q!=='all'?'<span class="dot" style="width:7px;height:7px;background:'+EVC[q]+'"></span>':'')+F[q]+'</button>').join('')+'</div></section>';
+  const row=e=>'<'+(e.url?'a href="'+esc(e.url)+'" target="_blank" rel="noopener"':'div')+' class="row" style="color:inherit"><span class="num" style="width:52px;flex:0 0 auto;display:flex;flex-direction:column"><b style="font-size:15px">'+md(e.d)+'</b><span class="meta">'+WD[dObj(e.d).getDay()]+(e.d===k.iso?' · 오늘':'')+'</span></span><span class="dot" style="background:'+EVC[e.ty]+'"></span><span class="grow"><b style="font-size:14px">'+esc(e.t)+'</b><span class="sub ell">'+esc(e.s)+'</span></span></'+(e.url?'a':'div')+'>';
+  h+='<section class="card flush"><div class="hd"><span class="h2">다가오는 일정</span></div>'+(up.length?up.slice(0,12).map(row).join(''):'<div class="empty">다가오는 일정이 없어요.</div>')+'</section>';
+  if(past.length)h+='<section class="card flush"><div class="hd"><span class="h2">최근 공시</span><span class="meta">내 종목 · 관심 종목 · 오늘 제안</span></div>'+past.slice(0,10).map(row).join('')+'</section>';
+  // 실적 표
+  const w=D&&D.watch,er=[];if(w)w.themes.forEach(t=>t.stocks.forEach(s=>{if(s.c2t){const m=s.c2t.match(/^(.+?)\s+매출\s+([\d,-]+)억\(전년\s+([\d,-]+)\)\s+·\s+영업이익\s+([\d,-]+)억\(전년\s+([\d,-]+)\)/);if(m){const n=v=>+v.replace(/,/g,'');er.push({code:s.code,name:s.name,p:m[1],s:n(m[2]),s0:n(m[3]),o:n(m[4]),o0:n(m[5]),ok:s.c2});}}}));
+  const sh=er.filter(r=>S.earn==='up'?r.ok:!r.ok).sort((a,b)=>(b.s/b.s0)-(a.s/a.s0));
+  h+='<section class="card flush"><div class="hd"><span class="h2">관심 종목 최근 분기 실적</span><div class="seg" style="width:120px"><button data-act="earn" data-v="up" class="'+(S.earn==='up'?'on':'')+'">개선</button><button data-act="earn" data-v="dn" class="'+(S.earn==='dn'?'on':'')+'">악화</button></div></div>'
+    +(er.length?'<div class="ctr h num"><span>종목</span><span>매출</span><span>영업이익</span><span>매출 증감</span></div>'+(sh.length?sh.slice(0,15).map(r=>{const g=(r.s/r.s0-1)*100;return '<a class="ctr num" href="#/stock/'+r.code+'" style="color:inherit"><span class="ell"><b>'+esc(r.name)+'</b></span><span>'+r.s.toLocaleString('ko-KR')+'억</span><span style="font-weight:700" class="'+cls(r.o-r.o0)+'">'+r.o.toLocaleString('ko-KR')+'억</span><span class="'+cls(g)+'">'+pct(g,0)+'</span></a>';}).join(''):'<div class="empty">이 조건에 맞는 종목이 없어요.</div>'):'<div class="empty">관심 종목 실적은 저녁 스캔에서 DART 재무 자료를 받으면 채워져요.</div>')
+    +'<p class="note" style="padding:10px 20px 4px">'+(er.length?esc(er[0].p)+' 기준 · ':'')+'예상치(컨센서스)는 무료로 받을 곳이 없어서 전년 같은 분기와 비교해요. 매출이 늘고 영업이익이 늘었거나 흑자면 개선이에요.</p></section>';
+  // 기관 × 기업
+  const dt=(D&&D.dart&&D.dart.items)||{},ic=interestCodes(),inst=[];Object.keys(dt).forEach(c=>{if(!ic.has(c))return;dt[c].forEach(z=>{if(/대량보유|자사주|최대주주/.test(z.lab))inst.push(Object.assign({code:c},z));});});
+  inst.sort((a,b)=>a.d<b.d?1:-1);
+  h+='<section class="card flush"><div class="hd"><span class="h2">기관 × 기업</span><span class="meta">5% 대량보유 · 자사주 · 최대주주</span></div>'
+    +(inst.length?inst.slice(0,10).map(z=>'<a class="row" href="'+esc(z.url)+'" target="_blank" rel="noopener"><span class="av" style="background:'+(z.k==='risk'?'#F04452':z.k==='good'?'#149E61':'#686B82')+'">'+esc((z.who||nameOf(z.code)).slice(0,1))+'</span><span class="grow"><b style="font-size:14px;line-height:1.4">'+esc(z.lab)+(z.who?' · '+esc(z.who):'')+'</b><span style="font-size:13px;font-weight:600;color:var(--g7)">'+esc(nameOf(z.code))+'</span><span class="meta ell">DART · '+md(z.d)+' · '+esc(z.t)+'</span></span></a>').join(''):'<div class="empty">최근 10일 동안 관심 종목의 대량보유·자사주·최대주주 공시가 없어요. 5% 대량보유 공시는 오늘 저녁 스캔부터 모아요.</div>')+'</section>';
+  return h+'</div>';}
+
+/* ── 기록 ── */
+function claudeStats(){const L=app().claude,done=L.filter(r=>r.score),beat=done.filter(r=>r.score.ok);return {n:L.length,done:done.length,beat:beat.length,list:L};}
+function vRec(){
+  const pk=D&&D.themes&&D.themes.picks,V=verdict(pk),w=D&&D.watch,C=claudeStats(),a=app();
+  const word=V.st==='pass'?'기준 통과':V.st==='fail'?'기준 미달':'아직 몰라요';
+  const tracks=[{n:'테마 묶음 제안',k:V.n,s:V.v?'끝난 '+V.n+'개 · 제안 '+pct(V.v.cur)+' vs 지수 '+pct(V.v.idx)+' · 지수를 이긴 비율 '+V.v.beat+'%':'아직 끝난 제안이 없어요'},
+    {n:'관심 테마 진입 검토',k:(w&&w.score&&w.score.n)||0,s:w&&w.score?'10거래일 평균 '+pct(w.score.avg10)+(w.score.idx10!=null?' vs 지수 '+pct(w.score.idx10):'')+' · 오른 비율 '+w.score.win10+'%':'아직 켜진 적이 없어요'},
+    {n:'Claude 브리핑',k:C.done,s:C.n?'기록 '+C.n+'개 · 채점 '+C.done+'개'+(C.done?' · 맞음 '+C.beat+'개':''):'Claude에게 묻기에서 기록 블록을 붙여 넣으면 채점해요'}];
+  let h='<header class="top"><h1>기록</h1></header><div class="stack">'+banner()
+    +'<span class="sub" style="padding:0 8px;margin-top:-6px">이 방식들이 지수 ETF를 그냥 들고 있는 것보다 나은지 채점해요.</span>'
+    +'<section class="card stack" style="gap:14px"><div class="stack" style="gap:4px"><span class="lab">지금 판정</span><span style="font-size:28px;font-weight:700;letter-spacing:-.02em">'+word+'</span><span class="sub">끝난 기록이 20개가 되면 같은 기간 KODEX 200과 비교해 통과·미달을 정해요. 기준은 미리 정해 두고 바꾸지 않아요.</span></div>'
+    +tracks.map(t=>'<div class="stack" style="gap:6px;padding-top:12px;border-top:1px solid var(--s2)"><div class="hd"><b style="font-size:15px">'+t.n+'</b><span class="num meta"><b style="color:var(--ink);font-size:15px">'+t.k+'</b>/20</span></div><div class="bar" style="height:8px"><i style="width:'+Math.min(100,t.k/20*100)+'%;background:var(--ink)"></i></div><span class="meta num">'+esc(t.s)+'</span></div>').join('')+'</section>';
+  // Claude 브리핑 목록
+  h+='<section class="card flush"><div class="hd"><span class="h2">Claude 브리핑 기록</span><a href="#/ask" class="meta" style="padding:10px 0;font-weight:600">묻기</a></div>'
+    +(C.list.length?C.list.slice().reverse().slice(0,10).map(r=>{const dleft=10-tdBetween(r.d,kst().iso);const sc=r.score;
+      return '<div class="row" style="align-items:flex-start"><span class="num" style="width:44px;flex:0 0 auto;font-weight:700">'+md(r.d)+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+esc(r.concl||'결론 없음')+(r.agree?' <span class="chip">'+esc(r.agree)+'</span>':'')+'</span><span class="sub">'+(r.picks.length?r.picks.map(p=>esc(p.name||nameOf(p.code))).join(' · '):'후보 없음')+(r.watch?' · 감시: '+esc(r.watch):'')+'</span>'
+        +'<span class="meta num">'+(sc?(sc.ok?'<b class="okc">맞음</b>':'<b class="up">틀림</b>')+' · '+esc(sc.t):dleft>0?'채점까지 '+dleft+'거래일':'채점 대기 · '+(worker()?'시세를 불러오는 중이에요':'후보 종목은 시세 서버가 있어야 채점돼요'))+'</span></span><button class="ib" style="width:32px;height:32px;color:var(--g5)" data-act="cdel" data-v="'+r.id+'" aria-label="이 기록 지우기">×</button></div>';}).join(''):'<div class="empty">아직 기록이 없어요.</div>')+'</section>';
+  // 시뮬레이션
+  const S=[['코스피 그냥 보유 (시가총액 비중)',29,'-45%'],['테마 묶음 · 후발 3',31,'-27%'],['테마 묶음 · 현행 5 (지금 규칙)',15,'-33%',1],['코스피 종목 똑같이 나눠 사기',6,'-28%']];
+  h+='<section class="card stack"><div class="hd"><span class="h2">3년 시뮬레이션 · 연수익</span>'+gq('sim')+'</div><span class="meta num" style="margin-top:-8px">KRX 전 종목 2023.10~2026.11 · 다음 날 시가 매수 · 비용 반영</span>'
+    +S.map(s=>'<div class="stack" style="gap:4px"><div class="hd" style="font-size:13px"><span style="font-weight:'+(s[3]?700:400)+'">'+s[0]+'</span><span class="num"><b class="up">+'+s[1]+'%</b> <span class="meta">· 낙폭 '+s[2]+'</span></span></div><div style="height:10px;border-radius:4px;background:var(--s2);overflow:hidden"><i style="display:block;height:100%;width:'+(s[1]/35*100)+'%;background:'+(s[3]?'var(--p)':'var(--g3)')+'"></i></div></div>').join('')
+    +'<div class="box sub">평균 종목보다는 나았지만, 코스피를 그냥 들고 있는 것보다 낫다는 근거는 아직 없어요. 9월 이후로는 손해였어요.</div></section>';
+  // 내 판단
+  const cl=(pk&&pk.closed)||[],R=recs(),bought=cl.filter(b=>R.some(r=>r.basket===b.date)),passed=cl.filter(b=>a.dec[b.date]==='pass'&&!R.some(r=>r.basket===b.date));
+  const avg=L=>L.length?L.reduce((x,b)=>x+(b.stocksRet!=null?b.stocksRet:b.ret),0)/L.length:null;
+  h+='<section class="card stack" style="gap:10px"><span class="h2">내 판단 성적</span><div class="grid2">'
+    +[['산 제안',bought],['패스한 제안',passed]].map(x=>'<div class="tile"><span class="meta">'+x[0]+'</span><b class="num '+cls(avg(x[1]))+'" style="font-size:18px">'+(x[1].length?pct(avg(x[1])):'—')+' <span class="meta">'+x[1].length+'개</span></b></div>').join('')+'</div>'
+    +'<span class="sub">산 제안이 패스한 제안보다 계속 못하면, 내 판단이 규칙보다 못하다는 신호예요.</span></section>';
+  // 복기
+  const rv=(D&&D.reviews)||[];
+  h+='<section class="card flush"><div class="hd"><span class="h2">복기할 것</span><span class="meta">'+(rv.length+cl.length)+'건</span></div>'
+    +cl.slice().reverse().slice(0,5).map(b=>'<div class="row" style="align-items:flex-start"><span class="num" style="width:44px;flex:0 0 auto;font-weight:700">'+md(b.date)+'</span><span class="grow"><span style="font-size:14px;font-weight:600" class="ell">'+esc((b.themes||[]).map(shortT).join(' · '))+'</span><span class="meta num">10거래일 '+pct(b.stocksRet!=null?b.stocksRet:b.ret)+(b.idx!=null?' · 지수 '+pct(b.idx):'')+(R.some(r=>r.basket===b.date)?' · 샀어요':a.dec[b.date]==='pass'?' · 패스':'')+'</span></span></div>').join('')
+    +rv.slice(0,5).map(r=>'<div class="row" style="align-items:flex-start"><span class="chip w">'+esc(r.code)+'</span><span class="grow"><span style="font-size:14px;font-weight:600">'+esc(r.title)+'</span><span class="sub">'+esc(r.why)+'</span></span></div>').join('')
+    +(rv.length+cl.length?'':'<div class="empty">정리한 묶음이 생기면 여기서 이유와 결과를 나란히 봐요.</div>')+'</section>';
+  return h+'</div>';}
+
+/* ── Claude에게 묻기 ── */
+function feeds(){
+  const d=decide(),tf=(D&&D.themes)||{},pk=tf.picks||{},m=tf.map||{},w=D&&D.watch,fl=D&&D.flows,nw=D&&D.news,bn=tf.bench,k=kst(),a=app();
+  const F=[];
+  if(d)F.push({id:'dec',k:'결',t:'오늘의 결정',v:d.word+' · 시장 필터 60일 '+pct(pk.mkt60)+' · 20일 '+pct(pk.mkt20),
+    txt:'- 트래커 판정: '+d.word+' — '+d.text+'\n- 시장 필터(테마 262개 평균): 60일 '+pct(pk.mkt60)+' · 20일 '+pct(pk.mkt20)+' → '+(pk.rest?'쉬는 구간('+(pk.restWhy||'')+')':'통과')
+      +(bn?'\n- '+bn.name+' '+Math.round(bn.close).toLocaleString('ko-KR')+'원 ('+md(bn.asOf)+') · 5일 '+pct(bn.ret5)+' · 20일 '+pct(bn.ret20)+' · 60일 '+pct(bn.ret60):'')
+      +((D.us||[]).length?'\n- 미국('+(D.us[0].date||'')+'): '+D.us.map(u=>u.name+' '+pct(u.chg,2)).join(' / '):'')});
+  const items=m.ind&&m.ind.length?m.ind:(m.items||[]);
+  if(items.length){const c={};items.forEach(i=>c[i.q]=(c[i.q]||0)+1);const ld=items.filter(i=>i.q==='주도'||i.q==='부상').sort((a,b)=>b.y-a.y).slice(0,6);
+    const thAll=m.ind?m.ind.flatMap(g=>g.themes||[]):m.items||[],thUp=thAll.filter(i=>i.q==='주도'||i.q==='부상').sort((a,b)=>b.y-a.y).slice(0,8);
+    F.push({id:'map',k:'지',t:m.ind?'산업·테마 지도':'테마 지도',v:(m.ind?'산업 ':'테마 ')+items.length+'개 · 주도 '+(c['주도']||0)+' · 부상 '+(c['부상']||0)+' · 소외 '+(c['소외']||0),
+      txt:'- 지도('+md(m.asOf)+', x=60일·y=20일 수익률): '+(m.ind?'산업':'테마')+' '+items.length+'개 중 주도 '+(c['주도']||0)+' · 부상 '+(c['부상']||0)+' · 과열·눌림 '+(c['과열·눌림']||0)+' · 소외 '+(c['소외']||0)
+        +(ld.length?'\n- 주도·부상 '+(m.ind?'산업':'테마')+': '+ld.map(i=>shortT(i.theme)+'('+i.q+' 60일 '+pct(i.x)+'/20일 '+pct(i.y)+')').join(', '):'')
+        +(m.ind&&thUp.length?'\n- 주도·부상 테마: '+thUp.map(i=>shortT(i.theme)+'(20일 '+pct(i.y)+')').join(', '):'')
+        +(m.ind?'\n- 오늘 많이 오른 산업: '+m.ind.slice().sort((a,b)=>(b.r1||0)-(a.r1||0)).slice(0,4).map(i=>i.theme+' '+pct(i.r1)).join(', '):'')});}
+  if(pk.today&&pk.today.length)F.push({id:'pick',k:'묶',t:'테마 묶음 후보',v:(pk.rest?'쉬는 구간이라 사지 않아요 · ':'')+pk.today.map(t=>shortT(t.theme)).join(' · '),
+    txt:'- 규칙: '+(pk.rule||'')+(pk.rest?'\n- 오늘은 쉬는 구간이라 규칙상 사지 않아요. 아래는 계산만 된 상위 테마예요.':'')+'\n'+pk.today.map(t=>'- '+t.theme+' (20일 '+pct(t.ret20)+', 5일 '+pct(t.ret5)+', '+(t.phase||'')+')\n'+(t.top||[]).map(s=>'  · '+nameOf(s.code)+'('+s.code+') '+Math.round(s.close).toLocaleString('ko-KR')+'원 · '+s.state+' · 20일선 대비 '+pct(s.gap)+' · 손절 '+Math.round(s.stop).toLocaleString('ko-KR')+'원').join('\n')).join('\n')});
+  else F.push({id:'pick',k:'묶',t:'테마 묶음 후보',v:'오늘은 후보가 없어요',txt:'- 오늘 테마 묶음 후보 없음'});
+  if(w){const on=w.themes.flatMap(t=>t.stocks.filter(s=>(s.n||0)>=2).map(s=>({t:t.name,s})));
+    F.push({id:'watch',k:'관',t:'관심 테마 체크',v:w.themes.map(t=>t.name).join('·')+' · 체크 2개 이상 '+on.length+'종목',
+      txt:w.themes.map(t=>'- '+t.name+': 지도 '+(t.q||'?')+(t.x!=null?' (60일 '+pct(t.x)+'/20일 '+pct(t.y)+')':'')).join('\n')+(on.length?'\n- 체크 2개 이상(①수주 ②실적 ③수급): '+on.slice(0,10).map(x=>x.s.name+'('+x.s.code+', '+x.t+', '+x.s.n+'개)').join(', '):'\n- 체크 2개 이상인 종목 없음')});}
+  if(fl&&fl.market&&fl.market.length){const l=fl.market[fl.market.length-1];F.push({id:'flow',k:'수',t:'수급',v:'대형주 '+(fl.mktN||40)+'종목 · 외국인 '+eok(l.frgn)+' · 기관 '+eok(l.orgn),
+    txt:'- 수급(거래대금 상위 '+(fl.mktN||40)+'종목 합, 억 원): '+fl.market.map(r=>md(r.d)+' 외국인 '+eok(r.frgn)+'/기관 '+eok(r.orgn)).join(' · ')});}
+  if(nw&&nw.themes&&nw.themes.length){const th=nw.themes.filter(t=>t.items&&t.items.length).slice(0,4);F.push({id:'news',k:'뉴',t:'뉴스 연결',v:'기사 '+th.reduce((x,t)=>x+Math.min(2,t.items.length),0)+'건 · '+th.map(t=>shortT(t.theme)).join(' · '),
+    txt:th.map(t=>'- ['+shortT(t.theme)+'] '+t.items.slice(0,2).map(x=>x.t+' ('+x.src+' '+x.d+')').join(' / ')).join('\n')});}
+  const V=verdict(pk),L=ledger();F.push({id:'me',k:'기',t:'내 성적',v:'검증 '+V.n+'/'+VER_N+(V.v?' · 제안 '+pct(V.v.cur)+' vs 지수 '+pct(V.v.idx):'')+' · 멈춤선 '+(L.halted?'도달':'여유'),
+    txt:'- 검증: 끝난 제안 '+V.n+'/'+VER_N+(V.v?', 평균 '+pct(V.v.cur)+' vs 같은 기간 지수 '+pct(V.v.idx):'')+'\n- 멈춤선: '+(L.halt?(L.plPct==null?'운영 자금 미입력':'누적 '+pct(L.plPct)+' / -'+L.halt+'%'):'꺼짐')+' · 들고 있는 묶음 '+((bstate()||{live:[]}).live.length)+'개'
+      +(app().claude.filter(r=>r.score).length?'\n- 지난 Claude 브리핑 채점: '+app().claude.filter(r=>r.score).slice(-3).map(r=>md(r.d)+' '+(r.score.ok?'맞음':'틀림')+'('+r.score.t+')').join(', '):'')});
+  const nm=k.m,nx=nm===12?1:nm+1,ins=(LS.get('sv4_insights',[])||[]).filter(i=>{const mm=+String(i.date||'').slice(5,7);return mm===nm||mm===nx||mm===(nm===1?12:nm-1);}).slice(0,8);
+  F.push({id:'season',k:'노',t:'시즌 달력 · 내 관찰 노트',v:nm+'~'+nx+'월 시즌 테마 · 노트 '+ins.length+'개',
+    txt:'- 이번 달('+nm+'월) 시즌 테마: '+SEASON_CAL[nm].join(', ')+'\n- 다음 달('+nx+'월) 선반영 후보: '+SEASON_CAL[nx].join(', ')+'\n- 내 관찰 노트: '+(ins.length?ins.map(i=>'['+i.date+'] '+i.theme+(i.stocks?' → '+i.stocks:'')+(i.memo?' ('+i.memo+')':'')).join(' / '):'없음')});
+  return F;}
+function recordFormat(mode){const k=kst();return '[트래커 기록] '+k.m+'/'+k.d+' · '+mode+'\n판정: 동의 | 일부 동의 | 반대\n결론: 관망 | 매수 검토 | 보유 유지 | 정리\n후보: 종목명(코드) 진입 00,000 목표 00,000 손절 00,000 / 종목명(코드) ... (없으면 "없음")\n감시 조건: (어떤 숫자가 되면 다시 볼지 한 줄)\n배울 점: (오늘 시장에서 배울 것 한 줄)';}
+function buildPrompt(){
+  const S=UI.ask,k=kst(),now=new Date(),ss=session(),ang=angle(),F=feeds().filter(f=>!S.off[f.id]);
+  const date=k.y+'년 '+k.m+'월 '+k.d+'일 ('+WD[k.dow]+') · '+ss.t;
+  const data=F.map(f=>'### '+f.t+'\n'+f.txt).join('\n\n');
+  const fresh='## 규칙\n- 오늘 날짜: '+date+'. 이 날짜 기준 최신 자료만 쓰고, 모든 수치에 (날짜·출처)를 붙여 주세요. 신뢰도 표기: ✅ 출처 확인 / ⚠️ 맥락상 추정 / ❓ 미확인. 3일 넘은 자료는 "구 데이터"로 표시해요.\n- 위 트래커 숫자는 '+md(D&&D.baseDate)+' 종가 기준 계산값이에요. 이 숫자를 다시 검색해서 바꾸지 말고, 그대로 출발점으로 써 주세요.\n- 누구나 아는 대형 테마의 재탕은 빼고, 어제와 달라진 재료·수급만 다뤄 주세요. 달라진 게 없으면 추천하지 마세요.\n- 가격을 확인할 수 없는 종목은 "HTS 확인 필요"로 맨 아래 한 줄에 묶어 주세요.\n- 손익비(목표까지 이익 ÷ 손절까지 손실)가 1.5배 미만인 후보는 빼 주세요.';
+  let ask='';
+  if(S.mode==='swing')ask='## 답 순서\n1. 트래커 판정에 동의하나요? 동의·일부 동의·반대와 근거 2~3줄 (오늘 분석 각도: "'+ang.t+'")\n2. 오늘 달라진 점: 새로 생긴 호재 / 사라진 악재 / 판단이 갈리는 재료로 나눠서\n3. 스윙 후보 0~3개: 종목명(코드) · 진입 조건(가격대) · 목표가(근거) · 손절선 · 손익비 · 테마 안 위치(대장/2등/후발) · 4단계 필터(재료 지속성 / 수급 / 차트·거래량 / 재무) 각 한 줄. 지도에서 소외 칸 테마의 종목이면 그래도 고른 이유를 꼭 써 주세요. 갭 +5% 이상이면 "당일 추격 금지".\n4. 관망이라면: 어떤 숫자가 되면 다시 볼지(감시 조건)와 오늘의 학습 포인트 1가지\n5. 다음 2~4주 미리 볼 시즌 테마 1가지와 대표 종목\n6. 오늘 하지 말아야 할 것 1가지';
+  else if(S.mode==='watch')ask='## 답 순서\n1. 관심 테마(위 "관심 테마 체크") 각각: 지금 지도 위치가 왜 그런지, 주도 칸으로 바뀌려면 무엇이 필요한지\n2. 체크 2개 이상 종목 중 가장 먼저 볼 종목 1~2개와 이유, 아직 아닌 이유가 있으면 그것도\n3. 테마별 감시 조건: 어떤 공시·실적·수급이 나오면 진입 검토로 올릴지\n4. 이 테마들에서 지금 피해야 할 함정 1가지';
+  else{const c=S.code,w=watchRow(c),kp=knownPx(c),dt=(D&&D.dart&&D.dart.items&&D.dart.items[c])||[],nws=(D&&D.news&&D.news.stocks&&D.news.stocks[c])||[];
+    ask='## 이 종목: '+nameOf(c)+'('+c+')\n'+(kp?'- 트래커가 아는 종가: '+Math.round(kp.px).toLocaleString('ko-KR')+'원 ('+md(kp.d)+')'+(kp.m?' · 차트 상태 '+kp.m.state+' · '+kp.m.note:''):'')
+      +(w?'\n- 관심 테마 '+w.theme+' · 등급 '+(w.grade||gradeOf(w))+' (성장 '+w.g+'/연결 '+w.l+') · 왜: '+w.why+(w.risk?' · 위험: '+w.risk:'')+'\n- 체크: ①수주 '+(w.c1===true?'✓ '+(w.c1t||''):w.c1===false?'없음':'미확인')+' / ②실적 '+(w.c2===true?'✓ ':w.c2===false?'✕ ':'미확인 ')+(w.c2t||'')+' / ③수급 '+(w.c3===true?'✓ '+(w.c3t||''):w.c3===false?'아님':'미확인'):'')
+      +(dt.length?'\n- 최근 공시: '+dt.map(z=>md(z.d)+' '+z.lab+(z.who?'('+z.who+')':'')).join(', '):'')+(nws.length?'\n- 최근 기사: '+nws.slice(0,3).map(x=>x.t).join(' / '):'')
+      +'\n\n## 답 순서\n1. 트래커 판정(시장 필터·지도 칸)을 이 종목에 적용하면 지금 살 때인가요, 기다릴 때인가요? 근거와 함께\n2. 진입한다면 조건 · 목표가 · 손절선 · 손익비, 기다린다면 감시 조건\n3. 이 종목만의 위험 1~2가지 (공시·재무·수급)';}
+  const mode=S.mode==='swing'?'오늘 스윙 후보':S.mode==='watch'?'관심 테마 점검':nameOf(S.code)+' 점검';
+  return '당신은 국내 주식 스윙 트레이딩을 돕는 분석가예요. 계절·시즌 테마 선반영 분석에 강해요. 아래는 제 트래커가 오늘 계산한 숫자예요. 이 판정에서 출발해서, 동의하는지와 근거를 먼저 말해 주세요.\n\n## 트래커 숫자 ('+md(D&&D.baseDate)+' 종가 기준)\n'+data+'\n\n'+fresh+'\n\n'+ask
+    +'\n\n## 마지막에 꼭\n답 맨 끝에 아래 형식 그대로 "트래커 기록" 블록을 붙여 주세요. 제가 이 블록만 복사해서 트래커에 붙여 넣고, 10거래일 뒤 결과를 지수와 비교해 채점해요.\n```\n'+recordFormat(mode)+'\n```\n\n답은 판단을 돕는 자료로만 쓸게요. 사고팔지는 제가 정해요.';}
+function vAsk(){
+  if(!D)return head('Claude에게 묻기','')+banner();
+  const S=UI.ask,F=feeds(),on=F.filter(f=>!S.off[f.id]).length,ang=angle();
+  let h='<header class="top" style="padding-left:0"><a class="ib" href="javascript:history.back()" aria-label="뒤로">'+svg(IC.back,24,'var(--ink)')+'</a><span style="flex:1;font-size:17px;font-weight:600">Claude에게 묻기</span>'+gq('ask')+'</header><div class="stack" style="padding-bottom:40px">'
+    +'<div style="padding:4px 8px 8px" class="stack"><h1 style="margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.3">트래커가 본 숫자로<br>스윙 종목을 물어봐요</h1><span class="sub" style="font-size:15px">Claude가 트래커 판정에서 출발해서, 동의하는지와 근거를 먼저 말하게 해요.</span></div>'
+    +'<section class="card stack"><span class="h2">무엇을 물을까요</span><div class="seg"><button data-act="amode" data-v="swing" class="'+(S.mode==='swing'?'on':'')+'">오늘 스윙 후보</button><button data-act="amode" data-v="watch" class="'+(S.mode==='watch'?'on':'')+'">관심 테마 점검</button>'+(S.code?'<button data-act="amode" data-v="stock" class="'+(S.mode==='stock'?'on':'')+'">'+esc(nameOf(S.code).slice(0,6))+' 점검</button>':'')+'</div>'
+    +'<div class="hd" style="font-size:13px"><span style="color:var(--g7)">오늘의 분석 각도 · '+ang.w+'요일</span><span style="font-weight:600;text-align:right">'+esc(ang.t)+'</span></div></section>'
+    +'<section class="card flush"><div class="hd"><span class="h2">질문에 담기는 정보</span><span class="meta num">'+F.length+'개 중 '+on+'개 · '+md(D.baseDate)+' 종가</span></div>'
+    +F.map(f=>'<button class="row" data-act="afeed" data-v="'+f.id+'"><span class="it" style="width:36px;height:36px;font-size:13px">'+f.k+'</span><span class="grow"><span style="font-size:15px;font-weight:600">'+f.t+'</span><span class="sub num">'+esc(f.v)+'</span></span><span class="ck" style="width:24px;height:24px;'+(S.off[f.id]?'border:1.5px solid var(--g3);':'background:var(--p);color:#fff;')+'" aria-label="'+(S.off[f.id]?'빠짐':'들어감')+'">'+(S.off[f.id]?'':'✓')+'</span></button>').join('')+'</section>'
+    +'<section class="card stack"><div class="hd"><span class="h2">질문 미리보기</span><button class="fc" data-act="afull">'+(S.full?'접기':'전체 보기')+'</button></div><div class="box"><pre class="pv" style="'+(S.full?'max-height:none':'')+'">'+esc(S.full?buildPrompt():buildPrompt().split('\n').slice(0,14).join('\n')+'\n…')+'</pre></div><span class="note">Claude 앱이나 웹에 붙여 넣으면 돼요. 버튼을 누르면 질문이 복사돼요.</span></section>'
+    +'<section class="card stack"><div class="hd"><span class="h2">답을 받으면 붙여 넣어요</span><span class="meta">기록 탭에서 채점</span></div><span class="sub">Claude 답 맨 끝의 "트래커 기록" 블록만 복사해서 넣어요. 10거래일 뒤 결과를 KODEX 200과 비교해 채점해요.</span>'
+    +'<textarea id="paste" rows="6" placeholder="[트래커 기록] 11/26 · 오늘 스윙 후보&#10;판정: 동의&#10;결론: 관망&#10;후보: 없음&#10;감시 조건: …&#10;배울 점: …">'+esc(S.paste)+'</textarea><button class="btn s" data-act="asave">기록에 저장하기</button></section>'
+    +'<p class="note" style="padding:0 8px">Claude의 답은 판단을 돕는 자료예요. 사고팔지는 대표님이 정하고, 트래커에는 주문 기능이 없어요.</p></div>'
+    +'<div class="cta"><div><button class="btn" data-act="acopy">질문 복사하고 Claude 열기</button></div></div>';
+  return h;}
+function parseBlock(t){
+  t=String(t||'').replace(/```/g,'');const i=t.indexOf('[트래커 기록]');if(i<0)return null;t=t.slice(i);
+  const get=k=>{const m=t.match(new RegExp(k+'\\s*[:：]\\s*(.+)'));return m?m[1].trim():'';};
+  const hd=t.split('\n')[0].replace('[트래커 기록]','').trim();const pk=get('후보'),picks=[];
+  if(pk&&!/^없음/.test(pk))pk.split(/\s\/\s|\/(?=\s*[^\d\s])|;/).forEach(s=>{const c=(s.match(/\(([0-9A-Z]{6})\)/)||s.match(/\b([0-9]{6})\b/)||[])[1];if(!c)return;
+    const num=k=>{const m=s.match(new RegExp(k+'\\s*([\\d,]+)'));return m?+m[1].replace(/,/g,''):null;};
+    picks.push({code:c,name:(s.split('(')[0]||'').trim(),entry:num('진입'),target:num('목표'),stop:num('손절')});});
+  return {hd,agree:get('판정').split('|')[0].trim(),concl:get('결론').split('|')[0].trim(),picks,watch:get('감시 조건'),learn:get('배울 점'),mode:(hd.split('·')[1]||'').trim()};}
+function copyText(t){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t).then(()=>true,()=>fallback());return Promise.resolve(fallback());
+  function fallback(){try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);const ok=document.execCommand('copy');ta.remove();return ok;}catch(e){return false;}}}
+/* 채점: 10거래일 뒤 — 지수는 저장할 때 KODEX 200 종가와 채점 시점 종가를 비교, 후보는 시세 서버 일봉으로 */
+async function scoreAll(){
+  const a=app(),bn=D&&D.themes&&D.themes.bench;if(!bn||!a.claude.length)return;let ch=false;
+  for(const r of a.claude){if(r.score||!r.b0)continue;const end=nextTD(r.d,10);if(bn.asOf<end)continue;
+    const idx=(bn.close/r.b0-1)*100;let rr=null,t='';
+    if(r.picks.length){const vals=[];for(const p of r.picks){const R=await rows(p.code,60);if(!R)continue;const i0=R.findIndex(x=>x.d>=r.d),i1=R.findIndex(x=>x.d>=end);if(i0<0||i1<0)continue;vals.push((R[i1].c/R[i0].c-1)*100);}
+      if(!vals.length)continue;rr=vals.reduce((x,v)=>x+v,0)/vals.length;t='후보 평균 '+pct(rr)+' vs 지수 '+pct(idx);r.score={ok:rr>idx,t,r:rr,i:idx,at:bn.asOf};}
+    else{const ok=/관망|정리/.test(r.concl)?idx<=0:idx>0;t=(/관망|정리/.test(r.concl)?'관망 결론 · 그 뒤 10거래일 지수 ':'후보 없이 매수 검토 · 그 뒤 지수 ')+pct(idx);r.score={ok,t,i:idx,at:bn.asOf};}
+    ch=true;}
+  if(ch){saveApp(a);if(route().v==='rec')render();}}
+
+/* ── 공용: 시트 · 토스트 ── */
+function sheet(html){const L=document.getElementById('layer');L.innerHTML='<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true">'+html+'<button class="btn s" style="margin-top:16px" data-act="close">닫기</button></div></div>';}
+let _tt;function toast(m){clearTimeout(_tt);let el=document.querySelector('.toast');if(!el){el=document.createElement('div');el.className='toast';el.setAttribute('role','status');document.body.appendChild(el);}el.textContent=m;el.style.display='block';_tt=setTimeout(()=>{el.style.display='none';},2600);}
+function searchSheet(){sheet('<h3>종목 찾기</h3><input type="text" id="q" placeholder="종목명이나 코드" autocomplete="off"><div id="qr" style="margin:8px -20px 0"></div>');
+  const q=document.getElementById('q');setTimeout(()=>q.focus(),50);
+  q.addEventListener('input',()=>{const v=q.value.trim().replace(/\s/g,'');const out=[];if(v){const all=Object.assign({},D&&D.names);((D&&D.watch&&D.watch.themes)||(WL&&WL.themes)||[]).forEach(t=>t.stocks.forEach(s=>all[s.code]=s.name));
+      Object.keys(all).forEach(c=>{if(out.length<20&&(c.startsWith(v)||String(all[c]).replace(/\s/g,'').includes(v)))out.push(c);});}
+    document.getElementById('qr').innerHTML=out.map(c=>'<a class="row" href="#/stock/'+c+'" data-act="close"><span class="grow"><b>'+esc(nameOf(c))+'</b><span class="meta">'+c+'</span></span></a>').join('')||(v?'<div class="empty">트래커가 아는 종목 중에는 없어요. 스캔·관심·공시·뉴스에 나온 종목만 찾을 수 있어요.</div>':'');});}
+
+/* ── 라우터 ── */
+function route(){const h=location.hash.replace(/^#\/?/,'')||'home',[p,qs]=h.split('?'),seg=p.split('/'),q={};(qs||'').split('&').forEach(x=>{const [a,b]=x.split('=');if(a)q[a]=decodeURIComponent(b||'');});return {v:seg[0]||'home',arg:seg[1],q};}
+function render(){
+  const r=route(),el=document.getElementById('app');let h='';
+  if(r.v==='map'&&r.q.ind){UI.map.mode='ind';UI.map.sel=r.q.ind;}
+  if(r.v==='watch'&&r.q.tab)UI.watch.tab=r.q.tab;
+  if(r.v==='ask'){if(r.q.code&&UI.ask.code!==r.q.code){UI.ask.code=r.q.code;UI.ask.mode='stock';}}
+  const tab={home:'home',map:'map',watch:'watch',cal:'cal',rec:'rec'}[r.v]||'';
+  try{h=r.v==='map'?vMap():r.v==='watch'?vWatch():r.v==='cal'?vCal():r.v==='rec'?vRec():r.v==='ask'?vAsk():r.v==='stock'&&r.arg?vStock(r.arg):vHome();}
+  catch(e){console.error(e);h='<div class="warnbox" style="margin-top:24px">화면을 그리다 문제가 생겼어요: '+esc(e.message)+'. 기존 화면은 그대로 쓸 수 있어요.</div><a class="btn s" style="margin-top:12px" href="'+V1+'">기존 화면으로</a>';}
+  el.innerHTML=h;tabs(r.v==='stock'||r.v==='ask'?'':tab||'home');
+  if(r.v==='home'||r.v==='')spark();if(r.v==='stock'&&r.arg)stockAsync(r.arg);
+}
+let _lastHash='';
+window.addEventListener('hashchange',()=>{const r=route();if(r.v!==(_lastHash.split('/')[0]||''))window.scrollTo(0,0);_lastHash=r.v;document.getElementById('layer').innerHTML='';render();});
+document.addEventListener('click',e=>{
+  const th=e.target.closest('[data-th]');if(th){const S=UI.map;S.sel=S.sel===th.dataset.th?null:th.dataset.th;render();return;}
+  const pt=e.target.closest('circle[data-i]');if(pt){const it=mapData().items[+pt.dataset.i];if(it){UI.map.sel=UI.map.sel===it.theme?null:it.theme;render();}return;}
+  const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act,v=b.dataset.v;
+  if(act==='close'){if(e.target===b||b.tagName==='BUTTON'||b.tagName==='A'){document.getElementById('layer').innerHTML='';}return;}
+  if(b.tagName==='A')return;
+  e.preventDefault();
+  const S=UI;
+  switch(act){
+    case 'guide':{const g=GUIDE[b.dataset.k];if(g)sheet('<h3>'+g[0]+'</h3><p class="sub" style="font-size:15px;margin:0">'+g[1]+'</p>');break;}
+    case 'why':{const d=decide();if(!d)break;sheet('<h3>왜 '+d.word+'인가요</h3><p class="sub" style="font-size:15px;margin:0 0 12px">'+esc(d.text)+'</p>'+d.ck.map(c=>'<div style="padding:10px 0;border-top:1px solid var(--s2)"><b>'+c.k+' · '+esc(c.say)+'</b><div class="sub num">'+esc(c.v)+'</div><div class="note" style="margin-top:4px">'+GUIDE[c.g][1]+'</div></div>').join(''));break;}
+    case 'pass':{const s=bstate();if(!s)break;const a=app();a.dec[s.asOf]='pass';saveApp(a);toast('오늘 제안은 패스로 기록했어요. 기록 탭에서 결과를 비교해요');render();break;}
+    case 'unhalt':{const a=app();a.prefs.haltFrom=kst().iso;saveApp(a);toast('멈춤을 풀었어요. 오늘부터 손익을 다시 세요');render();break;}
+    case 'search':searchSheet();break;
+    case 'mapmode':S.map.mode=v;S.map.sel=null;S.map.more=false;render();break;
+    case 'mapview':S.map.view=v;render();break;
+    case 'trail':S.map.trail=!S.map.trail;render();break;
+    case 'big':S.map.big=!S.map.big;render();break;
+    case 'drill':S.map.drill=v;S.map.sel=null;S.map.more=false;render();window.scrollTo(0,0);break;
+    case 'undrill':S.map.sel=S.map.drill;S.map.drill=null;render();break;
+    case 'more':S.map.more=true;render();break;
+    case 'wtab':S.watch.tab=v;render();break;
+    case 'wopen':{const cur=S.watch.open[v];const list=((D&&D.watch&&D.watch.themes)||(WL&&WL.themes)||[]);const idx=list.findIndex(t=>t.id===v);S.watch.open[v]=!(cur!=null?cur:idx===0);render();break;}
+    case 'wall':S.watch['all_'+v]=true;render();break;
+    case 'fav':{const a=app(),i=a.fav.indexOf(v);if(i>=0)a.fav.splice(i,1);else a.fav.push(v);saveApp(a);toast(i>=0?'관심 종목에서 뺐어요':'관심 종목에 넣었어요');render();break;}
+    case 'calf':S.cal.f=v;render();break;
+    case 'earn':S.cal.earn=v;render();break;
+    case 'amode':S.ask.mode=v;render();break;
+    case 'afeed':S.ask.off[v]=!S.ask.off[v];render();break;
+    case 'afull':S.ask.full=!S.ask.full;render();break;
+    case 'acopy':{const t=buildPrompt();copyText(t).then(ok=>{if(ok)sheet('<h3>질문을 복사했어요</h3><p class="sub" style="font-size:15px;margin:0 0 16px">Claude 새 대화창에 붙여 넣고 보내 주세요. 답 끝의 트래커 기록 블록은 이 화면 아래 칸에 붙여 넣어요.</p><a class="btn" href="https://claude.ai/new" target="_blank" rel="noopener" data-act="close">Claude 열기</a>');else{UI.ask.full=true;render();toast('자동 복사가 안 됐어요. 미리보기 글을 길게 눌러 복사해 주세요');}});break;}
+    case 'asave':{const ta=document.getElementById('paste');S.ask.paste=ta?ta.value:'';const p=parseBlock(S.ask.paste);
+      if(!p){toast('"[트래커 기록]"으로 시작하는 블록을 찾지 못했어요');break;}
+      const a=app(),bn=D&&D.themes&&D.themes.bench,k=kst();p.id=Date.now();p.d=k.iso;p.b0=bn?bn.close:null;p.bAt=bn?bn.asOf:null;a.claude.push(p);if(a.claude.length>200)a.claude=a.claude.slice(-200);saveApp(a);
+      S.ask.paste='';toast('기록했어요. '+md(nextTD(k.iso,10))+'에 채점해요');location.hash='#/rec';break;}
+    case 'cdel':{const a=app();a.claude=a.claude.filter(r=>String(r.id)!==v);saveApp(a);toast('기록을 지웠어요');render();break;}
+  }
+});
+document.addEventListener('input',e=>{if(e.target.id==='paste')UI.ask.paste=e.target.value;});
+(async function(){await load();_lastHash=route().v;render();scoreAll();})();
+</script>
+</body>
+</html>
